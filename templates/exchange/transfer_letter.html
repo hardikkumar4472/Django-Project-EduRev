@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Official Transfer Pass — {{ transfer.transfer_code }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Official Room Transfer Certificate</h1>
+    <p>University Hostel Allotment Office · Transfer ID: {{ transfer.transfer_code }}</p>
+  </div>
+  <div style="display: flex; gap: 0.75rem;">
+    <button onclick="window.print();" class="btn btn-primary">
+      🖨️ Print Transfer Pass
+    </button>
+    <a href="{% url 'transfers_list' %}" class="btn btn-outline">
+      ← Back to Transfers
+    </a>
+  </div>
+</div>
+
+<!-- Official Printable Transfer Certificate -->
+<div class="transfer-certificate">
+  
+  <div class="certificate-header">
+    <div class="certificate-crest">🏛️</div>
+    <div class="certificate-title">Office of the Chief Warden & Hostel Administration</div>
+    <div style="font-size: 0.9rem; color: var(--color-text-muted); margin-top: 0.25rem;">
+      OFFICIAL POST-ALLOCATION RESIDENCY REALLOCATION ORDER
+    </div>
+    <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--color-teal); margin-top: 0.5rem; font-weight: 700;">
+      ORDER REFERENCE: {{ transfer.transfer_code }}
+    </div>
+  </div>
+
+  <div class="certificate-grid">
+    <div class="certificate-box">
+      <h4 style="color: var(--color-navy); font-weight: 700; margin-bottom: 0.5rem; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.25rem;">
+        Resident Student Details
+      </h4>
+      <div style="font-size: 0.9rem; line-height: 1.8;">
+        <div><strong>Student Name:</strong> {{ transfer.student.get_full_name }}</div>
+        <div><strong>University Roll ID:</strong> {{ transfer.student.university_id }}</div>
+        <div><strong>Gender:</strong> {{ transfer.student.get_gender_display }}</div>
+        <div><strong>Contact Phone:</strong> {{ transfer.student.phone|default:"On File" }}</div>
+      </div>
+    </div>
+
+    <div class="certificate-box">
+      <h4 style="color: var(--color-navy); font-weight: 700; margin-bottom: 0.5rem; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.25rem;">
+        Authorization & Timestamp
+      </h4>
+      <div style="font-size: 0.9rem; line-height: 1.8;">
+        <div><strong>Approving Official:</strong> {{ transfer.approved_by.get_full_name }}</div>
+        <div><strong>Designation:</strong> {{ transfer.approved_by.get_role_display }}</div>
+        <div><strong>Date Approved:</strong> {{ transfer.completed_at|date:"d F Y, H:i" }}</div>
+        <div><strong>Proposal Cycle Code:</strong> {{ transfer.proposal.proposal_code }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="certificate-grid">
+    <div class="certificate-box" style="border-left: 4px solid var(--color-amber);">
+      <h4 style="color: var(--color-navy); font-weight: 700; margin-bottom: 0.5rem;">
+        Previous Room Allotment (Surrendered)
+      </h4>
+      <div style="font-size: 0.95rem; line-height: 1.8;">
+        <div><strong>Hostel:</strong> {{ transfer.previous_bed.room.block.hostel.name }}</div>
+        <div><strong>Block & Floor:</strong> Block {{ transfer.previous_bed.room.block.name }}, Floor {{ transfer.previous_bed.room.floor }}</div>
+        <div><strong>Room Number:</strong> {{ transfer.previous_bed.room.room_number }}</div>
+        <div><strong>Bed Allotment:</strong> {{ transfer.previous_bed.bed_number }}</div>
+      </div>
+    </div>
+
+    <div class="certificate-box" style="border-left: 4px solid var(--color-teal); background: var(--color-teal-light);">
+      <h4 style="color: var(--color-navy); font-weight: 700; margin-bottom: 0.5rem;">
+        New Official Room Allotment (Effective Immediately)
+      </h4>
+      <div style="font-size: 0.95rem; line-height: 1.8;">
+        <div><strong>Hostel:</strong> {{ transfer.new_bed.room.block.hostel.name }}</div>
+        <div><strong>Block & Floor:</strong> Block {{ transfer.new_bed.room.block.name }}, Floor {{ transfer.new_bed.room.floor }}</div>
+        <div><strong>Room Number:</strong> <strong style="color: var(--color-teal);">{{ transfer.new_bed.room.room_number }}</strong></div>
+        <div><strong>Bed Allotment:</strong> <strong style="color: var(--color-teal);">{{ transfer.new_bed.bed_number }}</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Verification & Caretaker Signature -->
+  <div style="display: flex; align-items: center; justify-content: space-between; border-top: 2px dashed #CBD5E1; padding-top: 1.5rem; margin-top: 1.5rem;">
+    <div style="max-width: 400px; font-size: 0.8rem; color: var(--color-text-muted);">
+      <p><strong>Instructions to Resident:</strong></p>
+      <p>1. Present this digitally-signed certificate to the hostel caretaker upon moving.</p>
+      <p>2. Key handover and room inspection must be completed within 48 hours of issue.</p>
+      <p>3. Security verification token: <code>{{ transfer.verification_token }}</code></p>
+    </div>
+
+    <div class="certificate-qr">
+      <img src="data:image/png;base64,{{ qr_base64 }}" alt="Transfer Verification QR Code" style="width: 120px; height: 120px; border: 1px solid #E2E8F0; border-radius: var(--radius-sm);">
+      <div style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.25rem;">Scan to Verify Authenticity</div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

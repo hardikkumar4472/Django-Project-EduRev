@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Approval Queue — Campus Exchange{% endblock %}
+
+{% block content %}
+<!-- ========================================================================
+     SCREEN 7: WARDEN APPROVAL QUEUE
+     ======================================================================== -->
+<div class="page-header" style="margin-bottom: 1.25rem;">
+  <div class="page-title-group">
+    <h1>Approval Queue</h1>
+    <p>Review and execute exchange proposals awaiting administrative clearance.</p>
+  </div>
+  <div>
+    {% if is_chief_or_admin %}
+      <span class="badge badge-purple" style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 700;">
+        ⚖️ Chief Warden Authority (All 20 Campus Hostels)
+      </span>
+    {% elif managed_hostels %}
+      <span class="badge badge-blue" style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 700;">
+        🛡️ In-Charge: {% for h in managed_hostels %}{{ h.name }} ({{ h.code }}){% if not forloop.last %}, {% endif %}{% endfor %}
+      </span>
+    {% else %}
+      <span class="badge badge-neutral" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;">Unassigned Warden</span>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Tabs Bar -->
+<div class="segmented-tabs-bar" style="margin-bottom: 1.25rem;">
+  <button class="segmented-tab-pill active">
+    Pending Consensus Approval ({{ pending_proposals.count }})
+  </button>
+  <a href="{% url 'transfers_list' %}" class="segmented-tab-pill" style="text-decoration: none;">
+    Completed Transfers
+  </a>
+</div>
+
+<!-- Table of Pending Proposals -->
+<div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2rem;">
+  <div style="overflow-x: auto;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Proposal ID</th>
+          <th>Type</th>
+          <th>Participants</th>
+          <th>Submitted</th>
+          <th>Expires</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in pending_proposals %}
+          <tr>
+            <td><strong style="color: var(--navy-800);">{{ p.proposal_code }}</strong></td>
+            <td>{{ p.get_proposal_type_display }}</td>
+            <td>{{ p.participants.count }} students</td>
+            <td>{{ p.created_at|date:"d M, H:i" }}</td>
+            <td><span style="color: #EA580C; font-weight: 700;">{{ p.expires_at|date:"d M, H:i" }}</span></td>
+            <td><span class="badge badge-green">Ready for Review</span></td>
+            <td style="text-align: right;">
+              <a href="{% url 'warden_review' pk=p.id %}" class="btn btn-primary btn-sm">Review &amp; Execute →</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+              <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+              <strong>No proposals currently awaiting warden approval.</strong>
+              <p style="font-size: 0.85rem; margin-top: 0.25rem;">Proposals will appear here once all student participants have formally consented.</p>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if recent_approvals %}
+  <div class="card" style="padding: 1.25rem; margin-top: 1.5rem;">
+    <div style="font-size: 1rem; font-weight: 800; color: var(--navy-800); margin-bottom: 1rem;">
+      Recent Warden Decisions
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+      {% for a in recent_approvals %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.65rem; background: #F8FAFC; border-radius: 6px; font-size: 0.85rem;">
+          <div>
+            <strong>{{ a.proposal.proposal_code }}</strong> · Decision: <span class="badge {% if a.decision == 'APPROVED' %}badge-green{% else %}badge-red{% endif %}">{{ a.get_decision_display }}</span>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ a.remarks|default:"No remarks" }}</div>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">
+            {{ a.created_at|date:"d M Y, H:i" }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

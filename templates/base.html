@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Campus Exchange — University Hostel Room Exchange{% endblock %}</title>
+  
+  <!-- Google Fonts: Inter & Caveat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- ========================================================================
+  <!-- Top Navigation Bar -->
+  <header class="top-navbar">
+    <div class="navbar-inner">
+      
+      <!-- Brand Crest & Title -->
+      <div class="brand-section">
+        <a href="{% url 'landing' %}" class="brand-link">
+          <div class="brand-crest">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3l9 7H3z"/>
+            </svg>
+          </div>
+          <div class="brand-title">Campus Exchange</div>
+        </a>
+
+        <!-- Nav Menu -->
+        <nav>
+          <ul class="nav-menu">
+            <li class="nav-item {% if request.path == '/' %}active{% endif %}">
+              <a href="{% url 'landing' %}">Home</a>
+            </li>
+            {% if user.is_authenticated %}
+              {% if user.is_student %}
+                <li class="nav-item {% if request.path == '/dashboard/' %}active{% endif %}">
+                  <a href="{% url 'dashboard' %}">Dashboard</a>
+                </li>
+                <li class="nav-item {% if request.path == '/exchange-requests/new/' %}active{% endif %}">
+                  <a href="{% url 'create_request' %}">New Request</a>
+                </li>
+                <li class="nav-item {% if '/proposals/' in request.path or request.path == '/matches/' %}active{% endif %}">
+                  <a href="{% url 'matches' %}">Matches</a>
+                </li>
+                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                  <a href="{% url 'transfers_list' %}">Transfers</a>
+                </li>
+              {% elif user.role == 'warden' %}
+                <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
+                  <a href="{% url 'warden_approvals' %}">Approval Queue</a>
+                </li>
+                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                  <a href="{% url 'transfers_list' %}">Transfers</a>
+                </li>
+              {% elif user.role == 'chief_warden' %}
+                <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
+                  <a href="{% url 'warden_approvals' %}">Approvals Oversight</a>
+                </li>
+                <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
+                  <a href="{% url 'dean_analytics' %}">Analytics</a>
+                </li>
+                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                  <a href="{% url 'transfers_list' %}">Transfers</a>
+                </li>
+              {% elif user.role == 'dsw' %}
+                <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+                  <a href="{% url 'hostels_list' %}">Hostels</a>
+                </li>
+                <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
+                  <a href="{% url 'dean_analytics' %}">Analytics</a>
+                </li>
+                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                  <a href="{% url 'transfers_list' %}">Transfers</a>
+                </li>
+              {% elif user.is_admin_role %}
+                <li class="nav-item {% if '/admin/users/' in request.path %}active{% endif %}">
+                  <a href="{% url 'admin_users_list' %}">Users</a>
+                </li>
+                <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+                  <a href="{% url 'hostels_list' %}">Hostels</a>
+                </li>
+                <li class="nav-item {% if '/admin/policies/' in request.path %}active{% endif %}">
+                  <a href="{% url 'admin_policies' %}">Policies</a>
+                </li>
+                <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
+                  <a href="{% url 'warden_approvals' %}">Approvals</a>
+                </li>
+                <li class="nav-item {% if '/dean/' in request.path or '/admin/analytics/' in request.path %}active{% endif %}">
+                  <a href="{% url 'dean_analytics' %}">Analytics</a>
+                </li>
+                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                  <a href="{% url 'transfers_list' %}">Transfers</a>
+                </li>
+              {% endif %}
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Right Controls: Notification Bell & Profile -->
+      <div class="navbar-controls">
+        {% if user.is_authenticated %}
+          <!-- Notification Bell -->
+          <a href="{% url 'dashboard' %}" class="nav-icon-bell" title="Notifications" style="position: relative;">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            {% if unread_notifications_count > 0 %}
+              <span style="position: absolute; top: -3px; right: -3px; background: #EF4444; color: #FFFFFF; font-size: 0.65rem; padding: 1px 5px; border-radius: 10px; font-weight: 700;">{{ unread_notifications_count }}</span>
+            {% endif %}
+          </a>
+
+          <!-- Dynamic User Profile Header -->
+          <div class="user-profile-header">
+            <div style="width: 34px; height: 34px; border-radius: 50%; background: #0F2942; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; border: 2px solid #E2E8F0; text-transform: uppercase;">
+              {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1"|default:user.username|slice:":1" }}
+            </div>
+            <div class="user-meta-header">
+              <span class="user-name-header">{{ user.get_full_name|default:user.username }}</span>
+              <span class="user-sub-header">
+                {% if user.is_student %}
+                  {% if user_allocated_bed %}
+                    {{ user_allocated_bed.room.block.hostel.code }} • {{ user_allocated_bed.room.room_number }} ({{ user_allocated_bed.bed_number }})
+                  {% else %}
+                    Student • {{ user.university_id }}
+                  {% endif %}
+                {% elif user.role == 'chief_warden' %}
+                  Chief Warden
+                {% elif user.role == 'warden' %}
+                  Hostel Warden
+                {% elif user.role == 'dsw' %}
+                  Dean of Student Welfare
+                {% elif user.is_admin_role %}
+                  Administrator
+                {% else %}
+                  {{ user.university_id }}
+                {% endif %}
+              </span>
+            </div>
+          </div>
+
+          <a href="{% url 'logout' %}" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;">
+            Sign Out
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-outline btn-sm">
+            Sign In
+          </a>
+          <a href="{% url 'signup' %}" class="btn btn-primary btn-sm" style="margin-left: 0.5rem;">
+            Register Student
+          </a>
+        {% endif %}
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="main-container">
+    {% if messages %}
+      <div style="margin-bottom: 1.5rem;">
+        {% for message in messages %}
+          <div class="alert" style="padding: 0.75rem 1.25rem; border-radius: var(--radius-md); background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{% static 'js/app.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

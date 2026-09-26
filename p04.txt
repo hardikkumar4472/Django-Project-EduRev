@@ -1,0 +1,1961 @@
+# P04 — HOSTEL ROOM EXCHANGE & MULTI-PARTY SWAP PLATFORM
+
+## MASTER BUILD INSTRUCTION FOR ANTIGRAVITY
+
+Build this project as a **production-ready university hostel room exchange platform** using:
+
+### BACKEND
+
+* Python
+* Django
+* Django REST Framework
+* PostgreSQL
+* Celery
+* Celery Beat
+* Redis
+* JWT / university SSO-ready authentication
+
+### FRONTEND
+
+* Next.js
+* TypeScript
+* Tailwind CSS
+* shadcn/ui
+* Lucide icons
+* Recharts or equivalent charting library
+
+### INFRASTRUCTURE
+
+* Docker
+* Docker Compose
+* PostgreSQL
+* Redis
+* Celery worker
+* Celery Beat
+* Nginx/reverse proxy ready
+* Environment-based configuration
+
+---
+
+# PROJECT PURPOSE
+
+Build an official university platform for **post-allocation hostel room exchanges**.
+
+Students should no longer need to coordinate room changes through WhatsApp, informal requests or manual paperwork.
+
+The platform should handle the complete lifecycle:
+
+STUDENT REQUEST
+↓
+ELIGIBILITY VALIDATION
+↓
+MATCH DISCOVERY
+↓
+DIRECT SWAP / MULTI-PARTY CYCLE
+↓
+PROPOSAL
+↓
+ALL PARTICIPANTS ACCEPT
+↓
+WARDEN APPROVAL
+↓
+ATOMIC OCCUPANCY UPDATE
+↓
+TRANSFER RECORD
+↓
+AUDIT TRAIL
+↓
+NOTIFICATIONS
+
+The application must be designed as a serious university system rather than a student CRUD project.
+
+---
+
+# CRITICAL BUSINESS RULE
+
+The most important technical requirement is:
+
+## NO PARTIAL ROOM TRANSFER
+
+If a 4-person exchange is approved, either:
+
+ALL 4 room allocations change successfully
+
+OR
+
+NONE of them change.
+
+There must never be a partially completed rotation.
+
+PostgreSQL transactions and row-level locking must enforce this.
+
+---
+
+# 20-PHASE DEVELOPMENT ROADMAP
+
+Do NOT attempt to build everything simultaneously.
+
+Implement the project sequentially through the following 20 phases.
+
+Each phase must leave the application in a working state.
+
+---
+
+# PHASE 01 — PRODUCT FOUNDATION & ARCHITECTURE
+
+Create the complete project architecture.
+
+Define:
+
+* Product requirements
+* User roles
+* Permissions
+* Core workflows
+* State machines
+* Database entities
+* API boundaries
+* Frontend routes
+* Backend modules
+* Notification architecture
+* Audit architecture
+* Integration boundaries
+
+Roles:
+
+### Student
+
+* Create exchange request
+* Modify own request
+* Withdraw request
+* View matches
+* Accept/decline proposals
+* View transfer history
+
+### Warden
+
+* View requests
+* Review proposals
+* Approve/reject exchanges inside assigned hostel
+* View audit trail
+
+### Chief Warden
+
+* Handle cross-hostel exchanges
+* Approve cross-hostel proposals
+* View broader hostel information
+
+### Hostel Administrator
+
+* Configure policy rules
+* Configure cooling-off period
+* Configure request validity
+* Configure maximum cycle length
+
+### Dean of Student Welfare
+
+* Read-only analytics
+* Reports
+* Exchange trends
+* Audit visibility
+
+Establish clear RBAC from the beginning.
+
+---
+
+# PHASE 02 — REPOSITORY & DEVELOPMENT ENVIRONMENT
+
+Create a production-oriented monorepo.
+
+Suggested structure:
+
+project-root/
+
+frontend/
+app/
+components/
+features/
+hooks/
+lib/
+services/
+types/
+public/
+
+backend/
+manage.py
+config/
+apps/
+accounts/
+exchange/
+matching/
+proposals/
+approvals/
+occupancy/
+transfers/
+policies/
+notifications/
+audit/
+analytics/
+
+infrastructure/
+docker/
+nginx/
+
+docs/
+
+tests/
+
+Create:
+
+* .env.example
+* README.md
+* Docker configuration
+* Docker Compose
+* development scripts
+* production configuration separation
+
+Never commit secrets.
+
+---
+
+# PHASE 03 — DATABASE ARCHITECTURE
+
+Use PostgreSQL.
+
+Design normalized relational models.
+
+Core entities:
+
+### User
+
+* id
+* university_id
+* name
+* email
+* role
+* phone
+* hostel
+* active status
+* timestamps
+
+### Hostel
+
+* id
+* name
+* code
+* type
+* active
+
+### Block
+
+* id
+* hostel
+* name
+* code
+
+### Room
+
+* id
+* block
+* room_number
+* floor
+* room_type
+* capacity
+* gender_rule
+* active
+
+### Bed
+
+* id
+* room
+* bed_number
+* occupancy_status
+* current_student
+
+### ExchangeRequest
+
+* id
+* requester
+* current_bed
+* target_preferences
+* status
+* expires_at
+* created_at
+* updated_at
+
+### ExchangeProposal
+
+* id
+* proposal_code
+* proposal_type
+* status
+* expires_at
+* created_at
+
+### ProposalParticipant
+
+* id
+* proposal
+* student
+* current_bed
+* target_bed
+* response
+* responded_at
+
+### Approval
+
+* id
+* proposal
+* approver
+* status
+* remarks
+* approved_at
+
+### TransferRecord
+
+* id
+* transfer_code
+* proposal
+* previous_bed
+* new_bed
+* completed_at
+* approved_by
+
+### PolicyRule
+
+* id
+* rule_type
+* configuration
+* active
+* updated_by
+
+### AuditEntry
+
+* id
+* actor
+* action
+* entity_type
+* entity_id
+* previous_state
+* new_state
+* metadata
+* timestamp
+
+Use proper:
+
+* Foreign keys
+* Unique constraints
+* Check constraints
+* Indexes
+* Database-level integrity where appropriate
+
+---
+
+# PHASE 04 — AUTHENTICATION & RBAC
+
+Implement authentication.
+
+Support:
+
+* University email/password during development
+* JWT authentication
+* Refresh tokens
+* Logout
+* Password reset architecture
+* Session/token expiration
+
+Build role-based authorization.
+
+Backend permissions must be enforced server-side.
+
+Never rely only on frontend route protection.
+
+Examples:
+
+Student cannot approve proposals.
+
+Warden cannot modify system-wide policy rules.
+
+Dean cannot mutate records.
+
+Students can only access their own requests/proposals/transfers.
+
+Create frontend route guards.
+
+---
+
+# PHASE 05 — HOSTEL & OCCUPANCY FOUNDATION
+
+Build the hostel occupancy layer.
+
+Create:
+
+Hostel
+→ Block
+→ Room
+→ Bed
+→ Student
+
+Create APIs for occupancy.
+
+Example:
+
+GET /api/hostels
+GET /api/hostels/:id
+GET /api/rooms
+GET /api/rooms/:id
+GET /api/beds
+GET /api/beds/:id
+
+Create a visual occupancy interface.
+
+Show:
+
+Room
+Beds
+Current occupants
+Vacant beds
+Pending transfers
+
+The system must treat P03 occupancy as an external integration boundary.
+
+Initially create an adapter/service interface so a mock occupancy provider can be used during development.
+
+Later it can be replaced by the actual P03 API.
+
+---
+
+# PHASE 06 — EXCHANGE REQUEST MANAGEMENT
+
+Implement M1.
+
+Students can:
+
+* Create request
+* Edit request
+* Withdraw request
+* View request
+* View request history
+
+Request preferences can include:
+
+* Preferred hostel
+* Preferred block
+* Preferred floor
+* Room type
+* Gender compatibility
+* Specific rooms
+* Other configurable preferences
+
+Request lifecycle:
+
+DRAFT
+↓
+SUBMITTED
+↓
+VALIDATING
+↓
+ACTIVE
+↓
+MATCHED
+↓
+PROPOSED
+↓
+COMPLETED
+
+Alternative states:
+
+WITHDRAWN
+EXPIRED
+REJECTED
+
+Build APIs:
+
+POST /api/exchange-requests
+GET /api/exchange-requests
+GET /api/exchange-requests/:id
+PATCH /api/exchange-requests/:id
+POST /api/exchange-requests/:id/withdraw
+
+---
+
+# PHASE 07 — POLICY & ELIGIBILITY ENGINE
+
+Implement M2.
+
+Before a request enters the matching engine, validate:
+
+### Cooling-off period
+
+Check last completed transfer.
+
+Example:
+
+Previous transfer:
+10 days ago
+
+Required cooling-off:
+30 days
+
+Result:
+
+NOT ELIGIBLE
+
+### Fee status
+
+Verify fee clearance.
+
+### Disciplinary hold
+
+Check whether student has an active disciplinary restriction.
+
+### Gender/block rules
+
+Validate against room and hostel policies.
+
+### Other configurable policies
+
+Do NOT hard-code all policy rules.
+
+Create a policy engine.
+
+Example:
+
+PolicyRule:
+
+COOLING_OFF
+FEE_CLEARANCE
+DISCIPLINARY_HOLD
+GENDER_RESTRICTION
+HOSTEL_RESTRICTION
+MAX_CHAIN_LENGTH
+
+Return structured validation results.
+
+Example:
+
+{
+"eligible": false,
+"checks": [
+{
+"rule": "COOLING_OFF",
+"passed": false,
+"reason": "Student must wait 12 more days."
+}
+]
+}
+
+The UI must clearly explain failures.
+
+---
+
+# PHASE 08 — GRAPH MATCHING ENGINE
+
+This is one of the core technical modules.
+
+Implement the exchange graph in Python.
+
+Each active request becomes a node/relationship representing:
+
+Student
+Current Bed
+Desired Bed / Preferences
+
+Support:
+
+DIRECT SWAP
+
+A → B
+B → A
+
+And cycles:
+
+A → B
+B → C
+C → A
+
+And:
+
+A → B
+B → C
+C → D
+D → A
+
+Support maximum cycle length:
+
+2–5
+
+Never search beyond the configured maximum.
+
+The matching engine should:
+
+* Load active eligible requests
+* Build an in-memory adjacency structure
+* Search for cycles
+* Avoid duplicate cycles
+* Avoid self-cycles
+* Respect eligibility constraints
+* Return candidate matches
+* Rank/display candidates based on compatibility without embedding arbitrary "AI" claims
+
+Target:
+
+2,000 open requests
+
+Cycle detection under:
+
+5 seconds
+
+Create dedicated service:
+
+matching/services/cycle_detector.py
+
+Add unit tests for:
+
+2-way
+3-way
+4-way
+5-way
+No-cycle
+Self-cycle
+Duplicate-cycle
+Expired-request
+Ineligible-request
+
+---
+
+# PHASE 09 — MATCH DISCOVERY EXPERIENCE
+
+Build the frontend around the matching engine.
+
+Student dashboard should have:
+
+"Find an Exchange"
+
+Display:
+
+Compatible direct swaps
+
+Multi-party exchanges
+
+Compatibility reasons
+
+Example:
+
+94% compatibility
+
+✓ Same hostel
+✓ Preferred room type
+✓ Compatible block
+✓ Eligible participants
+
+Do not simply show a percentage.
+
+Explain why the match exists.
+
+Create:
+
+Room cards
+Student-safe information cards
+Room visualization
+Exchange chain visualization
+
+---
+
+# PHASE 10 — PROPOSAL ENGINE
+
+Implement M4.
+
+When a valid cycle is found:
+
+Create ExchangeProposal.
+
+Create ProposalParticipant for every participant.
+
+Proposal states:
+
+PENDING_ACCEPTANCE
+PARTIALLY_ACCEPTED
+ACCEPTED
+DECLINED
+EXPIRED
+CANCELLED
+APPROVED
+COMPLETED
+
+Every participant must respond.
+
+All-or-nothing rule:
+
+If ANY participant declines:
+
+Proposal fails.
+
+If expiry occurs:
+
+Proposal fails.
+
+Only when EVERY participant accepts:
+
+Proposal becomes:
+
+READY_FOR_APPROVAL
+
+Build APIs:
+
+GET /api/proposals
+GET /api/proposals/:id
+POST /api/proposals/:id/respond
+
+Response:
+
+ACCEPT
+DECLINE
+
+---
+
+# PHASE 11 — PROPOSAL EXPIRY & CELERY
+
+Do NOT use in-memory timers.
+
+Store:
+
+expires_at
+
+Use:
+
+Celery
+Celery Beat
+Redis
+
+Run periodic expiry sweep.
+
+Example:
+
+Every minute:
+
+Find proposals where:
+
+expires_at < current_time
+
+and status is:
+
+PENDING_ACCEPTANCE
+
+Mark them:
+
+EXPIRED
+
+Create audit entry.
+
+Notify affected participants.
+
+The frontend should display a live countdown but the backend remains authoritative.
+
+---
+
+# PHASE 12 — NOTIFICATION SYSTEM
+
+Build notification infrastructure.
+
+Notification types:
+
+PROPOSAL_RECEIVED
+PARTICIPANT_ACCEPTED
+PARTICIPANT_DECLINED
+PROPOSAL_EXPIRING
+PROPOSAL_EXPIRED
+APPROVAL_REQUIRED
+APPROVAL_GRANTED
+APPROVAL_REJECTED
+TRANSFER_COMPLETED
+
+Create:
+
+Notification model
+
+Support:
+
+In-app notifications
+
+Email architecture
+
+SMS integration interface
+
+Push notification architecture
+
+Use async Celery tasks for email/SMS.
+
+Never block the main transaction waiting for an external notification provider.
+
+---
+
+# PHASE 13 — WARDEN APPROVAL WORKFLOW
+
+Implement M5.
+
+Approval queue should show:
+
+Proposal ID
+Participants
+Hostels
+Current rooms
+Target rooms
+Acceptance status
+Policy status
+Expiry
+Risk/attention indicators
+
+Approval workflow:
+
+READY_FOR_APPROVAL
+↓
+WARDEN_REVIEW
+↓
+APPROVED / REJECTED
+
+For cross-hostel exchange:
+
+WARDEN / CHIEF WARDEN rules must apply according to configuration.
+
+Approval must contain:
+
+Approver
+Timestamp
+Decision
+Remarks
+
+API:
+
+POST /api/proposals/:id/approve
+
+Reject endpoint should also be implemented.
+
+Only authorized wardens can approve relevant proposals.
+
+---
+
+# PHASE 14 — TRANSACTIONAL OCCUPANCY UPDATE
+
+THIS IS THE MOST IMPORTANT BACKEND PHASE.
+
+Use PostgreSQL:
+
+transaction.atomic()
+
+and:
+
+select_for_update()
+
+When executing a multi-party transfer:
+
+1. Validate proposal again.
+2. Validate every participant.
+3. Validate all beds.
+4. Collect every affected bed.
+5. Sort beds by primary key.
+6. Lock them in that fixed order.
+7. Re-check occupancy.
+8. Update all beds.
+9. Update student allocation records.
+10. Create TransferRecord.
+11. Create AuditEntry.
+12. Commit.
+
+If any operation fails:
+
+ROLLBACK EVERYTHING.
+
+No partial room movement.
+
+Example:
+
+4-party chain:
+
+A: Bed 101 → Bed 203
+B: Bed 203 → Bed 304
+C: Bed 304 → Bed 412
+D: Bed 412 → Bed 101
+
+The transaction must update all four allocations atomically.
+
+The fixed lock ordering is essential.
+
+Document this in:
+
+docs/locking-strategy.md
+
+Explain:
+
+* Why rows are locked
+* Why ordering is required
+* How deadlocks are reduced/prevented
+* Why partial transfers cannot occur
+* What happens when occupancy changed before approval
+
+---
+
+# PHASE 15 — TRANSFER RECORD & DOCUMENT GENERATION
+
+After successful transaction:
+
+Create TransferRecord.
+
+Generate an official transfer document.
+
+Include:
+
+University name
+Student name
+University ID
+Previous hostel
+Previous room
+Previous bed
+New hostel
+New room
+New bed
+Transfer ID
+Proposal ID
+Approval date
+Approver
+Completion timestamp
+
+Create downloadable PDF transfer letter.
+
+The transfer record should remain immutable after completion except through controlled administrative correction procedures.
+
+---
+
+# PHASE 16 — AUDIT TRAIL & HISTORY
+
+Every important action must be recorded.
+
+Examples:
+
+Request created
+
+Request modified
+
+Eligibility failed
+
+Match detected
+
+Proposal created
+
+Participant accepted
+
+Participant declined
+
+Proposal expired
+
+Warden opened proposal
+
+Warden approved
+
+Beds locked
+
+Occupancy updated
+
+Transfer completed
+
+Transfer document generated
+
+Record:
+
+Actor
+Action
+Entity
+Timestamp
+Previous state
+New state
+Metadata
+
+Students should see relevant history for their own activity.
+
+Admins should have broader audit access.
+
+---
+
+# PHASE 17 — ADMINISTRATION & ANALYTICS
+
+Build administrator dashboard.
+
+Policy configuration:
+
+Cooling-off period
+Proposal validity
+Maximum chain length
+Hostel restrictions
+Block rules
+Gender rules
+Fee eligibility
+Disciplinary eligibility
+
+Analytics:
+
+Total requests
+Active requests
+Matched requests
+Completed transfers
+Expired proposals
+Rejected proposals
+Average completion time
+
+Charts:
+
+Requests by hostel
+Requests by month
+Direct vs multi-party exchange
+Most requested rooms
+Approval/rejection trends
+Average approval time
+Exchange completion funnel
+
+Dean should have read-only access.
+
+---
+
+# PHASE 18 — CONCURRENCY, SECURITY & TESTING
+
+This phase is mandatory.
+
+Create tests for:
+
+### Test 1
+
+4-party rotation completes successfully.
+
+### Test 2
+
+One participant declines.
+
+Assert:
+
+NO occupancy changed.
+
+### Test 3
+
+Proposal expires.
+
+Assert:
+
+NO occupancy changed.
+
+### Test 4
+
+Two wardens approve overlapping chains simultaneously.
+
+Use:
+
+TransactionTestCase
+
+and:
+
+real Python threads
+
+Do NOT use Django TestCase for this concurrency test.
+
+Verify:
+
+No corrupted occupancy.
+
+No partial transfer.
+
+Correct transaction rollback.
+
+### Test 5
+
+100 simulated transfers.
+
+After completion:
+
+P03 occupancy state must exactly match expected occupancy.
+
+### Test 6
+
+Eligibility rules.
+
+### Test 7
+
+Unauthorized approval.
+
+### Test 8
+
+Expired proposal cannot be approved.
+
+### Test 9
+
+Already-transferred bed cannot be reused.
+
+### Test 10
+
+Duplicate approval cannot create duplicate transfer.
+
+---
+
+# PHASE 19 — PRODUCTION HARDENING & DEPLOYMENT
+
+Prepare the application for production.
+
+Backend:
+
+Gunicorn
+
+Frontend:
+
+Next.js production build
+
+Database:
+
+PostgreSQL
+
+Workers:
+
+Celery worker
+
+Scheduler:
+
+Celery Beat
+
+Broker:
+
+Redis
+
+Reverse proxy:
+
+Nginx
+
+Add:
+
+Health checks
+
+/api/health
+
+/api/ready
+
+Structured logging
+
+Error handling
+
+Request IDs
+
+Security headers
+
+CORS configuration
+
+CSRF protection
+
+Rate limiting
+
+Input validation
+
+File validation
+
+Secure cookies/tokens where applicable
+
+Environment variables
+
+Database migrations
+
+Backup strategy
+
+Restore documentation
+
+Do not expose debug information in production.
+
+---
+
+# PHASE 20 — UNIVERSITY PROPOSAL / DEMO READY PRODUCT
+
+This final phase transforms the project from a development project into a university-proposal-ready system.
+
+Create:
+
+## A. Professional Landing Page
+
+Title:
+
+Campus Exchange
+
+Subtitle:
+
+"An official, auditable platform for hostel room exchanges."
+
+Explain:
+
+Request
+Match
+Accept
+Approve
+Transfer
+
+---
+
+## B. Student Demo
+
+Prepare a complete demonstration:
+
+Student A creates request.
+
+System validates eligibility.
+
+Matching engine finds:
+
+4-person cycle.
+
+Proposal generated.
+
+All participants accept.
+
+Warden receives approval.
+
+Warden approves.
+
+Transaction executes.
+
+Occupancy updates.
+
+Transfer records generated.
+
+Notifications sent.
+
+Audit trail updated.
+
+---
+
+## C. Warden Demo
+
+Show:
+
+Approval queue
+
+Proposal details
+
+Participant chain
+
+Policy validation
+
+Acceptance status
+
+Approval action
+
+Transfer result
+
+---
+
+## D. Administrator Demo
+
+Show:
+
+Policy configuration
+
+Cooling-off period
+
+Maximum cycle length
+
+Request validity
+
+Analytics
+
+Audit logs
+
+---
+
+## E. Concurrency Demonstration
+
+Create a dedicated developer/admin demo page showing:
+
+Two overlapping proposals attempting to access the same beds.
+
+Display:
+
+Transaction A
+Transaction B
+
+Locked beds
+
+Successful transaction
+
+Rolled-back transaction
+
+Final consistent occupancy
+
+This should demonstrate the project's main technical teaching point.
+
+---
+
+# FRONTEND PAGE STRUCTURE
+
+Create these routes:
+
+/login
+
+/dashboard
+
+/exchange-requests
+
+/exchange-requests/new
+
+/exchange-requests/[id]
+
+/matches
+
+/proposals
+
+/proposals/[id]
+
+/transfers
+
+/transfers/[id]
+
+/notifications
+
+/profile
+
+/warden/approvals
+
+/warden/approvals/[id]
+
+/admin/policies
+
+/admin/requests
+
+/admin/analytics
+
+/admin/audit
+
+/admin/occupancy
+
+/dean/analytics
+
+---
+
+# MAIN DASHBOARD
+
+Student dashboard should contain:
+
+Current room
+
+Current bed
+
+Active exchange request
+
+Potential matches
+
+Pending proposals
+
+Transfer history
+
+Notifications
+
+Quick actions
+
+Use the project's distinctive room/bed visualization.
+
+---
+
+# SIGNATURE UI — EXCHANGE GRAPH
+
+The multi-party exchange graph should be one of the most visually distinctive components.
+
+Example:
+
+```
+     A
+  Room 101
+      ↓
+```
+
+D ←──────────── B
+Room 412      Room 203
+↓
+C
+Room 304
+
+Animate the direction of movement.
+
+Each node should display:
+
+Avatar
+Student
+Current room
+Target room
+
+Clicking a participant opens safe details.
+
+The graph should clearly show:
+
+CURRENT → TARGET
+
+Do not expose sensitive information to unauthorized users.
+
+---
+
+# SIGNATURE UI — ROOM VISUALIZER
+
+Build an interactive room diagram.
+
+Example:
+
+ROOM B-304
+
+┌──────────────────────────────┐
+│                              │
+│  🛏 BED 1       🛏 BED 2     │
+│  Occupied      YOU           │
+│                              │
+│  🛏 BED 3       🛏 BED 4     │
+│  Available     Occupied      │
+│                              │
+│            🚪                │
+└──────────────────────────────┘
+
+Click a bed:
+
+Show:
+
+Occupancy
+Transfer status
+Pending proposal
+Eligibility status where permitted
+
+---
+
+# VISUAL DESIGN SYSTEM
+
+Use a professional university visual language.
+
+Primary:
+
+Deep Navy
+#172A46
+
+Secondary:
+
+Campus Teal
+#147D78
+
+Accent:
+
+Warm Amber
+#E6A23C
+
+Background:
+
+Warm Off-White
+#F7F5EF
+
+Supporting:
+
+Slate
+#536273
+
+Success:
+#2E8B68
+
+Warning:
+#D9822B
+
+Danger:
+#C94C4C
+
+The visual system should communicate:
+
+Trust
+Movement
+Campus
+Official process
+Accountability
+
+Avoid:
+
+Generic purple AI gradients
+
+Excessive glassmorphism
+
+Neon colors
+
+Cryptocurrency aesthetics
+
+Generic admin-template appearance
+
+---
+
+# UX PRINCIPLES
+
+Every screen should answer:
+
+WHAT is happening?
+
+WHO is involved?
+
+WHAT happens next?
+
+WHY was this decision made?
+
+WHAT action can I take?
+
+For example, don't show:
+
+"Rejected"
+
+Instead show:
+
+"Exchange request cannot proceed"
+
+Reason:
+
+"Cooling-off period has 12 days remaining."
+
+Action:
+
+"You can submit a new request after 03 Oct 2026."
+
+---
+
+# STATE-MACHINE VISUALIZATION
+
+The system should visually communicate lifecycle.
+
+REQUEST:
+
+Draft
+→ Submitted
+→ Validated
+→ Active
+→ Matched
+→ Proposed
+→ Accepted
+→ Approved
+→ Completed
+
+Alternative:
+
+Withdrawn
+Expired
+Rejected
+Declined
+Cancelled
+
+Use consistent status badges.
+
+---
+
+# API ARCHITECTURE
+
+Implement REST APIs.
+
+Core:
+
+/api/auth/
+
+/api/exchange-requests/
+
+/api/matches/
+
+/api/proposals/
+
+/api/proposals/:id/respond
+
+/api/proposals/:id/approve
+
+/api/proposals/:id/reject
+
+/api/transfers/
+
+/api/occupancy/
+
+/api/policies/
+
+/api/notifications/
+
+/api/audit/
+
+/api/analytics/
+
+Use:
+
+* serializers
+* service layer
+* validators
+* permissions
+* repository/query helpers where useful
+
+Do not put all business logic inside Django views.
+
+---
+
+# BACKEND ARCHITECTURE
+
+Follow:
+
+API Layer
+↓
+Validation
+↓
+Service Layer
+↓
+Domain Logic
+↓
+Repository/ORM
+↓
+PostgreSQL
+
+Important services:
+
+ExchangeRequestService
+
+EligibilityService
+
+MatchingService
+
+ProposalService
+
+ApprovalService
+
+TransferService
+
+OccupancyService
+
+NotificationService
+
+AuditService
+
+AnalyticsService
+
+Keep the transaction logic centralized inside the transfer/occupancy service.
+
+---
+
+# ERROR HANDLING
+
+Use consistent API responses.
+
+Example:
+
+{
+"success": false,
+"error": {
+"code": "COOLING_OFF_ACTIVE",
+"message": "Exchange request cannot be created during the cooling-off period.",
+"details": {
+"remaining_days": 12
+}
+}
+}
+
+Frontend should convert technical errors into human-readable messages.
+
+---
+
+# SECURITY REQUIREMENTS
+
+Implement:
+
+Authentication
+
+RBAC
+
+Object-level authorization
+
+CSRF protection
+
+CORS configuration
+
+Rate limiting
+
+Input validation
+
+SQL injection protection through ORM
+
+Secure password handling
+
+Secure file upload
+
+Audit logging
+
+Sensitive-data minimization
+
+Do not expose:
+
+Internal IDs unnecessarily
+Other students' private data
+Disciplinary details to unauthorized students
+Administrative-only policy information
+
+---
+
+# PERFORMANCE
+
+The system must support:
+
+2,000 open exchange requests
+
+Cycle detection under 5 seconds
+
+Indexed queries
+
+Pagination
+
+Lazy loading
+
+Efficient ORM queries
+
+select_related()
+
+prefetch_related()
+
+Database indexes
+
+Avoid N+1 queries.
+
+Do not load the entire database unnecessarily.
+
+---
+
+# OBSERVABILITY
+
+Add:
+
+Structured application logs
+
+Request IDs
+
+Error logs
+
+Celery task logs
+
+Transaction logs
+
+Audit events
+
+Health checks
+
+Useful metrics:
+
+Request count
+
+Matching duration
+
+Proposal completion rate
+
+Transfer failures
+
+Transaction failures
+
+Celery task failures
+
+Notification failures
+
+---
+
+# DOCUMENTATION
+
+Create:
+
+README.md
+
+docs/architecture.md
+
+docs/database.md
+
+docs/api.md
+
+docs/matching-engine.md
+
+docs/locking-strategy.md
+
+docs/security.md
+
+docs/deployment.md
+
+docs/testing.md
+
+docs/p03-integration.md
+
+docs/user-guide.md
+
+docs/admin-guide.md
+
+The locking strategy document must explicitly explain:
+
+Why select_for_update() is used.
+
+Why all affected beds are locked.
+
+Why locks are acquired in primary-key order.
+
+How this prevents deadlock scenarios.
+
+How transaction rollback guarantees all-or-nothing occupancy changes.
+
+---
+
+# SEED / DEMO DATA
+
+Create a development seed command.
+
+Example:
+
+python manage.py seed_demo
+
+Create:
+
+4 hostels
+
+Multiple blocks
+
+100+ rooms
+
+Multiple beds
+
+50+ students
+
+Active requests
+
+Direct swap
+
+3-party cycle
+
+4-party cycle
+
+Expired proposal
+
+Rejected proposal
+
+Pending approval
+
+Completed transfer
+
+Use realistic but fictional data.
+
+---
+
+# DEMO SCENARIO
+
+The default demo should showcase:
+
+Student A
+Room A-101
+
+Student B
+Room B-203
+
+Student C
+Room C-304
+
+Student D
+Room D-412
+
+Desired movement:
+
+A → B-203
+B → C-304
+C → D-412
+D → A-101
+
+The system should:
+
+1. Validate everyone.
+2. Detect the 4-cycle.
+3. Create proposal.
+4. Notify everyone.
+5. Accept all participants.
+6. Send to warden.
+7. Approve.
+8. Lock all beds in sorted order.
+9. Update occupancy atomically.
+10. Generate transfer records.
+11. Generate transfer letters.
+12. Create audit records.
+13. Notify participants.
+14. Display completed transfer.
+
+This should become the primary university demonstration.
+
+---
+
+# FINAL QUALITY BAR
+
+Do not stop when the application "works."
+
+The final application must feel:
+
+Production-ready
+
+University-ready
+
+Demo-ready
+
+Scalable
+
+Secure
+
+Auditable
+
+Accessible
+
+Responsive
+
+Professionally designed
+
+Technically defensible
+
+The system should be something that can be presented to:
+
+School of Computer Science & Engineering
+
+Hostel Administration
+
+Chief Warden
+
+Dean of Student Welfare
+
+University IT team
+
+---
+
+# IMPORTANT DEVELOPMENT RULE
+
+Build in this exact order:
+
+01 Architecture
+02 Repository
+03 Database
+04 Authentication
+05 Occupancy
+06 Requests
+07 Eligibility
+08 Matching
+09 Match UI
+10 Proposals
+11 Expiry
+12 Notifications
+13 Approval
+14 Atomic Transfer
+15 Transfer Records
+16 Audit
+17 Analytics
+18 Testing & Concurrency
+19 Production Deployment
+20 University Demo & Documentation
+
+Do not skip Phase 14 or Phase 18.
+
+The project's primary technical differentiator is:
+
+GRAPH-BASED MULTI-PARTY ROOM EXCHANGE
+
+combined with:
+
+POSTGRESQL TRANSACTIONAL OCCUPANCY UPDATES
+
+combined with:
+
+CONCURRENT APPROVAL SAFETY
+
+combined with:
+
+COMPLETE AUDITABILITY.
+
+Build the application around these four pillars.
+i don't want too much devops tools and in ui there should be no left hand panel panel instead there should be a navbar for each based on rbac or what

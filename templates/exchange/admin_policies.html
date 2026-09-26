@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}System Policy Configuration — CampusExchange{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Platform Policy & Eligibility Rules</h1>
+    <p>Administrative configuration of eligibility parameters, cycle thresholds, and university constraints.</p>
+  </div>
+</div>
+
+<div class="card" style="max-width: 900px; margin-bottom: 2rem;">
+  <div class="card-header">
+    <h2 class="card-title">
+      <span>⚙️</span> Configurable Policy Engine
+    </h2>
+    <span class="badge badge-amber">Administrator Access</span>
+  </div>
+
+  <form method="post" action="{% url 'admin_policies' %}">
+    {% csrf_token %}
+
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      {% for policy in policies %}
+        <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 1.25rem; border-radius: var(--radius-md);">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+            <strong style="color: var(--color-navy); font-size: 1rem;">
+              {{ policy.get_rule_type_display }}
+            </strong>
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+              <input type="checkbox" name="bool_{{ policy.rule_type }}" {% if policy.bool_value %}checked{% endif %}>
+              Rule Enabled
+            </label>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 0.75rem;">
+            {{ policy.description }}
+          </p>
+
+          {% if 'DAYS' in policy.rule_type or 'LENGTH' in policy.rule_type or 'HOURS' in policy.rule_type %}
+            <div style="max-width: 250px;">
+              <label class="form-label" style="font-size: 0.75rem;">Parameter Value:</label>
+              <input type="number" name="int_{{ policy.rule_type }}" value="{{ policy.int_value }}" class="form-input" min="1" max="100">
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-teal" style="margin-top: 1.5rem; padding: 0.75rem 2rem;">
+      Save Policy Updates →
+    </button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Exchange Request — Campus Exchange{% endblock %}
+
+{% block content %}
+<!-- ========================================================================
+     SCREEN 3: CREATE EXCHANGE REQUEST (STEP WIZARD)
+     ======================================================================== -->
+<div class="page-header" style="margin-bottom: 1.5rem;">
+  <div class="page-title-group">
+    <h1>Create Exchange Request</h1>
+    <p>Tell us what you're looking for. We'll find the best matches for you.</p>
+  </div>
+</div>
+
+<!-- 4-Stage Connected Step Wizard -->
+<div class="wizard-stepper-container">
+  <div class="wizard-node active">
+    <div class="wizard-node-circle">1</div>
+    <span class="wizard-node-label">Preferences</span>
+  </div>
+  <div class="wizard-node">
+    <div class="wizard-node-circle">2</div>
+    <span class="wizard-node-label">Additional Info</span>
+  </div>
+  <div class="wizard-node">
+    <div class="wizard-node-circle">3</div>
+    <span class="wizard-node-label">Eligibility Check</span>
+  </div>
+  <div class="wizard-node">
+    <div class="wizard-node-circle">4</div>
+    <span class="wizard-node-label">Review &amp; Submit</span>
+  </div>
+</div>
+
+<div class="grid-2" style="grid-template-columns: 1.3fr 0.7fr; align-items: start; margin-bottom: 2rem;">
+  
+  <!-- LEFT: Current Room & Form -->
+  <div>
+    <!-- Current Room (Auto-filled) -->
+    {% if request.user.allocated_bed %}
+      <div class="autofill-room-box">
+        <img src="{% static 'images/room_interior_1.jpg' %}" alt="Room Thumbnail" class="autofill-thumb">
+        <div>
+          <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+            Current Room Allotment (Auto-filled)
+          </div>
+          <div style="font-size: 1rem; font-weight: 800; color: var(--navy-800); margin: 0.15rem 0;">
+            {{ request.user.allocated_bed.room.block.hostel.name }}
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary);">
+            Block {{ request.user.allocated_bed.room.block.name }} • Room {{ request.user.allocated_bed.room.room_number }} &nbsp;·&nbsp; {{ request.user.allocated_bed.bed_number }} &nbsp;·&nbsp; Type: {{ request.user.allocated_bed.room.get_room_type_display }}
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="autofill-room-box" style="border-color: #FCD34D; background: #FFFBEB;">
+        <div>
+          <div style="font-size: 0.72rem; font-weight: 700; color: #D97706; text-transform: uppercase;">
+            ⚠️ Notice: No Current Bed Allocated
+          </div>
+          <div style="font-size: 0.875rem; color: #92400E; margin-top: 0.25rem;">
+            You need an allocated bed before activating an exchange request.
+            <a href="{% url 'dashboard' %}" style="color: #B45309; font-weight: 700; text-decoration: underline;">Claim an available bed on your dashboard</a> first.
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if active_request %}
+      <div class="card" style="border-left: 4px solid #F59E0B; background: #FFFBEB; margin-bottom: 1.25rem; padding: 1.1rem 1.25rem;">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+          <div>
+            <div style="font-size: 0.9rem; font-weight: 800; color: #92400E; display: flex; align-items: center; gap: 0.4rem;">
+              <span>⚠️</span> Active Exchange Request in Progress
+            </div>
+            <div style="font-size: 0.825rem; color: #B45309; margin-top: 0.35rem; line-height: 1.45;">
+              You already have active request <strong>#{{ active_request.id }}</strong> (status: <strong>{{ active_request.get_status_display }}</strong>) submitted on {{ active_request.created_at|date:"d M Y" }}.
+              <br>University policy allows <strong>1 active exchange request</strong> per student. You can view your current matches or withdraw this request to submit a new one.
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.25rem;">
+            <a href="{% url 'matches' %}" class="btn btn-outline btn-sm" style="border-color: #D97706; color: #92400E; font-weight: 700;">
+              View Matches →
+            </a>
+            <form method="post" action="{% url 'withdraw_request' pk=active_request.id %}" style="display: inline; margin: 0;">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{% url 'create_request' %}">
+              <button type="submit" class="btn btn-sm" style="background: #DC2626; color: #fff; border: none; font-weight: 700;" onclick="return confirm('Are you sure you want to withdraw request #{{ active_request.id }} to submit a new one?');">
+                Withdraw &amp; Replace
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% elif not eligibility.eligible %}
+      <div class="card" style="border-left: 4px solid #EF4444; background: #FEF2F2; margin-bottom: 1.25rem; padding: 1.1rem 1.25rem;">
+        <div style="font-size: 0.9rem; font-weight: 800; color: #991B1B; display: flex; align-items: center; gap: 0.4rem;">
+          <span>🚫</span> Transfer Eligibility Policy Notice
+        </div>
+        <div style="font-size: 0.825rem; color: #B91C1C; margin-top: 0.35rem; line-height: 1.45;">
+          {% for check in eligibility.checks %}
+            {% if not check.passed %}
+              <div>• {{ check.reason }}</div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Your Preferences Form Card -->
+    <div class="card">
+      <div style="font-size: 1.05rem; font-weight: 800; color: var(--navy-800); margin-bottom: 1.25rem;">
+        Your Preferences
+      </div>
+
+      <form method="post" action="{% url 'create_request' %}">
+        {% csrf_token %}
+
+        <div class="grid-2" style="margin-bottom: 1rem;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Preferred Hostel</label>
+            <select name="preferred_hostel" class="form-select">
+              <option value="">Any</option>
+              {% for h in hostels %}
+                <option value="{{ h.id }}">{{ h.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Preferred Block</label>
+            <select name="preferred_block" class="form-select">
+              <option value="">Any</option>
+              <option value="A">Block A</option>
+              <option value="B">Block B</option>
+              <option value="C">Block C</option>
+              <option value="D">Block D</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 1.25rem;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label">Preferred Floor</label>
+            <select name="preferred_floor" class="form-select">
+              <option value="">Any</option>
+              <option value="1">1st Floor</option>
+              <option value="2">2nd Floor</option>
+              <option value="3">3rd Floor</option>
+              <option value="4">4th Floor</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" style="display: flex; align-items: center; justify-content: space-between;">
+              <span>Room Type</span>
+              {% if current_room_type %}
+                <span style="font-size: 0.7rem; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 0.15rem 0.5rem; border-radius: 9999px;">
+                  Matched Capacity
+                </span>
+              {% endif %}
+            </label>
+            <select name="preferred_room_type" class="form-select" {% if current_room_type %}style="background-color: #F8FAFC; border-color: #CBD5E1;"{% endif %}>
+              {% if not current_room_type %}
+                <option value="">Any Room Type</option>
+              {% endif %}
+              {% for val, label in room_types %}
+                <option value="{{ val }}" selected>{{ label }}</option>
+              {% endfor %}
+            </select>
+            {% if current_room_type %}
+              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
+                <span style="color: #2563EB; font-weight: bold;">ℹ️</span>
+                <span>Policy rule: You can only exchange with rooms having identical capacity (<strong>{{ current_room.get_room_type_display }}</strong>).</span>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Gender Compatibility -->
+        <div class="form-group" style="margin-bottom: 1.75rem;">
+          <label class="form-label">Gender Compatibility</label>
+          <div style="display: flex; align-items: center; gap: 2rem; margin-top: 0.35rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--navy-800); font-weight: 600; cursor: pointer;">
+              <input type="radio" name="gender_compatibility" value="SAME" checked>
+              Same gender only
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;">
+              <input type="radio" name="gender_compatibility" value="OPEN">
+              Open to all (as per policy)
+            </label>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle);">
+          <a href="{% url 'dashboard' %}" class="btn btn-outline" style="border-color: transparent; color: var(--text-muted);">
+            Cancel
+          </a>
+          <button type="submit" class="btn btn-primary" style="padding-left: 2rem; padding-right: 2rem;">
+            Next →
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- RIGHT: Tips Sidebar matching Screen 3 -->
+  <div class="card" style="background: #F8FAFC;">
+    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 1.25rem;">
+      <span style="color: #2563EB;">ℹ</span> Tips
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.825rem; color: var(--text-secondary); line-height: 1.5;">
+      <div style="display: flex; gap: 0.5rem;">
+        <span style="color: #2563EB; font-weight: bold;">•</span>
+        <span>You can select multiple preferences.</span>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <span style="color: #2563EB; font-weight: bold;">•</span>
+        <span>Wider preferences increase your chances of finding a match.</span>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <span style="color: #2563EB; font-weight: bold;">•</span>
+        <span>All requests are validated against university policies.</span>
+      </div>
+    </div>
+
+    <!-- Student Vector Art & Script Note matching Screen 3 -->
+    <div style="text-align: center; margin-top: 1.5rem;">
+      <img src="{% static 'images/student_illustration.svg' %}" alt="Find your place" style="max-width: 220px; width: 100%; height: auto;">
+    </div>
+  </div>
+
+</div>
+{% endblock %}

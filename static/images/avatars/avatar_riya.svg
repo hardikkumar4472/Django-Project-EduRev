@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <defs>
+    <linearGradient id="grad_RS" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#BE185D"/>
+      <stop offset="100%" stop-color="#BE185D" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+  <circle cx="40" cy="40" r="38" fill="url(#grad_RS)" stroke="#FBCFE8" stroke-width="2.5"/>
+  <!-- Stylized avatar figure -->
+  <circle cx="40" cy="31" r="14" fill="#FBCFE8"/>
+  <path d="M18,65 C20,50 30,46 40,46 C50,46 60,50 62,65 Z" fill="#FBCFE8"/>
+  <circle cx="40" cy="30" r="11" fill="#BE185D"/>
+  <text x="40" y="34" font-family="'Inter', sans-serif" font-size="10" font-weight="bold" fill="#FBCFE8" text-anchor="middle" dominant-baseline="middle">RS</text>
+</svg>

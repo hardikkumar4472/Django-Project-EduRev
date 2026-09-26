@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Find Your Next Room — Campus Exchange{% endblock %}
+
+{% block content %}
+<!-- ========================================================================
+     SCREEN 4: FIND YOUR NEXT ROOM (MATCHES BROWSER)
+     ======================================================================== -->
+<div class="page-header" style="margin-bottom: 1.25rem;">
+  <div class="page-title-group">
+    <h1>Find Your Next Room</h1>
+    <p>Here are the best compatible exchanges for you.</p>
+  </div>
+</div>
+
+<!-- Horizontal Filter & Search Bar -->
+<div class="filter-search-row">
+  <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+    <select class="form-select" style="width: auto; padding: 0.4rem 0.85rem; font-size: 0.825rem; font-weight: 600;">
+      <option selected>All Hostels ▾</option>
+      <option>Tagore Hostel</option>
+      <option>Raman Hostel</option>
+      <option>Sarojini Hostel</option>
+      <option>APJ Hostel</option>
+    </select>
+
+    <select class="form-select" style="width: auto; padding: 0.4rem 0.85rem; font-size: 0.825rem; font-weight: 600;">
+      <option selected>Room Type ▾</option>
+      <option>1-Seater (Single)</option>
+      <option>2-Seater (Double)</option>
+      <option>3-Seater (Triple)</option>
+      <option>4-Seater (Quad)</option>
+      <option>7-Seater Dormitory</option>
+      <option>8-Seater Dormitory</option>
+    </select>
+
+    <select class="form-select" style="width: auto; padding: 0.4rem 0.85rem; font-size: 0.825rem; font-weight: 600;">
+      <option selected>Preferred Block ▾</option>
+      <option>Block A</option>
+      <option>Block B</option>
+      <option>Block C</option>
+      <option>Block D</option>
+    </select>
+
+    <button class="btn btn-outline btn-sm" style="font-size: 0.825rem;">
+      More Filters ▾
+    </button>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.825rem; color: var(--text-muted);">
+      <span>Sort by:</span>
+      <select class="form-select" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.825rem; font-weight: 600;">
+        <option selected>Best Match</option>
+        <option>Shortest Cycle</option>
+        <option>Same Hostel</option>
+      </select>
+    </div>
+
+    <button class="btn btn-outline btn-sm" title="Grid View" style="color: var(--navy-800); font-weight: 600;">
+      ⊞ Grid view
+    </button>
+  </div>
+</div>
+
+<!-- Segmented Filter Tabs -->
+<div class="segmented-tabs-bar" style="margin-bottom: 1.5rem;">
+  <button class="segmented-tab-pill active">
+    Discovered Matches ({{ total_matches }})
+  </button>
+</div>
+
+{% if cycles %}
+  <div class="grid-3" style="margin-bottom: 2.5rem;">
+    {% for c in cycles %}
+      <div class="match-card-item">
+        <div class="match-photo-container">
+          <img src="{% static 'images/room_interior_1.jpg' %}" alt="Target Room" class="match-photo-img">
+          <span class="match-tag-score">{{ c.compatibility_score }}% Match</span>
+          <span class="match-tag-type">{{ c.type_display }}</span>
+        </div>
+
+        <div class="match-body">
+          <div class="match-hostel-name">
+            {{ c.participants.0.target_hostel }}
+          </div>
+          <div class="match-room-sub">
+            Room {{ c.participants.0.target_room }} &nbsp;·&nbsp; {{ c.cycle_length }}-Student Chain
+          </div>
+
+          <ul class="match-check-list">
+            {% for r in c.reasons %}
+              <li class="match-check-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span>{{ r }}</span>
+              </li>
+            {% empty %}
+              <li class="match-check-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span>Mutual room availability</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <!-- Swap Chain Participants -->
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 0.65rem; margin: 0.85rem 0; font-size: 0.78rem;">
+            <div style="font-weight: 700; color: #475569; margin-bottom: 0.35rem;">Exchange Rotation:</div>
+            {% for p in c.participants %}
+              <div style="display: flex; justify-content: space-between; color: var(--navy-800); margin-bottom: 0.2rem;">
+                <span><strong>{{ p.student_name|default:p.university_id }}</strong></span>
+                <span style="color: #0D9488;">Room {{ p.current_room }} → {{ p.target_room }}</span>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="match-footer" style="margin-top: 1rem;">
+            <form method="post" action="{% url 'initiate_proposal' %}" style="width: 100%; margin: 0;">
+              {% csrf_token %}
+              <input type="hidden" name="cycle_index" value="{{ forloop.counter0 }}">
+              <button type="submit" class="btn btn-teal" style="width: 100%; font-weight: 700;">
+                Initiate Official Proposal →
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card" style="padding: 3.5rem 1.5rem; text-align: center; max-width: 620px; margin: 2rem auto; box-shadow: var(--shadow-sm);">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">🔄</div>
+    <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.5rem;">
+      No Compatible Exchange Matches Yet
+    </h2>
+    <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+      The matching engine evaluates active requests from registered students across the campus graph (supporting 2 to 5-party circular rotations). As other students register and submit exchange preferences, compatible swap matches will dynamically appear here.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+      <a href="{% url 'create_request' %}" class="btn btn-primary">
+        Submit Exchange Request
+      </a>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline">
+        Return to Cockpit
+      </a>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Registration — CampusExchange{% endblock %}
+
+{% block content %}
+<div style="max-width: 650px; margin: 2rem auto;">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="card-title">
+        <span>🎓</span> Student Resident Registration
+      </h2>
+      <span class="badge badge-blue">Official Portal</span>
+    </div>
+
+    <form method="post" action="{% url 'signup' %}">
+      {% csrf_token %}
+      
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">University ID</label>
+          {{ form.university_id }}
+          {% if form.university_id.errors %}<div style="color: var(--color-danger); font-size: 0.8rem;">{{ form.university_id.errors }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          {{ form.username }}
+          {% if form.username.errors %}<div style="color: var(--color-danger); font-size: 0.8rem;">{{ form.username.errors }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          {{ form.first_name }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          {{ form.last_name }}
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          {{ form.email }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          {{ form.phone }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Gender (For Hostel Residency Policy)</label>
+        {{ form.gender }}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Allocated Hostel Room & Bed (Optional)</label>
+        <select name="allocated_bed" class="form-select">
+          <option value="">-- Assign Later by Warden / Admin --</option>
+          {% for b in vacant_beds %}
+            <option value="{{ b.id }}">{{ b.room.block.hostel.name }} · Room {{ b.room.room_number }} · {{ b.bed_number }}</option>
+          {% endfor %}
+        </select>
+        <small style="color: var(--color-text-muted); font-size: 0.8rem;">Select your current assigned room to enable exchange matching immediately.</small>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          {{ form.password }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          {{ form.confirm_password }}
+          {% if form.confirm_password.errors %}<div style="color: var(--color-danger); font-size: 0.8rem;">{{ form.confirm_password.errors }}</div>{% endif %}
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-teal" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 1rem;">
+        Complete Registration & Enter Cockpit →
+      </button>
+    </form>
+
+    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--color-text-muted);">
+      Already registered? <a href="{% url 'login' %}" style="color: var(--color-teal); font-weight: 600;">Sign in here</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

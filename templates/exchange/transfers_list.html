@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Official Room Transfers — Campus Exchange{% endblock %}
+
+{% block content %}
+<!-- ========================================================================
+     SCREEN 8: COMPLETED TRANSFERS RECORD (DYNAMIC)
+     ======================================================================== -->
+<div class="page-header" style="margin-bottom: 1.5rem;">
+  <div class="page-title-group">
+    <h1>Official Room Transfers</h1>
+    <p>Auditable log of executed post-allocation room exchanges.</p>
+  </div>
+  <div>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline">
+      ← Return to Cockpit
+    </a>
+  </div>
+</div>
+
+{% if transfers %}
+  <div style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem;">
+    {% for t in transfers %}
+      <div class="card" style="padding: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+              Order Reference
+            </div>
+            <strong style="font-size: 1.15rem; color: var(--navy-800); font-family: var(--font-mono);">
+              {{ t.transfer_code }}
+            </strong>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span class="badge badge-green" style="font-size: 0.8rem;">
+              ✓ Legally Executed
+            </span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">
+              {{ t.completed_at|date:"d M Y, H:i" }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Student & Movement Details -->
+        <div class="grid-2" style="grid-template-columns: 1fr 1.5fr; gap: 1.5rem; align-items: center;">
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem;">
+              Resident Student
+            </div>
+            <div style="font-size: 1rem; font-weight: 800; color: var(--navy-800);">
+              {{ t.student.get_full_name|default:t.student.username }}
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+              University ID: {{ t.student.university_id }}
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.35rem;">
+              Approved by: <strong>{{ t.approved_by.get_full_name|default:"Hostel Warden" }}</strong>
+            </div>
+          </div>
+
+          <!-- Room Transition Visual -->
+          <div style="display: flex; align-items: center; justify-content: space-around; background: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="text-align: center;">
+              <div style="font-size: 0.7rem; font-weight: 700; color: #64748B; text-transform: uppercase;">Surrendered Room</div>
+              <strong style="font-size: 0.95rem; color: var(--navy-800);">{{ t.previous_bed.room.block.hostel.code }}-{{ t.previous_bed.room.room_number }}</strong>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">{{ t.previous_bed.bed_number }}</div>
+            </div>
+
+            <div style="font-size: 1.5rem; color: #0D9488; font-weight: bold;">➔</div>
+
+            <div style="text-align: center;">
+              <div style="font-size: 0.7rem; font-weight: 700; color: #059669; text-transform: uppercase;">New Allocated Room</div>
+              <strong style="font-size: 0.95rem; color: #064E3B;">{{ t.new_bed.room.block.hostel.code }}-{{ t.new_bed.room.room_number }}</strong>
+              <div style="font-size: 0.75rem; color: #047857; font-weight: 600;">{{ t.new_bed.bed_number }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.25rem; display: flex; justify-content: flex-end;">
+          <a href="{% url 'transfer_letter' pk=t.id %}" class="btn btn-teal btn-sm" style="font-weight: 700;">
+            View Official Printable Pass &amp; QR →
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card" style="padding: 3.5rem 1.5rem; text-align: center; max-width: 600px; margin: 2rem auto;">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">📜</div>
+    <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.5rem;">
+      No Completed Room Transfers Yet
+    </h2>
+    <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
+      When an exchange proposal is approved by the hostel warden, verified room reallocation records with official printable certificates and anti-tamper QR tokens will appear here.
+    </p>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">
+      Return to Cockpit
+    </a>
+  </div>
+{% endif %}
+{% endblock %}
+

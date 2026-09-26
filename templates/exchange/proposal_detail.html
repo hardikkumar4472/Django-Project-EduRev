@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Proposal #{{ proposal.proposal_code }} — Campus Exchange{% endblock %}
+
+{% block content %}
+<!-- ========================================================================
+     SCREEN 5: PROPOSAL DETAIL (DYNAMIC)
+     ======================================================================== -->
+<div style="margin-bottom: 0.75rem;">
+  <a href="{% url 'matches' %}" style="text-decoration: none; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem;">
+    ← Back to Matches &amp; Proposals
+  </a>
+</div>
+
+<div class="page-header" style="margin-bottom: 1.25rem;">
+  <div style="display: flex; align-items: center; gap: 0.85rem; flex-wrap: wrap;">
+    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--navy-800); margin: 0;">
+      Proposal #{{ proposal.proposal_code }}
+    </h1>
+    <span class="badge {% if proposal.status == 'COMPLETED' %}badge-green{% elif proposal.status == 'DECLINED' or is_expired %}badge-red{% else %}badge-yellow{% endif %}" style="font-size: 0.75rem;">
+      {{ proposal.get_status_display }}
+    </span>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 700; color: #EA580C;">
+    {% if is_expired %}
+      <span style="color: #DC2626;">⏱ Expired</span>
+    {% else %}
+      <span>⏱</span> Valid until {{ proposal.expires_at|date:"d M Y, H:i" }}
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid-2" style="grid-template-columns: 1.35fr 0.65fr; align-items: start; margin-bottom: 2rem;">
+  
+  <!-- LEFT: Proposed Movement Rotation Chain -->
+  <div class="card" style="padding: 1.5rem;">
+    <div style="font-size: 1rem; font-weight: 800; color: var(--navy-800); margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+      <span>Proposed Room Reallocation Rotation</span>
+      <span class="badge badge-blue">{{ participants.count }}-Student Cycle</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      {% for p in participants %}
+        <div style="background: #F8FAFC; border: 1px solid {% if p.student == request.user %}#0D9488{% else %}#E2E8F0{% endif %}; padding: 1rem; border-radius: var(--radius-md);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 26px; height: 26px; border-radius: 50%; background: #0F2942; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
+                {{ forloop.counter }}
+              </div>
+              <strong style="color: var(--navy-800);">{{ p.student.get_full_name|default:p.student.username }}</strong>
+              {% if p.student == request.user %}
+                <span class="badge badge-teal" style="font-size: 0.7rem;">You</span>
+              {% endif %}
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">{{ p.student.university_id }}</span>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; padding: 0.65rem; background: #FFFFFF; border-radius: 6px; border: 1px solid #EDF2F7;">
+            <div>
+              <div style="font-size: 0.7rem; color: #64748B; font-weight: 600;">CURRENT BED:</div>
+              <strong>{{ p.current_bed.room.block.hostel.name }}</strong>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Room {{ p.current_bed.room.room_number }} · {{ p.current_bed.bed_number }}</div>
+            </div>
+            <div style="font-size: 1.25rem; color: #0D9488; font-weight: bold; margin: 0 0.5rem;">➔</div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.7rem; color: #0D9488; font-weight: 600;">TARGET DESTINATION:</div>
+              <strong style="color: #0D9488;">{{ p.target_bed.room.block.hostel.name }}</strong>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Room {{ p.target_bed.room.room_number }} · {{ p.target_bed.bed_number }}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- RIGHT: Proposal Information & Participants list -->
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    
+    <!-- Proposal Info -->
+    <div class="card" style="padding: 1.25rem;">
+      <div style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.85rem;">
+        Proposal Information
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.825rem;">
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Type</span>
+          <strong style="color: var(--navy-800);">{{ proposal.get_proposal_type_display }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Created</span>
+          <span>{{ proposal.created_at|date:"d M Y, H:i" }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Expires At</span>
+          <span>{{ proposal.expires_at|date:"d M Y, H:i" }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="color: var(--text-muted);">Status</span>
+          <span class="badge {% if proposal.status == 'COMPLETED' %}badge-green{% elif proposal.status == 'DECLINED' %}badge-red{% else %}badge-yellow{% endif %}" style="font-size: 0.72rem;">
+            {{ proposal.get_status_display }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Participants Status -->
+    <div class="card" style="padding: 1.25rem;">
+      <div style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.85rem;">
+        All Participants
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {% for p in participants %}
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 28px; height: 28px; border-radius: 50%; background: #0F2942; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                {{ p.student.first_name|slice:":1" }}{{ p.student.last_name|slice:":1"|default:p.student.username|slice:":1" }}
+              </div>
+              <span style="font-size: 0.825rem; font-weight: 600; color: var(--navy-800);">
+                {{ p.student.get_full_name|default:p.student.username }}
+                {% if p.student == request.user %}(You){% endif %}
+              </span>
+            </div>
+            {% if p.response == 'ACCEPTED' %}
+              <span class="badge badge-green" style="font-size: 0.7rem;">Accepted ✓</span>
+            {% elif p.response == 'DECLINED' %}
+              <span class="badge badge-red" style="font-size: 0.7rem;">Declined ✕</span>
+            {% else %}
+              <span class="badge badge-yellow" style="font-size: 0.7rem;">Pending</span>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Footer Actions: Accept / Decline or Status Notification -->
+<div style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--border-card);">
+  {% if current_student_participant and not has_voted and not is_expired and proposal.status == 'PENDING_ACCEPTANCE' %}
+    <form method="post" action="{% url 'respond_proposal' pk=proposal.id %}" style="display: inline;">
+      {% csrf_token %}
+      <input type="hidden" name="decision" value="DECLINE">
+      <button type="submit" class="btn btn-danger-outline" style="padding-left: 1.5rem; padding-right: 1.5rem;" onclick="return confirm('Decline this exchange proposal?');">
+        Decline Proposal
+      </button>
+    </form>
+
+    <form method="post" action="{% url 'respond_proposal' pk=proposal.id %}" style="display: inline;">
+      {% csrf_token %}
+      <input type="hidden" name="decision" value="ACCEPT">
+      <button type="submit" class="btn btn-emerald" style="padding-left: 2rem; padding-right: 2rem;">
+        Accept Proposal ✓
+      </button>
+    </form>
+  {% elif current_student_participant and has_voted %}
+    <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary);">
+      You recorded your response: <strong>{{ current_student_participant.get_response_display }}</strong>
+    </div>
+  {% endif %}
+
+  <a href="{% url 'matches' %}" class="btn btn-outline">
+    Back to Matches
+  </a>
+</div>
+{% endblock %}
+

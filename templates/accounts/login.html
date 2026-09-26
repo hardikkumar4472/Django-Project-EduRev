@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}University Sign In — Campus Exchange{% endblock %}
+
+{% block content %}
+<div style="max-width: 460px; margin: 3rem auto;">
+  <div class="card" style="box-shadow: var(--shadow-lg); padding: 2.25rem; border-radius: var(--radius-lg);">
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div style="width: 56px; height: 56px; margin: 0 auto 0.75rem; background: #EEF2FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; border: 1px solid #C7D2FE;">
+        🏛️
+      </div>
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.25rem;">
+        University Sign In
+      </h2>
+      <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0;">
+        Official Housing & Room Exchange Portal
+      </p>
+    </div>
+
+    <!-- Login Form (Email & Password only) -->
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      
+      <!-- Email / Identifier -->
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label class="form-label" style="font-size: 0.825rem; font-weight: 700; color: var(--navy-800); margin-bottom: 0.4rem;">
+          Email or University ID
+        </label>
+        {{ form.username }}
+      </div>
+
+      <!-- Password -->
+      <div class="form-group" style="margin-bottom: 1.5rem;">
+        <label class="form-label" style="font-size: 0.825rem; font-weight: 700; color: var(--navy-800); margin-bottom: 0.4rem;">
+          Password
+        </label>
+        {{ form.password }}
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 700; border-radius: var(--radius-md);">
+        Sign In to Portal →
+      </button>
+    </form>
+
+    <!-- Registration Link -->
+    <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-subtle); text-align: center; font-size: 0.85rem; color: var(--text-muted);">
+      New resident student? <a href="{% url 'signup' %}" style="color: var(--teal-600); font-weight: 700; text-decoration: none;">Register Student Account</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

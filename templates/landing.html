@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Campus Exchange — A Better Home for Every Student{% endblock %}
+
+{% block content %}
+<!-- ========================================================================
+     SCREEN 1: LANDING PAGE (HERO & SHOWCASE)
+     ======================================================================== -->
+<div class="hero-wrapper-box">
+  <!-- Script Tag floating top right of the hero -->
+  <div class="hero-script-tag">
+    <span>Same Campus, New Possibilities</span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F2942" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="22" y1="2" x2="11" y2="13"></line>
+      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+    </svg>
+  </div>
+
+  <div>
+    <h1 class="hero-main-title">
+      A Better<br>
+      Home for Every<br>
+      Student
+    </h1>
+
+    <p class="hero-sub-text">
+      An official, transparent and auditable platform for hostel room exchanges. Request, match, approve and move — all in one place.
+    </p>
+
+    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+      {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+          Go to Cockpit →
+        </a>
+      {% else %}
+        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">
+          Register Student Account →
+        </a>
+        <a href="{% url 'login' %}" class="btn btn-outline btn-lg">
+          Sign In
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div>
+    <img src="{% static 'images/campus_hero.jpg' %}" alt="Campus Architecture" class="hero-building-photo">
+  </div>
+</div>
+
+<!-- Floating Stats Bar matching Screen 1 -->
+<div class="hero-floating-stats">
+  <div class="hero-stat-col">
+    <span class="hero-stat-num">{{ total_hostels }}</span>
+    <span class="hero-stat-lbl">Hostels</span>
+  </div>
+
+  <div class="hero-stat-col">
+    <span class="hero-stat-num">{{ total_students }}</span>
+    <span class="hero-stat-lbl">Registered Students</span>
+  </div>
+
+  <div class="hero-stat-col">
+    <span class="hero-stat-num">{{ completed_transfers }}</span>
+    <span class="hero-stat-lbl">Transfers Completed</span>
+  </div>
+
+  <div class="hero-stat-col">
+    <span class="hero-stat-num" style="display: flex; align-items: center; gap: 0.4rem; font-size: 1.4rem;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F2942" stroke-width="2.3">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      Official
+    </span>
+    <span class="hero-stat-lbl">&amp; Auditable</span>
+  </div>
+
+  <!-- University Housing Portal Motto -->
+  <div class="hero-testimonial-group">
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <span style="font-size: 1.5rem;">🏛️</span>
+      <div>
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-800);">Official University Portal</div>
+        <div style="font-size: 0.75rem; color: var(--text-secondary);">Direct &amp; Multi-Party Exchange Verification</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

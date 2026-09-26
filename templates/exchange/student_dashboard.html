@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Dashboard — Campus Exchange{% endblock %}
+
+{% block content %}
+<!-- ========================================================================
+     SCREEN 2: STUDENT COCKPIT (DYNAMIC)
+     ======================================================================== -->
+<div class="page-header" style="margin-bottom: 1.5rem;">
+  <div class="page-title-group">
+    <h1>Good morning, {{ request.user.first_name|default:request.user.username }}! 👋</h1>
+    <p>Official Student Resident Cockpit · ID: {{ request.user.university_id }}</p>
+  </div>
+  <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">
+    {% now "D, d M Y" %}
+  </div>
+</div>
+
+<div class="grid-2" style="grid-template-columns: 1.35fr 0.65fr; align-items: stretch; margin-bottom: 2rem;">
+  
+  <!-- LEFT: Your Current Room Card with Info + Floorplan -->
+  <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+    <div style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+      <span>Your Current Room Allotment</span>
+      {% if current_bed %}
+        <span class="badge badge-green">Allocated</span>
+      {% else %}
+        <span class="badge badge-yellow">Unallocated</span>
+      {% endif %}
+    </div>
+
+    {% if current_bed %}
+      <div class="current-room-layout-card" style="border: none; padding: 0; box-shadow: none;">
+        <!-- Room Info Sidebar -->
+        <div class="room-sidebar-info">
+          <div class="room-info-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2">
+              <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3l9 7H3z"/>
+            </svg>
+            <span>{{ current_bed.room.block.hostel.name }}</span>
+          </div>
+
+          <div class="room-info-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2">
+              <rect x="4" y="4" width="16" height="16" rx="2"/>
+              <path d="M9 9h6M9 15h6"/>
+            </svg>
+            <span>Block {{ current_bed.room.block.name }} · Floor {{ current_bed.room.floor }}</span>
+          </div>
+
+          <div class="room-info-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2">
+              <path d="M21 2l-2 2m-1-1l-3 3m2 2l-3-3m-6 6l7-7 3 3-7 7m-3 3H3v-3l7-7 3 3-7 7z"/>
+            </svg>
+            <span>Room {{ current_bed.room.room_number }}</span>
+          </div>
+
+          <div class="room-info-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2">
+              <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>
+            </svg>
+            <span style="font-weight: 700; color: #0D9488;">{{ current_bed.bed_number }} (You)</span>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <a href="{% url 'room_detail' pk=current_bed.room.id %}" class="btn btn-outline btn-sm" style="width: 100%;">
+              View Room Specs
+            </a>
+          </div>
+        </div>
+
+        <!-- 3D Architectural Cutaway Render Box with Dynamic Beds -->
+        <div class="floorplan-render-box">
+          <img src="{% static 'images/room_floorplan_3d.jpg' %}" alt="Room Floorplan" class="floorplan-render-img">
+
+          {% for b in current_bed.room.beds.all %}
+            <div class="bed-marker-overlay {% if b.id == current_bed.id %}bed-marker-you{% elif b.occupancy_status == 'OCCUPIED' %}bed-marker-occupied{% else %}bed-marker-vacant{% endif %} pos-bed-{{ forloop.counter }}">
+              <span>{{ b.bed_number }}</span>
+              {% if b.id == current_bed.id %}
+                <span style="font-size: 0.65rem; font-weight: 800;">You</span>
+              {% elif b.current_occupant %}
+                <span style="font-size: 0.62rem; color: #64748B;">{{ b.current_occupant.first_name|default:b.current_occupant.username }}</span>
+              {% else %}
+                <span style="font-size: 0.62rem; color: #94A3B8;">Vacant</span>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <div class="pos-window-tag">Window</div>
+          <div class="pos-door-tag">Door</div>
+        </div>
+      </div>
+    {% else %}
+      <!-- Empty State: Student has not been allocated a bed -->
+      <div style="padding: 1.5rem; background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: var(--radius-md); text-align: center;">
+        <div style="font-size: 2.25rem; margin-bottom: 0.5rem;">🛏️</div>
+        <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--navy-800); margin-bottom: 0.35rem;">No Bed Allocated Yet</h3>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); max-width: 420px; margin: 0 auto 1.25rem auto;">
+          You are registered as <strong>{{ request.user.get_full_name|default:request.user.username }}</strong> ({{ request.user.university_id }}). To participate in room swaps, claim an available vacant bed below:
+        </p>
+
+        {% if vacant_beds %}
+          <form method="post" action="{% url 'claim_bed' %}" style="max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.75rem;">
+            {% csrf_token %}
+            <select name="bed_id" class="form-select" required>
+              <option value="">-- Choose Available Bed --</option>
+              {% for vb in vacant_beds %}
+                <option value="{{ vb.id }}">{{ vb.room.block.hostel.name }} · Room {{ vb.room.room_number }} · {{ vb.bed_number }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              Claim Room &amp; Bed Allotment →
+            </button>
+          </form>
+        {% else %}
+          <div style="font-size: 0.85rem; color: var(--text-muted);">
+            No vacant beds available currently. Please contact the Hostel Warden for room assignment.
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- RIGHT: University Notice, Active Request, Pending Proposals -->
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    
+    <!-- University Residence Note -->
+    <div class="card" style="background: #F8FAFC; padding: 1.25rem; text-align: center;">
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem;">
+        Residency Clearance
+      </div>
+      <div style="font-size: 0.85rem; font-weight: 600; color: {% if eligibility.eligible %}#059669{% else %}#DC2626{% endif %};">
+        {% if eligibility.eligible %}✓ Eligible for Transfer Requests{% else %}✕ {{ eligibility.reasons.0|default:"Ineligible" }}{% endif %}
+      </div>
+    </div>
+
+    <!-- Active Request Card -->
+    <div class="card" style="padding: 1.25rem;">
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+        Active Request
+      </div>
+      <div style="font-size: 2rem; font-weight: 800; color: var(--navy-800); margin: 0.25rem 0;">
+        {% if active_request %}1{% else %}0{% endif %}
+      </div>
+      {% if active_request %}
+        <div style="font-size: 0.8rem; color: var(--text-secondary);">
+          {{ active_request.get_status_display }}
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">
+          Submitted {{ active_request.created_at|date:"d M Y" }}
+        </div>
+        <div style="margin-top: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+          <a href="{% url 'matches' %}" style="font-size: 0.78rem; font-weight: 700; color: #2563EB; text-decoration: none;">
+            View Matches →
+          </a>
+          <form method="post" action="{% url 'withdraw_request' pk=active_request.id %}" style="display: inline; margin: 0;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'dashboard' %}">
+            <button type="submit" style="background: none; border: none; padding: 0; font-size: 0.75rem; color: #DC2626; cursor: pointer; text-decoration: underline;" onclick="return confirm('Withdraw your current exchange request #{{ active_request.id }}?');">
+              Withdraw
+            </button>
+          </form>
+        </div>
+      {% else %}
+        <div style="font-size: 0.8rem; color: var(--text-secondary);">
+          No active exchange request
+        </div>
+        <div style="margin-top: 0.5rem;">
+          <a href="{% url 'create_request' %}" style="font-size: 0.78rem; font-weight: 700; color: #0D9488; text-decoration: none;">
+            + Submit Request
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Pending Proposals Card -->
+    <div class="card" style="padding: 1.25rem; border-color: var(--orange-100); background: #FFFDF9;">
+      <div style="font-size: 0.75rem; font-weight: 700; color: var(--orange-600); text-transform: uppercase;">
+        Pending Proposals
+      </div>
+      <div style="font-size: 2rem; font-weight: 800; color: var(--orange-600); margin: 0.25rem 0;">
+        {{ active_proposals.count }}
+      </div>
+      {% if active_proposals %}
+        <div style="font-size: 0.8rem; color: #9A3412; margin-bottom: 0.5rem;">
+          Awaiting your response
+        </div>
+        <a href="{% url 'matches' %}" style="font-size: 0.78rem; font-weight: 700; color: var(--orange-600); text-decoration: none;">
+          View Proposals →
+        </a>
+      {% else %}
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          No proposals awaiting response
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Quick Actions Section matching Mockup Screen 2 -->
+<div style="margin-bottom: 2rem;">
+  <div style="font-size: 1rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.85rem;">
+    Quick Actions
+  </div>
+
+  <div class="quick-action-row">
+    <a href="{% url 'create_request' %}" class="quick-action-button">
+      <div style="width: 32px; height: 32px; border-radius: 6px; background: #F0FDFA; color: #0D9488; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+        ➕
+      </div>
+      <span>Create Exchange Request</span>
+    </a>
+
+    <a href="{% url 'matches' %}" class="quick-action-button">
+      <div style="width: 32px; height: 32px; border-radius: 6px; background: #EFF6FF; color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+        🔍
+      </div>
+      <span>Find a Match</span>
+    </a>
+
+    <a href="{% url 'matches' %}" class="quick-action-button">
+      <div style="width: 32px; height: 32px; border-radius: 6px; background: #FFF7ED; color: #EA580C; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+        📄
+      </div>
+      <span>View Proposals</span>
+    </a>
+
+    <a href="{% url 'transfers_list' %}" class="quick-action-button">
+      <div style="width: 32px; height: 32px; border-radius: 6px; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+        📜
+      </div>
+      <span>Transfer History</span>
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Room {{ room.room_number }} — {{ room.block.hostel.name }}{% endblock %}
+
+{% block content %}
+<!-- ========================================================================
+     SCREEN 6: ROOM DETAIL & ARCHITECTURAL FLOORPLAN VIEW (DYNAMIC)
+     ======================================================================== -->
+<div style="margin-bottom: 0.75rem;">
+  <a href="{% url 'dashboard' %}" style="text-decoration: none; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.35rem;">
+    ← Back to Dashboard
+  </a>
+</div>
+
+<div class="page-header" style="margin-bottom: 1.5rem;">
+  <div class="page-title-group">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <h1>Room {{ room.room_number }}</h1>
+      {% if room.vacant_beds_count > 0 %}
+        <span class="badge badge-green" style="font-size: 0.75rem;">
+          {{ room.vacant_beds_count }} Bed{{ room.vacant_beds_count|pluralize }} Vacant
+        </span>
+      {% else %}
+        <span class="badge badge-yellow" style="font-size: 0.75rem;">
+          Fully Occupied
+        </span>
+      {% endif %}
+    </div>
+    <p>{{ room.block.hostel.name }} &nbsp;•&nbsp; Block {{ room.block.name }} &nbsp;•&nbsp; Floor {{ room.floor }}</p>
+  </div>
+</div>
+
+<div class="grid-2" style="grid-template-columns: 1.35fr 0.65fr; align-items: start; margin-bottom: 2rem;">
+  
+  <!-- LEFT: Architectural Cutaway Floorplan View with Real Beds -->
+  <div class="card" style="padding: 1.5rem; display: flex; align-items: center; justify-content: center;">
+    <div class="floorplan-render-box" style="max-width: 480px;">
+      <img src="{% static 'images/room_floorplan_3d.jpg' %}" alt="Room Floorplan" class="floorplan-render-img">
+
+      <!-- Dynamic Bed Overlays -->
+      {% for b in beds %}
+        <div class="bed-marker-overlay {% if b.current_occupant == request.user %}bed-marker-you{% elif b.occupancy_status == 'OCCUPIED' %}bed-marker-occupied{% else %}bed-marker-vacant{% endif %} pos-bed-{{ forloop.counter }}">
+          <span>{{ b.bed_number }}</span>
+          {% if b.current_occupant == request.user %}
+            <span style="font-size: 0.7rem; font-weight: 800;">You</span>
+          {% elif b.current_occupant %}
+            <span style="font-size: 0.65rem; color: #64748B;">Occupied</span>
+            <span style="font-size: 0.65rem; font-weight: 800; color: var(--navy-800);">{{ b.current_occupant.first_name|default:b.current_occupant.username }}</span>
+          {% else %}
+            <span style="font-size: 0.7rem; font-weight: 800; color: #059669;">Vacant</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="pos-window-tag">Window</div>
+      <div class="pos-door-tag">Door</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Room Details Specs & Current Occupants -->
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    
+    <!-- Room Details -->
+    <div class="card" style="padding: 1.25rem;">
+      <div style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.85rem;">
+        Room Details
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.825rem;">
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">🛏 Room Type</span>
+          <strong style="color: var(--navy-800);">{{ room.get_room_type_display }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">👥 Capacity</span>
+          <span>{{ room.capacity }} Resident{{ room.capacity|pluralize }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">🛡 Gender Policy</span>
+          <span>{{ room.block.hostel.get_gender_type_display }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">🏢 Floor</span>
+          <span>Floor {{ room.floor }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">📍 Block</span>
+          <span>Block {{ room.block.name }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">🏛 Hostel</span>
+          <span>{{ room.block.hostel.name }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Occupants -->
+    <div class="card" style="padding: 1.25rem;">
+      <div style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.85rem;">
+        Bed Allocations
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+        {% for b in beds %}
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            {% if b.current_occupant %}
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #0F2942; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
+                {{ b.current_occupant.first_name|slice:":1" }}{{ b.current_occupant.last_name|slice:":1" }}
+              </div>
+              <div>
+                <div style="font-size: 0.825rem; font-weight: 700; color: var(--navy-800);">
+                  {{ b.bed_number }} · {{ b.current_occupant.get_full_name|default:b.current_occupant.username }}
+                  {% if b.current_occupant == request.user %}(You){% endif %}
+                </div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">{{ b.current_occupant.university_id }}</div>
+              </div>
+            {% else %}
+              <div style="width: 32px; height: 32px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">
+                ✓
+              </div>
+              <div>
+                <div style="font-size: 0.825rem; font-weight: 700; color: #059669;">
+                  {{ b.bed_number }} · Vacant
+                </div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Available for assignment / swap</div>
+              </div>
+            {% endif %}
+          </div>
+        {% empty %}
+          <div style="font-size: 0.8rem; color: var(--text-muted);">No beds configured for this room.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Footer Actions -->
+<div style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--border-card);">
+  <a href="{% url 'dashboard' %}" class="btn btn-outline">
+    Return to Dashboard
+  </a>
+  <a href="{% url 'create_request' %}" class="btn btn-primary" style="padding-left: 1.75rem; padding-right: 1.75rem;">
+    Request Exchange
+  </a>
+</div>
+{% endblock %}
+
