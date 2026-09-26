@@ -6,7 +6,13 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.http import JsonResponse
+
+def ping_view(request):
+    return JsonResponse({'status': 'alive', 'app': 'edurev_swap'})
+
 urlpatterns = [
+    path('ping/', ping_view, name='keep_alive_ping'),
     path('django-admin/', admin.site.urls),
     path('', include('accounts.urls')),
     path('', include('exchange.urls')),
