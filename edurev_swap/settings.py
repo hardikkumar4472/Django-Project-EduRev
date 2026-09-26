@@ -78,15 +78,25 @@ WSGI_APPLICATION = 'edurev_swap.wsgi.application'
 ASGI_APPLICATION = 'edurev_swap.asgi.application'
 
 # Database
-# Default: SQLite with foreign key and WAL support.
-# If DATABASE_URL or POSTGRES environment variables are present, PostgreSQL can be utilized.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'TIMEOUT': 20,
+# Uses PostgreSQL if DATABASE_URL is set (e.g. Render Postgres), otherwise falls back to SQLite.
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+            'TIMEOUT': 20,
+        }
+    }
 
 # Custom User Model
 AUTH_USER_MODEL = 'accounts.User'
