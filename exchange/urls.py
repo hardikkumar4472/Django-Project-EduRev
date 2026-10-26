@@ -17,6 +17,11 @@ urlpatterns = [
     path('warden/approvals/<int:pk>/', views.warden_review_view, name='warden_review'),
     path('transfers/', views.transfers_list_view, name='transfers_list'),
     path('transfers/<int:pk>/', views.transfer_letter_view, name='transfer_letter'),
+    path('caretaker/verify/', views.caretaker_verify_view, name='caretaker_verify'),
+
+    # Interactive Chat & Lifestyle
+    path('proposals/<int:pk>/messages/send/', views.send_proposal_message_view, name='send_proposal_message'),
+    path('lifestyle/quiz/', views.lifestyle_quiz_view, name='lifestyle_quiz'),
 
     # Phase 17 & 18: Admin & Dean & Concurrency
     path('admin/policies/', views.admin_policies_view, name='admin_policies'),
@@ -27,3 +32,4 @@ urlpatterns = [
     path('rooms/<int:pk>/', views.room_detail_view, name='room_detail'),
     path('rooms/', views.room_detail_view, name='room_detail_default'),
 ]
+

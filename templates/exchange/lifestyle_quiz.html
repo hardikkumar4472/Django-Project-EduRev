@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Roommate Lifestyle & Compatibility Quiz — Campus Exchange{% endblock %}
+
+{% block content %}
+<div class="page-header" style="margin-bottom: 2rem;">
+  <div class="page-title-group">
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+      <span class="badge badge-teal" style="font-size: 0.75rem;">🤝 Roommate Compatibility Engine</span>
+    </div>
+    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--navy-800); margin: 0;">
+      Roommate Lifestyle &amp; Preference Profile
+    </h1>
+    <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">
+      Set your living habits to find high-compatibility swap rotations and like-minded roommates.
+    </p>
+  </div>
+</div>
+
+<div style="max-width: 760px; margin: 0 auto 3rem auto;">
+  <div class="card" style="padding: 2.5rem; border-radius: 16px;">
+    
+    <form method="post" action="{% url 'lifestyle_quiz' %}">
+      {% csrf_token %}
+
+      <!-- Question 1: Sleep Schedule -->
+      <div style="margin-bottom: 2rem;">
+        <label class="form-label" style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.75rem; display: block;">
+          1. What is your typical sleep &amp; waking schedule?
+        </label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+          {% for val, label in sleep_choices %}
+            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.sleep_schedule == val %}#0D9488{% else %}#E2E8F0{% endif %}; background: {% if profile.sleep_schedule == val %}#F0FDFA{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+              <input type="radio" name="sleep_schedule" value="{{ val }}" {% if profile.sleep_schedule == val %}checked{% endif %}>
+              <span>{{ label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Question 2: Study Habits -->
+      <div style="margin-bottom: 2rem;">
+        <label class="form-label" style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.75rem; display: block;">
+          2. How do you prefer to study in your room?
+        </label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+          {% for val, label in study_choices %}
+            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.study_habit == val %}#0D9488{% else %}#E2E8F0{% endif %}; background: {% if profile.study_habit == val %}#F0FDFA{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+              <input type="radio" name="study_habit" value="{{ val }}" {% if profile.study_habit == val %}checked{% endif %}>
+              <span>{{ label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Question 3: AC / Climate -->
+      <div style="margin-bottom: 2rem;">
+        <label class="form-label" style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.75rem; display: block;">
+          3. Room temperature &amp; AC preference:
+        </label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+          {% for val, label in ac_choices %}
+            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.ac_preference == val %}#0D9488{% else %}#E2E8F0{% endif %}; background: {% if profile.ac_preference == val %}#F0FDFA{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+              <input type="radio" name="ac_preference" value="{{ val }}" {% if profile.ac_preference == val %}checked{% endif %}>
+              <span>{{ label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Question 4: Cleanliness -->
+      <div style="margin-bottom: 2rem;">
+        <label class="form-label" style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.75rem; display: block;">
+          4. Room cleanliness &amp; organisation style:
+        </label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
+          {% for val, label in clean_choices %}
+            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.cleanliness == val %}#0D9488{% else %}#E2E8F0{% endif %}; background: {% if profile.cleanliness == val %}#F0FDFA{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+              <input type="radio" name="cleanliness" value="{{ val }}" {% if profile.cleanliness == val %}checked{% endif %}>
+              <span>{{ label }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Hobbies & Interests -->
+      <div style="margin-bottom: 2.5rem;">
+        <label class="form-label" style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.5rem; display: block;">
+          Hobbies &amp; Campus Interests (comma separated):
+        </label>
+        <input type="text" name="hobbies" value="{{ profile.hobbies }}" class="form-input" placeholder="e.g. Competitive Programming, Football, Guitar, Chess" style="font-size: 0.9rem; padding: 0.75rem;">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+        <a href="{% url 'dashboard' %}" class="btn btn-outline">Cancel</a>
+        <button type="submit" class="btn btn-teal" style="padding: 0.75rem 2rem; font-weight: 700;">
+          Save Compatibility Profile →
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

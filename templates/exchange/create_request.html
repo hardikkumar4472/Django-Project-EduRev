@@ -41,7 +41,15 @@
     <!-- Current Room (Auto-filled) -->
     {% if request.user.allocated_bed %}
       <div class="autofill-room-box">
-        <img src="{% static 'images/room_interior_1.jpg' %}" alt="Room Thumbnail" class="autofill-thumb">
+        {% if request.user.allocated_bed.room.capacity == 1 or request.user.allocated_bed.room.room_type == 'SINGLE' %}
+          <img src="{% static 'images/room_floorplan_1bed.jpg' %}" alt="Room Thumbnail" class="autofill-thumb">
+        {% elif request.user.allocated_bed.room.capacity == 2 or request.user.allocated_bed.room.room_type == 'DOUBLE' %}
+          <img src="{% static 'images/room_floorplan_2bed.jpg' %}" alt="Room Thumbnail" class="autofill-thumb">
+        {% elif request.user.allocated_bed.room.capacity == 3 or request.user.allocated_bed.room.room_type == 'TRIPLE' %}
+          <img src="{% static 'images/room_floorplan_3bed.jpg' %}" alt="Room Thumbnail" class="autofill-thumb">
+        {% else %}
+          <img src="{% static 'images/room_floorplan_4bed.jpg' %}" alt="Room Thumbnail" class="autofill-thumb">
+        {% endif %}
         <div>
           <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
             Current Room Allotment (Auto-filled)
@@ -177,7 +185,72 @@
               </div>
             {% endif %}
           </div>
+        <!-- Interactive 2D Campus Floorplan & Bed Grid Picker -->
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <label class="form-label" style="margin-bottom: 0;">
+              🗺️ Specific Target Room (Optional — 2D Bed Grid Selector)
+            </label>
+            <span style="font-size: 0.72rem; color: #0D9488; font-weight: 700;">Live Layout View</span>
+          </div>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Click a room below to target specific room &amp; floor layouts, or leave unselected for any matching room.
+          </p>
+
+          <input type="hidden" name="specific_target_room" id="id_specific_target_room" value="">
+
+          <div style="max-height: 260px; overflow-y: auto; border: 1px solid #E2E8F0; border-radius: 8px; padding: 0.75rem; background: #F8FAFC;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.65rem;">
+              {% for r in rooms %}
+                <div class="room-selector-card" data-room-id="{{ r.id }}" onclick="selectRoomCard(this, '{{ r.id }}')" style="background: #FFFFFF; border: 1.5px solid #CBD5E1; border-radius: 6px; padding: 0.6rem; cursor: pointer; transition: all 0.15s ease; text-align: center;">
+                  <div style="font-size: 0.7rem; font-weight: 700; color: #64748B;">{{ r.block.hostel.code }} · Fl {{ r.floor }}</div>
+                  <div style="font-size: 0.95rem; font-weight: 800; color: #0F2942; margin: 0.2rem 0;">Room {{ r.room_number }}</div>
+                  
+                  <!-- Visual Bed Micro-grid -->
+                  <div style="display: flex; justify-content: center; gap: 4px; margin: 0.35rem 0;">
+                    {% for b in r.beds.all %}
+                      <span title="Bed {{ b.bed_number }}: {% if b.current_occupant %}Occupied ({{ b.current_occupant.username }}){% else %}Vacant{% endif %}" style="width: 12px; height: 18px; border-radius: 2px; display: inline-block; {% if b.current_occupant %}background: #94A3B8;{% else %}background: #10B981;{% endif %}"></span>
+                    {% endfor %}
+                  </div>
+                  <div style="font-size: 0.68rem; color: #475569;">{{ r.get_room_type_display }}</div>
+                </div>
+              {% empty %}
+                <div style="grid-column: 1 / -1; text-align: center; padding: 1.5rem; color: #94A3B8; font-size: 0.8rem;">
+                  No compatible rooms listed for this filter.
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div id="selectedRoomNotice" style="display: none; margin-top: 0.5rem; font-size: 0.8rem; color: #0D9488; font-weight: 700;">
+            ✓ Target Room Selected: <span id="selectedRoomText"></span> 
+            <button type="button" onclick="clearSelectedRoom()" style="background: none; border: none; color: #EF4444; font-size: 0.75rem; text-decoration: underline; cursor: pointer; margin-left: 0.5rem;">Clear Target</button>
+          </div>
         </div>
+
+        <script>
+          function selectRoomCard(el, roomId) {
+            document.querySelectorAll('.room-selector-card').forEach(c => {
+              c.style.borderColor = '#CBD5E1';
+              c.style.backgroundColor = '#FFFFFF';
+            });
+            el.style.borderColor = '#0D9488';
+            el.style.backgroundColor = '#F0FDFA';
+            document.getElementById('id_specific_target_room').value = roomId;
+            const roomName = el.querySelector('div:nth-child(2)').innerText;
+            const hostelName = el.querySelector('div:nth-child(1)').innerText;
+            document.getElementById('selectedRoomText').innerText = hostelName + ' — ' + roomName;
+            document.getElementById('selectedRoomNotice').style.display = 'block';
+          }
+
+          function clearSelectedRoom() {
+            document.querySelectorAll('.room-selector-card').forEach(c => {
+              c.style.borderColor = '#CBD5E1';
+              c.style.backgroundColor = '#FFFFFF';
+            });
+            document.getElementById('id_specific_target_room').value = '';
+            document.getElementById('selectedRoomNotice').style.display = 'none';
+          }
+        </script>
 
         <!-- Gender Compatibility -->
         <div class="form-group" style="margin-bottom: 1.75rem;">

@@ -64,6 +64,35 @@
   </div>
 </div>
 
+<!-- Interactive Visual Analytics Charts (Screen 9 Enhanced) -->
+<div class="grid-2" style="margin-bottom: 2rem;">
+  <!-- Hostel Inflow vs Outflow Demand Chart -->
+  <div class="card" style="padding: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div style="font-size: 1rem; font-weight: 800; color: var(--navy-800);">
+        📊 Hostel Inflow vs. Outflow Demand
+      </div>
+      <span class="badge badge-blue">Hostel Traffic</span>
+    </div>
+    <div style="position: relative; height: 260px; width: 100%;">
+      <canvas id="hostelMigrationChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Room Type Preference Distribution Chart -->
+  <div class="card" style="padding: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <div style="font-size: 1rem; font-weight: 800; color: var(--navy-800);">
+        🍩 Room Type Demand Breakdown
+      </div>
+      <span class="badge badge-teal">Capacity Trends</span>
+    </div>
+    <div style="position: relative; height: 260px; width: 100%;">
+      <canvas id="roomTypeDemandChart"></canvas>
+    </div>
+  </div>
+</div>
+
 <!-- Breakdown Cards -->
 <div class="grid-2" style="margin-bottom: 2rem;">
   <!-- Swap Mechanism Breakdown -->
@@ -151,4 +180,99 @@
     </table>
   </div>
 </div>
+
+<!-- Chart.js Integration for Interactive DSW Analytics -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const hostelLabels = JSON.parse('{{ hostel_labels_json|escapejs }}' || '[]');
+    const hostelInDemand = JSON.parse('{{ hostel_in_demand_json|escapejs }}' || '[]');
+    const hostelOutDemand = JSON.parse('{{ hostel_out_demand_json|escapejs }}' || '[]');
+
+    // 1. Inflow vs Outflow Bar Chart
+    const ctxMigration = document.getElementById('hostelMigrationChart');
+    if (ctxMigration && hostelLabels.length > 0) {
+      new Chart(ctxMigration, {
+        type: 'bar',
+        data: {
+          labels: hostelLabels,
+          datasets: [
+            {
+              label: 'Inbound Demand (Wanting this Hostel)',
+              data: hostelInDemand,
+              backgroundColor: 'rgba(13, 148, 136, 0.85)',
+              borderColor: '#0D9488',
+              borderWidth: 1.5,
+              borderRadius: 4
+            },
+            {
+              label: 'Outbound Demand (Wanting to Leave)',
+              data: hostelOutDemand,
+              backgroundColor: 'rgba(239, 68, 68, 0.75)',
+              borderColor: '#DC2626',
+              borderWidth: 1.5,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', labels: { font: { family: 'Inter', size: 11, weight: '600' } } },
+            tooltip: { cornerRadius: 6 }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0, font: { family: 'Inter', size: 10 } },
+              grid: { color: '#F1F5F9' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { family: 'Inter', size: 11, weight: '600' } }
+            }
+          }
+        }
+      });
+    }
+
+    // 2. Room Type Demand Doughnut Chart
+    const ctxRoom = document.getElementById('roomTypeDemandChart');
+    const roomLabels = JSON.parse('{{ room_type_labels_json|escapejs }}' || '[]');
+    const roomCounts = JSON.parse('{{ room_type_counts_json|escapejs }}' || '[]');
+
+    if (ctxRoom && roomLabels.length > 0) {
+      new Chart(ctxRoom, {
+        type: 'doughnut',
+        data: {
+          labels: roomLabels,
+          datasets: [{
+            data: roomCounts,
+            backgroundColor: [
+              '#3B82F6', // Single - Blue
+              '#0D9488', // Double - Teal
+              '#8B5CF6', // Triple - Purple
+              '#F59E0B', // Four - Amber
+              '#64748B'  // Dorm - Slate
+            ],
+            borderWidth: 2,
+            borderColor: '#FFFFFF'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { font: { family: 'Inter', size: 11, weight: '600' } }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}

@@ -185,13 +185,13 @@ def create_request_view(request):
     else:
         room_types = Room.RoomType.choices
 
-    rooms = Room.objects.filter(is_active=True).select_related('block__hostel')
+    rooms = Room.objects.filter(is_active=True).select_related('block__hostel').prefetch_related('beds__current_occupant')
     if current_room_type:
         rooms = rooms.filter(room_type=current_room_type)
     if hasattr(user, 'gender') and user.gender:
         gender_target = 'FEMALE' if user.gender == 'F' else 'MALE'
         rooms = rooms.filter(block__hostel__gender_type=gender_target)
-    rooms = rooms[:100]
+    rooms = rooms[:40]
 
     return render(request, 'exchange/create_request.html', {
         'eligibility': eligibility,
@@ -229,16 +229,30 @@ def withdraw_request_view(request, pk):
 
 def cycle_explorer_view(request):
     """
-    Graph Cycle Explorer: Matches discovery & animated directional swap graph.
+    Graph Cycle Explorer: Matches discovery & active proposals.
     """
     user = request.user
     target_id = user.id if user.is_student else None
     discovered_cycles = MatchingService.find_cycles(target_student_id=target_id)
 
+    # Active proposals involving this student
+    active_proposals = []
+    if user.is_authenticated and user.is_student:
+        active_proposals = list(ExchangeProposal.objects.filter(
+            participants__student=user,
+            status__in=[
+                ExchangeProposal.ProposalStatus.PENDING_ACCEPTANCE,
+                ExchangeProposal.ProposalStatus.PARTIALLY_ACCEPTED,
+                ExchangeProposal.ProposalStatus.READY_FOR_APPROVAL
+            ]
+        ).prefetch_related('participants__student', 'participants__current_bed__room__block__hostel', 'participants__target_bed__room__block__hostel').distinct())
+
     return render(request, 'exchange/cycle_explorer.html', {
         'cycles': discovered_cycles,
-        'total_matches': len(discovered_cycles)
+        'total_matches': len(discovered_cycles),
+        'active_proposals': active_proposals
     })
+
 
 @require_POST
 def initiate_proposal_view(request):
@@ -305,12 +319,16 @@ def warden_dashboard_view(request):
     managed_hostels = user.managed_hostels.all()
 
     if is_chief_or_admin:
-        pending_proposals = ExchangeProposal.objects.filter(
+        # Chief warden sees proposals ready for final execution:
+        # If single hostel: can approve directly.
+        # If cross-hostel: only after all involved hostel wardens have given their consent!
+        all_ready = ExchangeProposal.objects.filter(
             status=ExchangeProposal.ProposalStatus.READY_FOR_APPROVAL
         )
+        pending_proposals = all_ready
         recent_approvals = Approval.objects.select_related('proposal', 'approver').order_by('-created_at')[:15]
     else:
-        # Filter proposals that involve students from or moving into this warden's hostel
+        # Hostel warden sees proposals where their hostel is involved
         pending_proposals = ExchangeProposal.objects.filter(
             status=ExchangeProposal.ProposalStatus.READY_FOR_APPROVAL
         ).filter(
@@ -327,7 +345,8 @@ def warden_dashboard_view(request):
     pending_proposals = pending_proposals.prefetch_related(
         'participants__student',
         'participants__current_bed__room__block__hostel',
-        'participants__target_bed__room__block__hostel'
+        'participants__target_bed__room__block__hostel',
+        'approvals__approver'
     )
 
     return render(request, 'exchange/warden_dashboard.html', {
@@ -339,28 +358,33 @@ def warden_dashboard_view(request):
 
 def warden_review_view(request, pk):
     """
-    Warden Review single proposal before atomic commitment.
-    Enforces that regular wardens can ONLY review/approve transfers for their assigned hostel,
-    while Chief Warden and Admin can manage all hostels.
+    Warden Review:
+    - If cross-hostel: Each involved hostel's warden reviews and grants 'WARDEN_CONSENT'.
+    - Once all involved hostel wardens have approved, Chief Warden / Admin executes final atomic transfer.
+    - If single hostel: The hostel's warden or Chief Warden can execute transfer directly.
     """
     proposal = get_object_or_404(ExchangeProposal, id=pk)
     user = request.user
     is_chief_or_admin = (user.is_chief_warden or user.is_admin_role)
     managed_hostels = user.managed_hostels.all()
 
-    if not is_chief_or_admin:
-        proposal_hostel_ids = set(
-            proposal.participants.values_list('current_bed__room__block__hostel_id', flat=True)
-        ).union(
-            set(proposal.participants.values_list('target_bed__room__block__hostel_id', flat=True))
+    # Determine all involved hostels
+    involved_hostels = proposal.involved_hostels
+    warden_status_list = proposal.get_warden_approval_status()
+    all_wardens_approved = proposal.all_hostel_wardens_approved
+    is_cross_hostel = proposal.is_cross_hostel
+
+    # Permission check for regular hostel warden
+    user_managed_involved = [h for h in involved_hostels if h in managed_hostels]
+    user_has_approved = proposal.approvals.filter(approver=user, decision=Approval.Decision.APPROVED).exists()
+
+    if not is_chief_or_admin and not user_managed_involved:
+        assigned_names = ", ".join([h.name for h in managed_hostels]) or "No assigned hostel"
+        messages.error(
+            request,
+            f"Access Denied: You are only authorized to review proposals involving your assigned hostel ({assigned_names})."
         )
-        if not managed_hostels.filter(id__in=proposal_hostel_ids).exists():
-            assigned_names = ", ".join([h.name for h in managed_hostels]) or "No assigned hostel"
-            messages.error(
-                request,
-                f"Access Denied: You are only authorized to review and approve transfers for your assigned hostel ({assigned_names})."
-            )
-            return redirect('/warden/approvals/')
+        return redirect('/warden/approvals/')
 
     participants = proposal.participants.select_related(
         'student',
@@ -370,24 +394,62 @@ def warden_review_view(request, pk):
 
     if request.method == 'POST':
         action = request.POST.get('action')
-        remarks = request.POST.get('remarks', 'Warden review finalized.')
+        remarks = request.POST.get('remarks', 'Warden review finalized.').strip()
 
-        if action == 'APPROVE':
-            try:
-                res = AtomicOccupancyEngine.execute_proposal_atomic(proposal.id, request.user, remarks=remarks)
+        if action == 'WARDEN_APPROVE':
+            # Hostel warden records approval for their hostel
+            Approval.objects.create(
+                proposal=proposal,
+                approver=user,
+                decision=Approval.Decision.APPROVED,
+                remarks=remarks or f"Consent granted by {user.get_full_name()}."
+            )
+            AuditService.log(
+                action="PROPOSAL_APPROVED_BY_HOSTEL_WARDEN",
+                entity_type="ExchangeProposal",
+                entity_id=proposal.id,
+                actor=user,
+                metadata={"remarks": remarks, "warden": user.username}
+            )
+
+            # Re-check if all wardens approved
+            if proposal.all_hostel_wardens_approved:
                 messages.success(
                     request,
-                    f"SUCCESS: Atomic transaction executed cleanly! {res['transfers_count']} room allocations updated with 0 partial transfers."
+                    f"Consent recorded! All involved hostel wardens have now signed off. Proposal is escalated to Chief Warden for final execution."
+                )
+            else:
+                messages.success(
+                    request,
+                    f"Consent recorded! Waiting for remaining hostel warden(s) to sign off before escalation to Chief Warden."
+                )
+            return redirect('/warden/approvals/')
+
+        elif action == 'EXECUTE_ATOMIC':
+            # Execution check: if cross-hostel, must be chief_warden or admin, and all hostel wardens must have approved (unless admin override)
+            if is_cross_hostel and not all_wardens_approved and not user.is_admin_role:
+                messages.error(
+                    request,
+                    "Cannot execute transfer yet: All involved hostel wardens must approve this cross-hostel swap first."
+                )
+                return redirect(f'/warden/approvals/{proposal.id}/')
+
+            try:
+                res = AtomicOccupancyEngine.execute_proposal_atomic(proposal.id, user, remarks=remarks or "Approved and executed.")
+                messages.success(
+                    request,
+                    f"SUCCESS: Atomic room swap transaction executed cleanly! {res['transfers_count']} room allocations updated with 0 partial transfers."
                 )
                 return redirect('/warden/approvals/')
             except OccupancyTransferError as exc:
                 messages.error(request, f"Atomic Transfer Aborted & Rolled Back: {str(exc)}")
+
         elif action == 'REJECT':
             proposal.status = ExchangeProposal.ProposalStatus.DECLINED
             proposal.save()
             Approval.objects.create(
                 proposal=proposal,
-                approver=request.user,
+                approver=user,
                 decision=Approval.Decision.REJECTED,
                 remarks=remarks
             )
@@ -395,7 +457,7 @@ def warden_review_view(request, pk):
                 action="PROPOSAL_REJECTED_BY_WARDEN",
                 entity_type="ExchangeProposal",
                 entity_id=proposal.id,
-                actor=request.user,
+                actor=user,
                 metadata={"remarks": remarks}
             )
             messages.info(request, f"Proposal {proposal.proposal_code} has been rejected.")
@@ -403,8 +465,14 @@ def warden_review_view(request, pk):
 
     return render(request, 'exchange/warden_review.html', {
         'proposal': proposal,
-        'participants': participants
+        'participants': participants,
+        'is_cross_hostel': is_cross_hostel,
+        'warden_status_list': warden_status_list,
+        'all_wardens_approved': all_wardens_approved,
+        'user_has_approved': user_has_approved,
+        'is_chief_or_admin': is_chief_or_admin,
     })
+
 
 def transfer_letter_view(request, pk):
     """
@@ -511,6 +579,27 @@ def analytics_dashboard_view(request):
     direct_swaps = ExchangeProposal.objects.filter(proposal_type=ExchangeProposal.ProposalType.DIRECT).count()
     multi_cycles = proposals_count - direct_swaps
 
+    # Hostel migration and room type metrics for charts
+    import json
+    hostels_all = list(Hostel.objects.filter(is_active=True).values('id', 'name', 'code'))
+    hostel_labels = [h['code'] or h['name'] for h in hostels_all]
+    
+    # Inbound and outbound demand counts per hostel
+    hostel_in_demand = []
+    hostel_out_demand = []
+    for h in hostels_all:
+        in_count = ExchangeRequest.objects.filter(preferred_hostel_id=h['id']).count()
+        out_count = ExchangeRequest.objects.filter(current_bed__room__block__hostel_id=h['id']).count()
+        hostel_in_demand.append(in_count)
+        hostel_out_demand.append(out_count)
+
+    # Room type demand counts
+    room_types_labels = ["1-Seater", "2-Seater", "3-Seater", "4-Seater", "Dormitory"]
+    room_type_keys = ["SINGLE", "DOUBLE", "TRIPLE", "FOUR", "DORMITORY"]
+    room_type_counts = [
+        ExchangeRequest.objects.filter(preferred_room_type=k).count() for k in room_type_keys
+    ]
+
     # Audit logs
     audit_entries = AuditEntry.objects.select_related('actor').order_by('-timestamp')[:50]
 
@@ -521,7 +610,12 @@ def analytics_dashboard_view(request):
         'proposals_count': proposals_count,
         'direct_swaps': direct_swaps,
         'multi_cycles': multi_cycles,
-        'audit_entries': audit_entries
+        'audit_entries': audit_entries,
+        'hostel_labels_json': json.dumps(hostel_labels),
+        'hostel_in_demand_json': json.dumps(hostel_in_demand),
+        'hostel_out_demand_json': json.dumps(hostel_out_demand),
+        'room_type_labels_json': json.dumps(room_types_labels),
+        'room_type_counts_json': json.dumps(room_type_counts),
     })
 
 def concurrency_demo_view(request):
@@ -546,4 +640,129 @@ def room_detail_view(request, pk=None):
     return render(request, 'exchange/room_detail.html', {
         'room': room,
         'beds': beds
+    })
+
+
+def caretaker_verify_view(request):
+    """
+    In-App Caretaker Verification & QR Scanner Screen.
+    Allows hostel caretakers, wardens, and admins to scan or input verification tokens
+    and officially confirm room key handovers.
+    """
+    user = request.user
+    if not user.is_authenticated:
+        return redirect('login')
+    
+    # Restrict to Staff Roles: Wardens, Chief Warden, Administrators
+    if user.is_student and not (user.is_warden or user.is_admin_role or user.is_staff):
+        messages.error(request, "Access restricted: The Key Handover & Verification Desk is for authorized Hostel Caretakers and Wardens only.")
+        return redirect('dashboard')
+
+    token_input = request.GET.get('token', '').strip()
+    scanned_transfer = None
+    verification_error = None
+
+    if token_input:
+        # Match by token or transfer_code
+        scanned_transfer = TransferRecord.objects.filter(
+            Q(verification_token__iexact=token_input) |
+            Q(transfer_code__iexact=token_input)
+        ).select_related(
+            'student',
+            'previous_bed__room__block__hostel',
+            'new_bed__room__block__hostel',
+            'approved_by',
+            'proposal'
+        ).first()
+
+        if not scanned_transfer:
+            verification_error = "Invalid or expired transfer pass token. Please check the order reference."
+
+    # If caretaker confirms handover via POST
+    if request.method == 'POST':
+        transfer_id = request.POST.get('transfer_id')
+        caretaker_notes = request.POST.get('notes', 'Keys exchanged and verified by caretaker.')
+        tr = get_object_or_404(TransferRecord, id=transfer_id)
+        
+        AuditService.log(
+            action="CARETAKER_KEY_HANDOVER_COMPLETED",
+            entity_type="TransferRecord",
+            entity_id=tr.id,
+            actor=request.user,
+            metadata={"notes": caretaker_notes, "token": str(tr.verification_token)}
+        )
+        messages.success(request, f"✓ Key Handover Confirmed! Resident {tr.student.get_full_name()} possession of Room {tr.new_bed.room.room_number} ({tr.new_bed.bed_number}) officially validated.")
+        return redirect(f"/caretaker/verify/?token={tr.transfer_code}")
+
+    recent_verified = TransferRecord.objects.select_related(
+        'student',
+        'previous_bed__room__block__hostel',
+        'new_bed__room__block__hostel'
+    ).order_by('-completed_at')[:10]
+
+    return render(request, 'exchange/caretaker_scanner.html', {
+        'token_input': token_input,
+        'scanned_transfer': scanned_transfer,
+        'verification_error': verification_error,
+        'recent_verified': recent_verified
+    })
+
+
+@require_POST
+def send_proposal_message_view(request, pk):
+    """
+    Submits a discussion chat message within an active proposal.
+    """
+    proposal = get_object_or_404(ExchangeProposal, id=pk)
+    user = request.user
+    msg_text = request.POST.get('message', '').strip()
+
+    if not msg_text:
+        return redirect(f'/proposals/{proposal.id}/')
+
+    # Ensure user is a participant or warden
+    is_participant = proposal.participants.filter(student=user).exists()
+    is_staff = user.is_warden or user.is_chief_warden or user.is_admin_role
+
+    if not is_participant and not is_staff:
+        messages.error(request, "Only participants and wardens can participate in this discussion.")
+        return redirect(f'/proposals/{proposal.id}/')
+
+    from .models import ProposalMessage
+    ProposalMessage.objects.create(
+        proposal=proposal,
+        sender=user,
+        message=msg_text
+    )
+    return redirect(f'/proposals/{proposal.id}/#chat')
+
+
+def lifestyle_quiz_view(request):
+    """
+    Student Roommate Lifestyle Quiz & Compatibility Engine.
+    """
+    user = request.user
+    if not user.is_authenticated:
+        return redirect('/login/')
+
+    from .models import StudentLifestyle
+    profile, _ = StudentLifestyle.objects.get_or_create(student=user)
+
+    if request.method == 'POST':
+        profile.sleep_schedule = request.POST.get('sleep_schedule', profile.sleep_schedule)
+        profile.study_habit = request.POST.get('study_habit', profile.study_habit)
+        profile.ac_preference = request.POST.get('ac_preference', profile.ac_preference)
+        profile.cleanliness = request.POST.get('cleanliness', profile.cleanliness)
+        profile.hobbies = request.POST.get('hobbies', profile.hobbies).strip()
+        profile.save()
+
+        messages.success(request, "Roommate Lifestyle & Compatibility Profile updated successfully!")
+        return redirect('/dashboard/')
+
+    return render(request, 'exchange/lifestyle_quiz.html', {
+        'profile': profile,
+        'sleep_choices': StudentLifestyle.SleepSchedule.choices,
+        'study_choices': StudentLifestyle.StudyHabit.choices,
+        'ac_choices': StudentLifestyle.ACPreference.choices,
+        'clean_choices': StudentLifestyle.Cleanliness.choices,
     })

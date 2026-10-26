@@ -136,13 +136,48 @@
       </div>
     </div>
 
+    <!-- Proposal Negotiation & Discussion Chat -->
+    <div id="chat" class="card" style="padding: 1.25rem; margin-top: 1.25rem;">
+      <div style="font-size: 0.95rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between;">
+        <span>💬 Participant Discussion</span>
+        <span style="font-size: 0.72rem; color: #64748B;">{{ proposal.messages.count }} messages</span>
+      </div>
+
+      <!-- Messages Stream -->
+      <div style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 0.85rem; padding-right: 0.25rem;">
+        {% for msg in proposal.messages.all %}
+          <div style="padding: 0.6rem 0.85rem; border-radius: 8px; font-size: 0.825rem; {% if msg.sender == request.user %}background: #EFF6FF; border: 1px solid #BFDBFE; align-self: flex-end; max-width: 85%;{% else %}background: #F8FAFC; border: 1px solid #E2E8F0; align-self: flex-start; max-width: 85%;{% endif %}">
+            <div style="display: flex; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.2rem; font-size: 0.7rem;">
+              <strong style="color: var(--navy-800);">{{ msg.sender.get_full_name|default:msg.sender.username }}</strong>
+              <span style="color: #94A3B8;">{{ msg.created_at|date:"H:i" }}</span>
+            </div>
+            <div style="color: #334155; line-height: 1.4;">{{ msg.message }}</div>
+          </div>
+        {% empty %}
+          <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 1rem 0;">
+            No messages yet. Discuss room logistics, key handover, or timing with participants.
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Send Input -->
+      <form method="post" action="{% url 'send_proposal_message' pk=proposal.id %}" style="display: flex; gap: 0.5rem; margin: 0;">
+        {% csrf_token %}
+        <input type="text" name="message" class="form-input" placeholder="Type a message to participants..." style="font-size: 0.825rem; padding: 0.45rem 0.75rem;" required>
+        <button type="submit" class="btn btn-teal btn-sm" style="font-weight: 700; white-space: nowrap;">
+          Send
+        </button>
+      </form>
+    </div>
+
   </div>
 
 </div>
 
+
 <!-- Footer Actions: Accept / Decline or Status Notification -->
 <div style="display: flex; align-items: center; justify-content: flex-end; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--border-card);">
-  {% if current_student_participant and not has_voted and not is_expired and proposal.status == 'PENDING_ACCEPTANCE' %}
+  {% if current_student_participant and not has_voted and not is_expired and proposal.status in 'PENDING_ACCEPTANCE,PARTIALLY_ACCEPTED' %}
     <form method="post" action="{% url 'respond_proposal' pk=proposal.id %}" style="display: inline;">
       {% csrf_token %}
       <input type="hidden" name="decision" value="DECLINE">
@@ -154,19 +189,36 @@
     <form method="post" action="{% url 'respond_proposal' pk=proposal.id %}" style="display: inline;">
       {% csrf_token %}
       <input type="hidden" name="decision" value="ACCEPT">
-      <button type="submit" class="btn btn-emerald" style="padding-left: 2rem; padding-right: 2rem;">
+      <button type="submit" class="btn btn-emerald" style="padding-left: 2rem; padding-right: 2rem; background: #059669; color: white; font-weight: 700;">
         Accept Proposal ✓
       </button>
     </form>
   {% elif current_student_participant and has_voted %}
     <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary);">
-      You recorded your response: <strong>{{ current_student_participant.get_response_display }}</strong>
+      You recorded your response: <strong style="color: #059669;">{{ current_student_participant.get_response_display }}</strong>
     </div>
   {% endif %}
+
 
   <a href="{% url 'matches' %}" class="btn btn-outline">
     Back to Matches
   </a>
 </div>
+
+{% if proposal.status in 'READY_FOR_APPROVAL,COMPLETED' %}
+  <!-- Celebratory Confetti for Approved / Completed Proposals -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 70,
+          spread: 60,
+          origin: { y: 0.65 }
+        });
+      }
+    });
+  </script>
+{% endif %}
 {% endblock %}
 

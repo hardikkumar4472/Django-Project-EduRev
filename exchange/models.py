@@ -108,11 +108,47 @@ class ExchangeProposal(models.Model):
         hostel_ids = set(self.participants.values_list('current_bed__room__block__hostel_id', flat=True))
         return len(hostel_ids) > 1
 
+    @property
+    def involved_hostels(self):
+        from hostel.models import Hostel
+        h_ids = set(self.participants.values_list('current_bed__room__block__hostel_id', flat=True)).union(
+            set(self.participants.values_list('target_bed__room__block__hostel_id', flat=True))
+        )
+        return Hostel.objects.filter(id__in=h_ids).select_related('warden')
+
+    @property
+    def approved_wardens(self):
+        return [a.approver for a in self.approvals.filter(decision='APPROVED')]
+
+    def get_warden_approval_status(self):
+        """
+        Returns list of dicts for each involved hostel, indicating its warden and approval status.
+        """
+        approved_approver_ids = set(self.approvals.filter(decision='APPROVED').values_list('approver_id', flat=True))
+        status_list = []
+        for h in self.involved_hostels:
+            warden = h.warden
+            is_approved = warden and warden.id in approved_approver_ids
+            status_list.append({
+                'hostel': h,
+                'warden': warden,
+                'is_approved': is_approved,
+            })
+        return status_list
+
+    @property
+    def all_hostel_wardens_approved(self):
+        for item in self.get_warden_approval_status():
+            if not item['is_approved']:
+                return False
+        return True
+
 
 class ProposalParticipant(models.Model):
     class ParticipantResponse(models.TextChoices):
         PENDING = 'PENDING', 'Pending Decision'
         ACCEPTED = 'ACCEPTED', 'Accepted'
+
         DECLINED = 'DECLINED', 'Declined'
 
     proposal = models.ForeignKey(ExchangeProposal, on_delete=models.CASCADE, related_name='participants')
@@ -205,3 +241,50 @@ class AuditEntry(models.Model):
     def __str__(self):
         actor_name = self.actor.username if self.actor else "SYSTEM"
         return f"{self.timestamp.strftime('%Y-%m-%d %H:%M:%S')} · {actor_name} -> {self.action} [{self.entity_type} #{self.entity_id}]"
+
+
+class ProposalMessage(models.Model):
+    proposal = models.ForeignKey(ExchangeProposal, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_proposal_messages')
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.sender.username} on {self.proposal.proposal_code}: {self.message[:30]}"
+
+
+class StudentLifestyle(models.Model):
+    class SleepSchedule(models.TextChoices):
+        NIGHT_OWL = 'NIGHT_OWL', '🌙 Night Owl (Late sleeper)'
+        EARLY_BIRD = 'EARLY_BIRD', '🌅 Early Bird (Early riser)'
+        FLEXIBLE = 'FLEXIBLE', '⚖️ Flexible / Balanced'
+
+    class StudyHabit(models.TextChoices):
+        PIN_DROP = 'PIN_DROP', '🤫 Pin-Drop Silent Study'
+        AMBIENT = 'AMBIENT', '🎧 Low Music / Ambient'
+        GROUP = 'GROUP', '👥 Collaborative / Group Study'
+
+    class ACPreference(models.TextChoices):
+        COLD = 'COLD', '❄️ Chilled (18°C - 21°C)'
+        MODERATE = 'MODERATE', '🍃 Moderate (22°C - 25°C)'
+        FAN_ONLY = 'FAN_ONLY', '🌀 Fan / Natural Air Only'
+
+    class Cleanliness(models.TextChoices):
+        VERY_STRICT = 'VERY_STRICT', '✨ Spotless & Organised'
+        AVERAGE = 'AVERAGE', '🧹 Tidy & Reasonable'
+        RELAXED = 'RELAXED', '📦 Relaxed / Casual'
+
+    student = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lifestyle_profile')
+    sleep_schedule = models.CharField(max_length=20, choices=SleepSchedule.choices, default=SleepSchedule.FLEXIBLE)
+    study_habit = models.CharField(max_length=20, choices=StudyHabit.choices, default=StudyHabit.AMBIENT)
+    ac_preference = models.CharField(max_length=20, choices=ACPreference.choices, default=ACPreference.MODERATE)
+    cleanliness = models.CharField(max_length=20, choices=Cleanliness.choices, default=Cleanliness.AVERAGE)
+    hobbies = models.CharField(max_length=150, blank=True, default="Coding, Gaming, Gym")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Lifestyle Profile: {self.student.username}"
+

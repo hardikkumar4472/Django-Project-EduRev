@@ -56,8 +56,16 @@ class EligibilityService:
             is_eligible = False
 
         # Check 2: Cooling-off Period
+        cooling_enabled = cls.get_policy_bool(PolicyRule.RuleType.COOLING_OFF_DAYS, True)
         cooling_days = cls.get_policy_int(PolicyRule.RuleType.COOLING_OFF_DAYS, 30)
-        if student.last_transferred_at:
+
+        if not cooling_enabled or cooling_days <= 0:
+            checks.append({
+                'rule': 'COOLING_OFF',
+                'passed': True,
+                'reason': "Cooling-off period policy is currently disabled by administration."
+            })
+        elif student.last_transferred_at:
             delta = timezone.now() - student.last_transferred_at
             remaining_days = cooling_days - delta.days
             if remaining_days > 0:
@@ -80,6 +88,7 @@ class EligibilityService:
                 'passed': True,
                 'reason': "First-time exchange request (No cooling-off restriction)."
             })
+
 
         # Check 3: Fee Clearance
         fee_required = cls.get_policy_bool(PolicyRule.RuleType.FEE_CLEARANCE_REQUIRED, True)
@@ -135,7 +144,11 @@ class EligibilityService:
                 'reason': 'No conflicting active exchange requests.'
             })
 
+        failed_reasons = [c['reason'] for c in checks if not c['passed']]
+
         return {
             'eligible': is_eligible,
-            'checks': checks
+            'checks': checks,
+            'reasons': failed_reasons
         }
+

@@ -69,10 +69,72 @@
   <button class="segmented-tab-pill active">
     Discovered Matches ({{ total_matches }})
   </button>
+  {% if active_proposals %}
+    <span style="background: #FEF3C7; color: #92400E; font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; margin-left: 0.5rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+      ⚡ {{ active_proposals|length }} Pending Proposal Awaiting Action
+    </span>
+  {% endif %}
 </div>
 
+<!-- Active Proposals Section -->
+{% if active_proposals %}
+  <div style="margin-bottom: 2rem;">
+    <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span>📋</span> Active Proposals Involving You
+    </h3>
+    <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+      {% for p in active_proposals %}
+        <div class="card" style="padding: 1.25rem; border-left: 4px solid #F59E0B; background: #FFFDF9; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.35rem;">
+              <span style="font-weight: 800; font-size: 1.05rem; color: var(--navy-800);">Proposal #{{ p.proposal_code }}</span>
+              <span class="badge {% if p.status == 'READY_FOR_APPROVAL' %}badge-green{% else %}badge-yellow{% endif %}">
+                {{ p.get_status_display }}
+              </span>
+            </div>
+            <div style="font-size: 0.825rem; color: var(--text-secondary);">
+              Rotation between {{ p.participants.count }} students · Expires {{ p.expires_at|date:"d M Y, H:i" }}
+            </div>
+          </div>
+          <div>
+            <a href="{% url 'proposal_detail' pk=p.id %}" class="btn btn-teal" style="font-weight: 700; padding: 0.55rem 1.15rem;">
+              Review Proposal &amp; Cast Vote →
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+
 {% if cycles %}
+  <!-- Interactive Animated Directed Graph Cycle Visualizer -->
+  <div class="card" style="padding: 1.5rem; margin-bottom: 2rem; border-radius: 16px; background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+      <div>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--navy-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🌐</span> Interactive Multi-Party Rotation Graph
+        </h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+          Directed graph visualizer showcasing circular student reallocation dependencies (Drag nodes to inspect).
+        </p>
+      </div>
+      <span class="badge badge-teal" style="font-size: 0.75rem;">
+        ⚡ NetworkX Graph Traversal
+      </span>
+    </div>
+
+    <!-- Vis.js Container -->
+    <div id="cycle-network-canvas" style="height: 320px; width: 100%; border-radius: 12px; border: 1px solid #E2E8F0; background: #0F172A; position: relative;">
+      <div style="position: absolute; bottom: 12px; left: 16px; font-size: 0.75rem; color: #94A3B8; background: rgba(15, 23, 42, 0.75); padding: 4px 8px; border-radius: 6px; pointer-events: none;">
+        ● Drag student nodes to explore rotation cycles
+      </div>
+    </div>
+  </div>
+
   <div class="grid-3" style="margin-bottom: 2.5rem;">
+
     {% for c in cycles %}
       <div class="match-card-item">
         <div class="match-photo-container">
@@ -151,3 +213,85 @@
   </div>
 {% endif %}
 {% endblock %}
+
+{% block extra_js %}
+{% if cycles %}
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('cycle-network-canvas');
+    if (!container) return;
+
+    const nodesArray = [];
+    const edgesArray = [];
+    const addedNodes = new Set();
+
+    {% for c in cycles %}
+      // Cycle {{ forloop.counter }}
+      {% for p in c.participants %}
+        if (!addedNodes.has("{{ p.student_id }}")) {
+          addedNodes.add("{{ p.student_id }}");
+          nodesArray.push({
+            id: "{{ p.student_id }}",
+            label: "{{ p.student_name|default:p.university_id|escapejs }}\nRoom {{ p.current_room }}",
+            shape: 'box',
+            margin: 10,
+            color: {
+              background: '#1E293B',
+              border: '#0D9488',
+              highlight: { background: '#0F766E', border: '#14B8A6' }
+            },
+            font: { color: '#F8FAFC', face: 'Inter', size: 12, bold: true },
+            borderWidth: 2,
+            shadow: true
+          });
+        }
+      {% endfor %}
+
+      // Add edges in rotation
+      {% for p in c.participants %}
+        {% with next_p=c.participants|slice:":1" %}
+          // Link this participant to next
+        {% endwith %}
+      {% endfor %}
+    {% endfor %}
+
+    // Add directed rotation edges
+    {% for c in cycles %}
+      {% for p in c.participants %}
+        edgesArray.push({
+          from: "{{ p.student_id }}",
+          to: "{% for p2 in c.participants %}{% if p2.current_room == p.target_room %}{{ p2.student_id }}{% endif %}{% endfor %}",
+          arrows: 'to',
+          color: { color: '#10B981', highlight: '#34D399' },
+          width: 2.5,
+          smooth: { type: 'curvedCW', roundness: 0.2 },
+          label: 'wants Room {{ p.target_room }}',
+          font: { color: '#94A3B8', size: 10, align: 'middle' }
+        });
+      {% endfor %}
+    {% endfor %}
+
+    const data = {
+      nodes: new vis.DataSet(nodesArray),
+      edges: new vis.DataSet(edgesArray)
+    };
+
+    const options = {
+      physics: {
+        stabilization: true,
+        barnesHut: { springLength: 160, springConstant: 0.04 }
+      },
+      interaction: {
+        hover: true,
+        zoomView: true,
+        dragView: true
+      }
+    };
+
+    new vis.Network(container, data, options);
+  });
+</script>
+{% endif %}
+{% endblock %}
+

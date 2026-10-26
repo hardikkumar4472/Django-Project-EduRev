@@ -60,10 +60,21 @@
             <td>{{ p.participants.count }} students</td>
             <td>{{ p.created_at|date:"d M, H:i" }}</td>
             <td><span style="color: #EA580C; font-weight: 700;">{{ p.expires_at|date:"d M, H:i" }}</span></td>
-            <td><span class="badge badge-green">Ready for Review</span></td>
-            <td style="text-align: right;">
-              <a href="{% url 'warden_review' pk=p.id %}" class="btn btn-primary btn-sm">Review &amp; Execute →</a>
+            <td>
+              {% if p.is_cross_hostel %}
+                {% if p.all_hostel_wardens_approved %}
+                  <span class="badge badge-green" style="font-weight: 700;">Hostel Wardens Approved ✓</span>
+                {% else %}
+                  <span class="badge badge-yellow" style="font-weight: 700;">Awaiting Hostel Wardens ({{ p.approvals.count }}/{{ p.involved_hostels.count }})</span>
+                {% endif %}
+              {% else %}
+                <span class="badge badge-green">Ready for Execution</span>
+              {% endif %}
             </td>
+            <td style="text-align: right;">
+              <a href="{% url 'warden_review' pk=p.id %}" class="btn btn-primary btn-sm">Review &amp; Sign →</a>
+            </td>
+
           </tr>
         {% empty %}
           <tr>

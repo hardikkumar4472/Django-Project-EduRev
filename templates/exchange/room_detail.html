@@ -36,7 +36,15 @@
   <!-- LEFT: Architectural Cutaway Floorplan View with Real Beds -->
   <div class="card" style="padding: 1.5rem; display: flex; align-items: center; justify-content: center;">
     <div class="floorplan-render-box" style="max-width: 480px;">
-      <img src="{% static 'images/room_floorplan_3d.jpg' %}" alt="Room Floorplan" class="floorplan-render-img">
+      {% if room.capacity == 1 or room.room_type == 'SINGLE' %}
+        <img src="{% static 'images/room_floorplan_1bed.jpg' %}" alt="Single Room Floorplan" class="floorplan-render-img">
+      {% elif room.capacity == 2 or room.room_type == 'DOUBLE' %}
+        <img src="{% static 'images/room_floorplan_2bed.jpg' %}" alt="Double Room Floorplan" class="floorplan-render-img">
+      {% elif room.capacity == 3 or room.room_type == 'TRIPLE' %}
+        <img src="{% static 'images/room_floorplan_3bed.jpg' %}" alt="Triple Room Floorplan" class="floorplan-render-img">
+      {% else %}
+        <img src="{% static 'images/room_floorplan_4bed.jpg' %}" alt="Quad Room Floorplan" class="floorplan-render-img">
+      {% endif %}
 
       <!-- Dynamic Bed Overlays -->
       {% for b in beds %}

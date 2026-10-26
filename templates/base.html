@@ -49,6 +49,9 @@
                 <li class="nav-item {% if '/proposals/' in request.path or request.path == '/matches/' %}active{% endif %}">
                   <a href="{% url 'matches' %}">Matches</a>
                 </li>
+                <li class="nav-item {% if request.path == '/lifestyle/quiz/' %}active{% endif %}">
+                  <a href="{% url 'lifestyle_quiz' %}">🤝 Quiz</a>
+                </li>
                 <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
                   <a href="{% url 'transfers_list' %}">Transfers</a>
                 </li>
@@ -58,6 +61,9 @@
                 </li>
                 <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
                   <a href="{% url 'transfers_list' %}">Transfers</a>
+                </li>
+                <li class="nav-item {% if request.path == '/caretaker/verify/' %}active{% endif %}">
+                  <a href="{% url 'caretaker_verify' %}">🔑 Key Desk</a>
                 </li>
               {% elif user.role == 'chief_warden' %}
                 <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
@@ -69,8 +75,12 @@
                 <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
                   <a href="{% url 'transfers_list' %}">Transfers</a>
                 </li>
+                <li class="nav-item {% if request.path == '/caretaker/verify/' %}active{% endif %}">
+                  <a href="{% url 'caretaker_verify' %}">🔑 Key Desk</a>
+                </li>
               {% elif user.role == 'dsw' %}
                 <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+
                   <a href="{% url 'hostels_list' %}">Hostels</a>
                 </li>
                 <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">

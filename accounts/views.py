@@ -36,7 +36,45 @@ def login_view(request):
     else:
         form = UniversityLoginForm()
 
-    return render(request, 'accounts/login.html', {'form': form})
+    # Fetch all database users grouped by role for convenient one-click autofill
+    all_users = User.objects.all().select_related('allocated_bed__room__block__hostel').order_by('role', 'username')
+    autofill_users = []
+    
+    # Standard password map for demo & seeded accounts
+    role_default_passwords = {
+        'admin': 'admin@123',
+        'chief_warden': 'chief_warden@123',
+        'dsw': 'dsw@123',
+        'warden': 'warden@123',
+        'student': 'student@123',
+    }
+
+    for u in all_users:
+        # Determine known password
+        pw = role_default_passwords.get(u.role, 'campus123')
+        if u.username.startswith('warden_bh') or u.username.startswith('warden_gh'):
+            code_part = u.username.replace('warden_', '')
+            pw = f"warden{code_part}@123"
+        elif u.username.startswith('student_bh'):
+            pw = 'student@123'
+        elif u.username.startswith('student_2s'):
+            pw = 'student@123'
+
+        autofill_users.append({
+            'username': u.username,
+            'email': u.email or u.username,
+            'password': pw,
+            'name': u.get_full_name() or u.username,
+            'role': u.role,
+            'role_display': u.get_role_display(),
+            'university_id': u.university_id or '',
+        })
+
+    return render(request, 'accounts/login.html', {
+        'form': form,
+        'autofill_users': autofill_users
+    })
+
 
 def signup_view(request):
     if request.user.is_authenticated:

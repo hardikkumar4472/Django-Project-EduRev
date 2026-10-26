@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Caretaker Key Handover & Verification Portal — Campus Exchange{% endblock %}
+
+{% block content %}
+<div class="page-header" style="margin-bottom: 2rem;">
+  <div class="page-title-group">
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+      <span class="badge badge-teal" style="font-size: 0.75rem;">🛡️ On-Campus Physical Operations</span>
+    </div>
+    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--navy-800); margin: 0;">
+      Caretaker Key Handover &amp; Verification Desk
+    </h1>
+    <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">
+      Scan student QR passes or enter Order Verification Tokens to validate room allocations and log key handovers.
+    </p>
+  </div>
+</div>
+
+<div class="grid-2" style="grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem;">
+
+  <!-- Left: Scan or Input Token -->
+  <div class="card" style="padding: 2rem; border-radius: 16px;">
+    <div style="font-size: 1.1rem; font-weight: 800; color: var(--navy-800); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span>📱</span> Digital Pass Scanner &amp; Lookup
+    </div>
+
+    <!-- Quick Camera Scan Box Simulator -->
+    <div style="background: #0F172A; border-radius: 12px; padding: 2rem 1.5rem; text-align: center; color: #FFFFFF; margin-bottom: 1.75rem; position: relative; overflow: hidden; border: 2px dashed #334155;">
+      <div style="width: 140px; height: 140px; margin: 0 auto 1rem auto; border: 2px solid #0D9488; border-radius: 12px; position: relative; display: flex; align-items: center; justify-content: center;">
+        <!-- Reticle corners -->
+        <div style="position: absolute; top: -2px; left: -2px; width: 14px; height: 14px; border-top: 3px solid #10B981; border-left: 3px solid #10B981;"></div>
+        <div style="position: absolute; top: -2px; right: -2px; width: 14px; height: 14px; border-top: 3px solid #10B981; border-right: 3px solid #10B981;"></div>
+        <div style="position: absolute; bottom: -2px; left: -2px; width: 14px; height: 14px; border-bottom: 3px solid #10B981; border-left: 3px solid #10B981;"></div>
+        <div style="position: absolute; bottom: -2px; right: -2px; width: 14px; height: 14px; border-bottom: 3px solid #10B981; border-right: 3px solid #10B981;"></div>
+        
+        <div style="font-size: 2.5rem; opacity: 0.85;">📷</div>
+        <!-- Laser Scan Animation -->
+        <div style="position: absolute; width: 100%; height: 2px; background: #10B981; top: 50%; box-shadow: 0 0 10px #10B981; animation: scanLaser 2s infinite ease-in-out;"></div>
+      </div>
+      <div style="font-size: 0.85rem; font-weight: 700; color: #E2E8F0;">
+        Hold Student Pass QR Code in Frame
+      </div>
+      <div style="font-size: 0.725rem; color: #94A3B8; margin-top: 0.25rem;">
+        Camera barcode scanner actively listening on device
+      </div>
+    </div>
+
+    <!-- Manual Code Input Form -->
+    <form method="get" action="{% url 'caretaker_verify' %}">
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label class="form-label" style="font-size: 0.825rem; font-weight: 700; color: var(--navy-800);">
+          Or Enter Order Reference / Auth Token:
+        </label>
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="text" name="token" value="{{ token_input }}" class="form-input" placeholder="e.g. TRF-2026-0001 or Token UUID" style="font-family: monospace; font-size: 0.85rem;" required>
+          <button type="submit" class="btn btn-teal" style="font-weight: 700; padding: 0 1.25rem; white-space: nowrap;">
+            Lookup Pass
+          </button>
+        </div>
+      </div>
+    </form>
+
+    {% if verification_error %}
+      <div style="margin-top: 1rem; padding: 0.85rem 1.25rem; background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; color: #B91C1C; font-size: 0.85rem; font-weight: 600;">
+        ✕ {{ verification_error }}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Right: Verification Result / Handover Action -->
+  <div>
+    {% if scanned_transfer %}
+      <div class="card" style="padding: 2rem; border-radius: 16px; border: 2px solid #10B981; background: #F0FDF4; box-shadow: 0 12px 24px -8px rgba(16, 185, 129, 0.15);">
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+          <div>
+            <span class="badge badge-green" style="font-size: 0.8rem; font-weight: 800; padding: 4px 10px;">
+              ✓ PASS AUTHENTIC &amp; SANCTIONED
+            </span>
+            <h3 style="font-size: 1.35rem; font-weight: 900; color: #065F46; margin: 0.5rem 0 0 0;">
+              {{ scanned_transfer.student.get_full_name }}
+            </h3>
+            <div style="font-size: 0.825rem; color: #047857;">
+              Roll ID: <strong>{{ scanned_transfer.student.university_id }}</strong> · Ref: <strong>{{ scanned_transfer.transfer_code }}</strong>
+            </div>
+          </div>
+          <div style="font-size: 2rem;">🛏️</div>
+        </div>
+
+        <!-- Room Reassignment Summary -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+          <div style="background: #FFFFFF; border: 1px solid #E2E8F0; padding: 1rem; border-radius: 8px;">
+            <div style="font-size: 0.7rem; font-weight: 800; color: #B45309; text-transform: uppercase;">Surrendering Room:</div>
+            <div style="font-size: 1.05rem; font-weight: 800; color: #78350F; margin-top: 0.25rem;">
+              Room {{ scanned_transfer.previous_bed.room.room_number }}
+            </div>
+            <div style="font-size: 0.775rem; color: #92400E;">
+              {{ scanned_transfer.previous_bed.room.block.hostel.name }} ({{ scanned_transfer.previous_bed.bed_number }})
+            </div>
+          </div>
+
+          <div style="background: #FFFFFF; border: 1.5px solid #10B981; padding: 1rem; border-radius: 8px;">
+            <div style="font-size: 0.7rem; font-weight: 800; color: #047857; text-transform: uppercase;">Hand Over New Keys For:</div>
+            <div style="font-size: 1.15rem; font-weight: 900; color: #065F46; margin-top: 0.25rem;">
+              Room {{ scanned_transfer.new_bed.room.room_number }} ★
+            </div>
+            <div style="font-size: 0.775rem; color: #047857; font-weight: 700;">
+              {{ scanned_transfer.new_bed.room.block.hostel.name }} ({{ scanned_transfer.new_bed.bed_number }})
+            </div>
+          </div>
+        </div>
+
+        <!-- Confirm Handover Form -->
+        <form method="post" action="{% url 'caretaker_verify' %}">
+          {% csrf_token %}
+          <input type="hidden" name="transfer_id" value="{{ scanned_transfer.id }}">
+          
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #065F46;">
+              Caretaker Inspection &amp; Key Handover Notes:
+            </label>
+            <input type="text" name="notes" class="form-input" value="Keys surrendered & new room keys issued. Inventory OK." style="font-size: 0.85rem;" required>
+          </div>
+
+          <button type="submit" class="btn btn-teal" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 800; background: #059669; color: #FFFFFF; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);">
+            🔑 Confirm Physical Key Handover →
+          </button>
+        </form>
+
+      </div>
+    {% else %}
+      <div class="card" style="padding: 3rem 2rem; text-align: center; border-radius: 16px;">
+        <div style="font-size: 2.75rem; margin-bottom: 0.75rem;">📋</div>
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.5rem;">
+          Awaiting Pass Scan
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 360px; margin: 0 auto;">
+          When a resident arrives at the hostel desk with their printed or mobile transfer pass, scan the QR code or enter their Order ID to verify authenticity.
+        </p>
+      </div>
+    {% endif %}
+
+    <!-- Recent Key Handovers Table -->
+    <div class="card" style="margin-top: 1.5rem; padding: 1.25rem; border-radius: 14px;">
+      <div style="font-size: 0.9rem; font-weight: 800; color: var(--navy-800); margin-bottom: 0.85rem;">
+        Recent Desk Log Entries
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        {% for r in recent_verified %}
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #F8FAFC; border-radius: 6px; font-size: 0.8rem;">
+            <div>
+              <strong>{{ r.student.get_full_name }}</strong>
+              <span style="color: #64748B;">→ {{ r.new_bed.room.full_name }}</span>
+            </div>
+            <div style="font-size: 0.725rem; color: #94A3B8;">
+              {{ r.completed_at|date:"d M, H:i" }}
+            </div>
+          </div>
+        {% empty %}
+          <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">No transfer logs yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+@keyframes scanLaser {
+  0% { top: 10%; opacity: 0.2; }
+  50% { top: 90%; opacity: 1; }
+  100% { top: 10%; opacity: 0.2; }
+}
+</style>
+{% endblock %}

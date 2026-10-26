@@ -59,40 +59,94 @@
       <span class="badge badge-green">Consensus Confirmed</span>
     </div>
 
-    <!-- Administrative Checklist -->
+    <!-- Administrative Checklist & Hostel Warden Consensuses -->
     <div style="margin-bottom: 1.5rem; font-size: 0.875rem;">
       <h4 style="font-weight: 700; color: var(--color-navy); margin-bottom: 0.5rem;">Pre-Approval Checklist:</h4>
       <div style="display: flex; flex-direction: column; gap: 0.5rem; color: var(--color-text-muted);">
-        <div>✓ All {{ participants.count }} participants have accepted the exchange proposal.</div>
+        <div>✓ All {{ participants.count }} students have accepted the exchange proposal.</div>
         <div>✓ Student accounts fee clearance confirmed in system.</div>
         <div>✓ Zero active disciplinary suspensions or room holds.</div>
-        <div>✓ Gender and block residence zoning compliance verified.</div>
       </div>
+
+      <!-- In-Charge Hostel Wardens Approval Status (for cross-hostel swaps) -->
+      {% if is_cross_hostel %}
+        <div style="margin-top: 1.25rem; padding: 1rem; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px;">
+          <div style="font-weight: 800; font-size: 0.85rem; color: var(--navy-800); text-transform: uppercase; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between;">
+            <span>🏢 Required Hostel Warden Approvals</span>
+            {% if all_wardens_approved %}
+              <span class="badge badge-green">All Wardens Approved ✓</span>
+            {% else %}
+              <span class="badge badge-yellow">Awaiting Hostel Warden(s)</span>
+            {% endif %}
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            {% for item in warden_status_list %}
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #FFFFFF; border-radius: 6px; border: 1px solid #E2E8F0; font-size: 0.825rem;">
+                <div>
+                  <strong>{{ item.hostel.name }} ({{ item.hostel.code }})</strong>
+                  <div style="font-size: 0.75rem; color: #64748B;">
+                    Warden: {{ item.warden.get_full_name|default:item.warden.username|default:"Unassigned" }}
+                  </div>
+                </div>
+                <div>
+                  {% if item.is_approved %}
+                    <span class="badge badge-green" style="font-weight: 700;">Approved ✓</span>
+                  {% else %}
+                    <span class="badge badge-yellow" style="font-weight: 700;">Pending Consent ⏳</span>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
     </div>
 
     <form method="post" action="{% url 'warden_review' pk=proposal.id %}">
       {% csrf_token %}
       
-      <div class="form-group">
-        <label class="form-label">Warden Approval Remarks / Order Reference</label>
+      <div class="form-group" style="margin-bottom: 1.25rem;">
+        <label class="form-label" style="font-weight: 700; color: var(--navy-800); font-size: 0.85rem;">Approval Remarks / Order Reference</label>
         <textarea name="remarks" class="form-input" rows="3" placeholder="Enter official hostel office approval remarks (e.g. 'Room keys to be surrendered to caretaker by Friday 5 PM')..."></textarea>
       </div>
 
-      <div style="display: flex; gap: 1rem;">
-        <button type="submit" name="action" value="APPROVE" class="btn btn-teal" style="flex: 2; padding: 0.85rem; font-size: 0.95rem;">
-          🔒 Grant Approval & Execute Atomic Transfer
-        </button>
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {% if is_chief_or_admin %}
+          <!-- Chief Warden / Admin Controls -->
+          {% if not is_cross_hostel or all_wardens_approved or request.user.is_admin_role %}
+            <button type="submit" name="action" value="EXECUTE_ATOMIC" class="btn btn-teal" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 700;">
+              🔒 Chief Warden Final Approval &amp; Atomic Transfer
+            </button>
+          {% else %}
+            <div style="padding: 0.85rem; background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 6px; color: #92400E; font-size: 0.85rem; font-weight: 600; text-align: center;">
+              ⏳ Waiting for all involved Hostel Wardens to grant consent before Chief Warden final execution.
+            </div>
+          {% endif %}
+        {% else %}
+          <!-- Regular Hostel Warden Controls -->
+          {% if user_has_approved %}
+            <div style="padding: 0.85rem; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 6px; color: #065F46; font-size: 0.85rem; font-weight: 600; text-align: center;">
+              ✓ You have already recorded approval for your hostel.
+            </div>
+          {% else %}
+            <button type="submit" name="action" value="WARDEN_APPROVE" class="btn btn-teal" style="width: 100%; padding: 0.85rem; font-size: 0.95rem; font-weight: 700;">
+              ✓ Grant Hostel Warden Approval
+            </button>
+          {% endif %}
+        {% endif %}
 
-        <button type="submit" name="action" value="REJECT" class="btn btn-danger" style="flex: 1; padding: 0.85rem; font-size: 0.95rem;" onclick="return confirm('Reject this proposal? This action cannot be undone.');">
-          Reject Proposal
+        <button type="submit" name="action" value="REJECT" class="btn btn-danger-outline" style="width: 100%; padding: 0.65rem; font-size: 0.85rem;" onclick="return confirm('Reject this proposal? This action cannot be undone.');">
+          Reject Proposal ✕
         </button>
       </div>
     </form>
 
     <div style="margin-top: 1.25rem; font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.4;">
-      <em>Note: Executing approval will acquire row-level locks on all {{ participants.count }} beds simultaneously in ascending PK order. All room records and student allocations will update in a single atomic database commit.</em>
+      <em>Note: Executing final approval will acquire row-level locks on all {{ participants.count }} beds simultaneously in ascending PK order. All room records and student allocations will update in a single atomic database commit.</em>
     </div>
   </div>
+
 
 </div>
 {% endblock %}
