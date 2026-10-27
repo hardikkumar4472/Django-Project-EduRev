@@ -71,7 +71,7 @@
     {% endif %}
 
     <!-- Login Form (Email & Password only) -->
-    <form method="post" action="{% url 'login' %}">
+    <form method="post" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">
       {% csrf_token %}
       
       <!-- Email / Identifier -->
@@ -95,9 +95,9 @@
       </button>
     </form>
 
-    <!-- Registration Link -->
-    <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-subtle); text-align: center; font-size: 0.85rem; color: var(--text-muted);">
-      New resident student? <a href="{% url 'signup' %}" style="color: var(--teal-600); font-weight: 700; text-decoration: none;">Register Student Account</a>
+    <!-- Administrative User Provisioning Note -->
+    <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-subtle); text-align: center; font-size: 0.825rem; color: var(--text-muted); line-height: 1.5;">
+      <span style="font-weight: 700; color: var(--navy-800);">🔒 Managed Institutional Access:</span> Accounts for Students, Wardens, Chief Wardens, and Dean of Student Welfare are provisioned directly by University Administrators.
     </div>
   </div>
 </div>

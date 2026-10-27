@@ -105,8 +105,8 @@
                 <li class="nav-item {% if '/dean/' in request.path or '/admin/analytics/' in request.path %}active{% endif %}">
                   <a href="{% url 'dean_analytics' %}">Analytics</a>
                 </li>
-                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
-                  <a href="{% url 'transfers_list' %}">Transfers</a>
+                <li class="nav-item {% if '/django-admin/' in request.path or '/admin/' in request.path and '/admin/users/' not in request.path and '/admin/policies/' not in request.path %}active{% endif %}">
+                  <a href="/django-admin/" target="_blank">⚙️ Django Admin</a>
                 </li>
               {% endif %}
             {% endif %}
@@ -161,11 +161,8 @@
             Sign Out
           </a>
         {% else %}
-          <a href="{% url 'login' %}" class="btn btn-outline btn-sm">
-            Sign In
-          </a>
-          <a href="{% url 'signup' %}" class="btn btn-primary btn-sm" style="margin-left: 0.5rem;">
-            Register Student
+          <a href="{% url 'login' %}" class="btn btn-primary btn-sm">
+            Sign In to Portal
           </a>
         {% endif %}
       </div>

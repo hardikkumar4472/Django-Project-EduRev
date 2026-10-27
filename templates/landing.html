@@ -34,11 +34,8 @@
           Go to Cockpit →
         </a>
       {% else %}
-        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">
-          Register Student Account →
-        </a>
-        <a href="{% url 'login' %}" class="btn btn-outline btn-lg">
-          Sign In
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg">
+          Sign In to Portal →
         </a>
       {% endif %}
     </div>
@@ -58,7 +55,7 @@
 
   <div class="hero-stat-col">
     <span class="hero-stat-num">{{ total_students }}</span>
-    <span class="hero-stat-lbl">Registered Students</span>
+    <span class="hero-stat-lbl">Resident Students</span>
   </div>
 
   <div class="hero-stat-col">

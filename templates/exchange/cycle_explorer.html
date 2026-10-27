@@ -17,12 +17,11 @@
 <!-- Horizontal Filter & Search Bar -->
 <div class="filter-search-row">
   <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
-    <select class="form-select" style="width: auto; padding: 0.4rem 0.85rem; font-size: 0.825rem; font-weight: 600;">
-      <option selected>All Hostels ▾</option>
-      <option>Tagore Hostel</option>
-      <option>Raman Hostel</option>
-      <option>Sarojini Hostel</option>
-      <option>APJ Hostel</option>
+    <select class="form-select" id="filter-hostel-select" style="width: auto; padding: 0.4rem 0.85rem; font-size: 0.825rem; font-weight: 600;">
+      <option value="" selected>All Hostels ▾</option>
+      {% for h in filter_hostels %}
+        <option value="{{ h.name }}">{{ h.name }}</option>
+      {% endfor %}
     </select>
 
     <select class="form-select" style="width: auto; padding: 0.4rem 0.85rem; font-size: 0.825rem; font-weight: 600;">
@@ -141,6 +140,9 @@
           <img src="{% static 'images/room_interior_1.jpg' %}" alt="Target Room" class="match-photo-img">
           <span class="match-tag-score">{{ c.compatibility_score }}% Match</span>
           <span class="match-tag-type">{{ c.type_display }}</span>
+          {% if c.is_direct_match %}
+            <span style="position: absolute; bottom: 10px; left: 10px; background: #059669; color: white; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">★ Involves You</span>
+          {% endif %}
         </div>
 
         <div class="match-body">
@@ -171,11 +173,15 @@
 
           <!-- Swap Chain Participants -->
           <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 0.65rem; margin: 0.85rem 0; font-size: 0.78rem;">
-            <div style="font-weight: 700; color: #475569; margin-bottom: 0.35rem;">Exchange Rotation:</div>
+            <div style="font-weight: 700; color: #475569; margin-bottom: 0.45rem;">Exchange Rotation:</div>
             {% for p in c.participants %}
-              <div style="display: flex; justify-content: space-between; color: var(--navy-800); margin-bottom: 0.2rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; color: var(--navy-800); margin-bottom: 0.35rem; gap: 0.5rem; flex-wrap: wrap;">
                 <span><strong>{{ p.student_name|default:p.university_id }}</strong></span>
-                <span style="color: #0D9488;">Room {{ p.current_room }} → {{ p.target_room }}</span>
+                <span style="color: #0D9488; font-weight: 600; text-align: right;">
+                  {{ p.current_hostel_code|default:p.current_hostel }} (Rm {{ p.current_room }})
+                  <span style="color: #64748B; font-weight: 400;">→</span>
+                  {{ p.target_hostel_code|default:p.target_hostel }} (Rm {{ p.target_room }})
+                </span>
               </div>
             {% endfor %}
           </div>
@@ -233,7 +239,7 @@
           addedNodes.add("{{ p.student_id }}");
           nodesArray.push({
             id: "{{ p.student_id }}",
-            label: "{{ p.student_name|default:p.university_id|escapejs }}\nRoom {{ p.current_room }}",
+            label: "{{ p.student_name|default:p.university_id|escapejs }}\n{{ p.current_hostel_code|default:p.current_hostel }} · Rm {{ p.current_room }}",
             shape: 'box',
             margin: 10,
             color: {

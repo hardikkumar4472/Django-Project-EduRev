@@ -11,9 +11,12 @@ from django.http import JsonResponse
 def ping_view(request):
     return JsonResponse({'status': 'alive', 'app': 'edurev_swap'})
 
+from django.views.generic import RedirectView
+
 urlpatterns = [
     path('ping/', ping_view, name='keep_alive_ping'),
     path('django-admin/', admin.site.urls),
+    path('admin/', RedirectView.as_view(url='/django-admin/', permanent=False)),
     path('', include('accounts.urls')),
     path('', include('exchange.urls')),
     path('hostels/', include('hostel.urls')),

@@ -154,6 +154,8 @@ class MatchingService:
 
                 r_curr = req_map[curr_s]
                 r_next = req_map[next_s]
+                curr_h = r_curr.current_bed.room.block.hostel
+                next_h = r_next.current_bed.room.block.hostel
                 participants.append({
                     'order': i + 1,
                     'student_id': curr_s,
@@ -161,10 +163,12 @@ class MatchingService:
                     'university_id': r_curr.requester.university_id,
                     'current_bed_id': r_curr.current_bed.id,
                     'current_room': r_curr.current_bed.room.room_number,
-                    'current_hostel': r_curr.current_bed.room.block.hostel.name,
+                    'current_hostel': curr_h.name,
+                    'current_hostel_code': curr_h.code or curr_h.name,
                     'target_bed_id': r_next.current_bed.id,
                     'target_room': r_next.current_bed.room.room_number,
-                    'target_hostel': r_next.current_bed.room.block.hostel.name,
+                    'target_hostel': next_h.name,
+                    'target_hostel_code': next_h.code or next_h.name,
                     'request_id': r_curr.id,
                 })
 

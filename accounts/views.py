@@ -77,42 +77,12 @@ def login_view(request):
 
 
 def signup_view(request):
-    if request.user.is_authenticated:
-        return redirect('/dashboard/')
-
-    if request.method == 'POST':
-        form = StudentSignupForm(request.POST)
-        bed_id = request.POST.get('allocated_bed')
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            user.role = User.Role.STUDENT
-            user.save()
-
-            # If student selected an available bed or assign first available matching gender
-            if bed_id:
-                try:
-                    bed = Bed.objects.get(id=bed_id, occupancy_status=Bed.OccupancyStatus.VACANT)
-                    bed.current_occupant = user
-                    bed.occupancy_status = Bed.OccupancyStatus.OCCUPIED
-                    bed.save()
-                except Bed.DoesNotExist:
-                    pass
-
-            login(request, user)
-            messages.success(request, f"Registration successful! Welcome to CampusExchange, {user.first_name}.")
-            return redirect('/dashboard/')
-    else:
-        form = StudentSignupForm()
-
-    vacant_beds = Bed.objects.filter(
-        occupancy_status=Bed.OccupancyStatus.VACANT
-    ).select_related('room__block__hostel')[:30]
-
-    return render(request, 'accounts/signup.html', {
-        'form': form,
-        'vacant_beds': vacant_beds
-    })
+    """
+    Public self-registration is disabled. All user accounts (Student, Warden, Chief Warden, DSW, Admin)
+    are provisioned, edited, and managed exclusively by Administrators.
+    """
+    messages.info(request, "Public registration is disabled. Student, Warden, Chief Warden, and Dean accounts are provisioned exclusively by University Administrators.")
+    return redirect('login')
 
 def logout_view(request):
     logout(request)

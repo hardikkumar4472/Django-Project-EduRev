@@ -132,6 +132,15 @@ def create_request_view(request):
             return redirect('/exchange-requests/new/')
 
         hostel_id = request.POST.get('preferred_hostel')
+        # Server-side Gender Residency Enforcement
+        if hostel_id and hasattr(user, 'gender') and user.gender:
+            target_h = Hostel.objects.filter(id=hostel_id).first()
+            if target_h:
+                if (user.gender == User.Gender.MALE and target_h.gender_type == 'FEMALE') or \
+                   (user.gender == User.Gender.FEMALE and target_h.gender_type == 'MALE'):
+                    messages.error(request, "Cross-gender hostel applications are strictly prohibited by campus residency policy.")
+                    return redirect('/exchange-requests/new/')
+
         # If user has an allocated bed/room, enforce preferred_room_type to match their current room type
         if current_room_type:
             room_type = current_room_type
@@ -230,10 +239,58 @@ def withdraw_request_view(request, pk):
 def cycle_explorer_view(request):
     """
     Graph Cycle Explorer: Matches discovery & active proposals.
+    Strictly filters cycles based on user's gender (Male students see only Boys Hostels,
+    Female students see only Girls Hostels).
     """
     user = request.user
-    target_id = user.id if user.is_student else None
-    discovered_cycles = MatchingService.find_cycles(target_student_id=target_id)
+    target_id = user.id if user.is_authenticated and user.is_student else None
+    user_gender = getattr(user, 'gender', None) if user.is_authenticated else None
+    
+    # 1. Fetch user-involved cycles if authenticated student
+    student_cycles = MatchingService.find_cycles(target_student_id=target_id) if target_id else []
+    
+    # 2. Fetch all system-wide graph rotation cycles
+    all_campus_cycles = MatchingService.find_cycles()
+    
+    # Filter cycles by gender policy
+    from hostel.models import Bed
+    def matches_user_gender(cycle_item):
+        if not user_gender or not user.is_student:
+            return True
+        participants = cycle_item.get('participants', [])
+        if not participants:
+            return True
+        b_id = participants[0].get('current_bed_id')
+        if b_id:
+            bed = Bed.objects.select_related('room__block__hostel').filter(id=b_id).first()
+            if bed:
+                h_gender = bed.room.block.hostel.gender_type
+                if user_gender == 'M' and h_gender == 'FEMALE':
+                    return False
+                if user_gender == 'F' and h_gender == 'MALE':
+                    return False
+        return True
+
+    student_cycles = [c for c in student_cycles if matches_user_gender(c)]
+    all_campus_cycles = [c for c in all_campus_cycles if matches_user_gender(c)]
+
+    # Prioritize user's own cycles first, followed by other active campus cycle opportunities
+    seen_cycle_keys = set()
+    discovered_cycles = []
+    
+    for c in student_cycles:
+        key = tuple(c.get('node_ids', []))
+        if key not in seen_cycle_keys:
+            seen_cycle_keys.add(key)
+            c['is_direct_match'] = True
+            discovered_cycles.append(c)
+            
+    for c in all_campus_cycles:
+        key = tuple(c.get('node_ids', []))
+        if key not in seen_cycle_keys:
+            seen_cycle_keys.add(key)
+            c['is_direct_match'] = False
+            discovered_cycles.append(c)
 
     # Active proposals involving this student
     active_proposals = []
@@ -247,10 +304,17 @@ def cycle_explorer_view(request):
             ]
         ).prefetch_related('participants__student', 'participants__current_bed__room__block__hostel', 'participants__target_bed__room__block__hostel').distinct())
 
+    # Hostels matching user's gender for filter dropdown
+    filter_hostels = Hostel.objects.filter(is_active=True)
+    if user_gender and user.is_student:
+        target_g = 'FEMALE' if user_gender == 'F' else 'MALE'
+        filter_hostels = filter_hostels.filter(gender_type=target_g)
+
     return render(request, 'exchange/cycle_explorer.html', {
         'cycles': discovered_cycles,
         'total_matches': len(discovered_cycles),
-        'active_proposals': active_proposals
+        'active_proposals': active_proposals,
+        'filter_hostels': filter_hostels,
     })
 
 
@@ -261,8 +325,45 @@ def initiate_proposal_view(request):
     """
     user = request.user
     cycle_index = int(request.POST.get('cycle_index', 0))
-    target_id = user.id if user.is_student else None
-    discovered_cycles = MatchingService.find_cycles(target_student_id=target_id)
+    target_id = user.id if user.is_authenticated and user.is_student else None
+    user_gender = getattr(user, 'gender', None) if user.is_authenticated else None
+    
+    student_cycles = MatchingService.find_cycles(target_student_id=target_id) if target_id else []
+    all_campus_cycles = MatchingService.find_cycles()
+    
+    from hostel.models import Bed
+    def matches_user_gender(cycle_item):
+        if not user_gender or not user.is_student:
+            return True
+        participants = cycle_item.get('participants', [])
+        if not participants:
+            return True
+        b_id = participants[0].get('current_bed_id')
+        if b_id:
+            bed = Bed.objects.select_related('room__block__hostel').filter(id=b_id).first()
+            if bed:
+                h_gender = bed.room.block.hostel.gender_type
+                if user_gender == 'M' and h_gender == 'FEMALE':
+                    return False
+                if user_gender == 'F' and h_gender == 'MALE':
+                    return False
+        return True
+
+    student_cycles = [c for c in student_cycles if matches_user_gender(c)]
+    all_campus_cycles = [c for c in all_campus_cycles if matches_user_gender(c)]
+
+    seen_cycle_keys = set()
+    discovered_cycles = []
+    for c in student_cycles:
+        key = tuple(c.get('node_ids', []))
+        if key not in seen_cycle_keys:
+            seen_cycle_keys.add(key)
+            discovered_cycles.append(c)
+    for c in all_campus_cycles:
+        key = tuple(c.get('node_ids', []))
+        if key not in seen_cycle_keys:
+            seen_cycle_keys.add(key)
+            discovered_cycles.append(c)
 
     if 0 <= cycle_index < len(discovered_cycles):
         match_data = discovered_cycles[cycle_index]
@@ -594,8 +695,15 @@ def analytics_dashboard_view(request):
         hostel_out_demand.append(out_count)
 
     # Room type demand counts
-    room_types_labels = ["1-Seater", "2-Seater", "3-Seater", "4-Seater", "Dormitory"]
-    room_type_keys = ["SINGLE", "DOUBLE", "TRIPLE", "FOUR", "DORMITORY"]
+    room_types_labels = ["1-Seater", "2-Seater", "3-Seater", "4-Seater", "7-Seater", "8-Seater"]
+    room_type_keys = [
+        Room.RoomType.SINGLE,
+        Room.RoomType.DOUBLE,
+        Room.RoomType.TRIPLE,
+        Room.RoomType.FOUR_SHARING,
+        Room.RoomType.SEVEN_SEATER,
+        Room.RoomType.EIGHT_SEATER
+    ]
     room_type_counts = [
         ExchangeRequest.objects.filter(preferred_room_type=k).count() for k in room_type_keys
     ]
