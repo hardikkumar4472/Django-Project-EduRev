@@ -72,10 +72,12 @@ class MatchingService:
                 b_room = b_bed.room
                 b_hostel = b_room.block.hostel
 
-                # Check gender policy alignment
-                if r_a.requester.gender == User.Gender.MALE and b_hostel.gender_type == 'FEMALE':
+                # Check gender policy alignment - strict gender residency separation
+                if r_a.requester.gender != r_b.requester.gender:
                     continue
-                if r_a.requester.gender == User.Gender.FEMALE and b_hostel.gender_type == 'MALE':
+                if r_a.requester.gender == User.Gender.MALE and b_hostel.gender_type != 'MALE':
+                    continue
+                if r_a.requester.gender == User.Gender.FEMALE and b_hostel.gender_type != 'FEMALE':
                     continue
 
                 # Match criteria
@@ -119,7 +121,8 @@ class MatchingService:
                     G.add_edge(s_a, s_b, score=min(100.0, score), reasons=reasons)
 
         # 3. Find elementary cycles (bounded 2 <= length <= max_chain)
-        all_cycles = list(nx.simple_cycles(G))
+        # Pass length_bound=max_chain so NetworkX prunes deep searches beyond max_chain immediately
+        all_cycles = list(nx.simple_cycles(G, length_bound=max_chain))
         discovered_cycles = []
         seen_cycle_fingerprints = set()
 

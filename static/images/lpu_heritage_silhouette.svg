@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240" fill="none">
+  <!-- University Classical Heritage Building / Clocktower / Colonnade Silhouette -->
+  <g fill="#FFFFFF" opacity="0.28">
+    <!-- Base balustrade / steps -->
+    <rect x="10" y="210" width="380" height="25" rx="2"/>
+    <rect x="25" y="195" width="350" height="15" rx="1"/>
+
+    <!-- Left Wing -->
+    <rect x="35" y="130" width="120" height="65"/>
+    <!-- Left Wing Windows (2 floors) -->
+    <g fill="#EA580C">
+      <rect x="45" y="140" width="14" height="20" rx="3"/>
+      <rect x="68" y="140" width="14" height="20" rx="3"/>
+      <rect x="91" y="140" width="14" height="20" rx="3"/>
+      <rect x="114" y="140" width="14" height="20" rx="3"/>
+      <rect x="137" y="140" width="14" height="20" rx="3"/>
+
+      <rect x="45" y="168" width="14" height="22" rx="2"/>
+      <rect x="68" y="168" width="14" height="22" rx="2"/>
+      <rect x="91" y="168" width="14" height="22" rx="2"/>
+      <rect x="114" y="168" width="14" height="22" rx="2"/>
+      <rect x="137" y="168" width="14" height="22" rx="2"/>
+    </g>
+
+    <!-- Right Wing -->
+    <rect x="245" y="130" width="120" height="65"/>
+    <!-- Right Wing Windows -->
+    <g fill="#EA580C">
+      <rect x="255" y="140" width="14" height="20" rx="3"/>
+      <rect x="278" y="140" width="14" height="20" rx="3"/>
+      <rect x="301" y="140" width="14" height="20" rx="3"/>
+      <rect x="324" y="140" width="14" height="20" rx="3"/>
+      <rect x="347" y="140" width="14" height="20" rx="3"/>
+
+      <rect x="255" y="168" width="14" height="22" rx="2"/>
+      <rect x="278" y="168" width="14" height="22" rx="2"/>
+      <rect x="301" y="168" width="14" height="22" rx="2"/>
+      <rect x="324" y="168" width="14" height="22" rx="2"/>
+      <rect x="347" y="168" width="14" height="22" rx="2"/>
+    </g>
+
+    <!-- Central Grand Portico Colonnade -->
+    <rect x="155" y="120" width="90" height="75"/>
+    <polygon points="150,120 200,85 250,120"/>
+    <!-- Arched Portico Entrance -->
+    <path d="M 180,195 V 150 A 20,20 0 0 1 220,150 V 195 Z" fill="#EA580C"/>
+
+    <!-- Clock Tower Body -->
+    <rect x="175" y="45" width="50" height="45"/>
+    <circle cx="200" cy="65" r="14" fill="#EA580C"/>
+    <!-- Clock Hands -->
+    <line x1="200" y1="65" x2="200" y2="56" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="200" y1="65" x2="208" y2="65" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Cupola / Dome on Top -->
+    <path d="M 175,45 Q 200,15 225,45 Z"/>
+    <rect x="196" y="10" width="8" height="12"/>
+    <polygon points="200,2 196,10 204,10"/>
+    <circle cx="200" cy="2" r="2.5"/>
+
+    <!-- Wing Roof Balustrades and Finials -->
+    <polygon points="35,130 95,115 155,130"/>
+    <polygon points="245,130 305,115 365,130"/>
+    <circle cx="35" cy="126" r="3"/>
+    <circle cx="95" cy="112" r="3.5"/>
+    <circle cx="155" cy="116" r="3"/>
+    <circle cx="245" cy="116" r="3"/>
+    <circle cx="305" cy="112" r="3.5"/>
+    <circle cx="365" cy="126" r="3"/>
+  </g>
+</svg>

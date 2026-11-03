@@ -1,117 +1,220 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Hostel Directory & Management — Campus Exchange{% endblock %}
+{% block title %}Explore LPU Campus Hostels — Lovely Professional University{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<div class="page-header" style="margin-bottom: 1.5rem;">
-  <div class="page-title-group">
-    <h1>Hostel Directory & Management</h1>
-    <p>Dynamic provisioning, room capacity, and active status control for university residences.</p>
-  </div>
+<!-- LPU Aerial Green Campus Grand Hero Banner -->
+<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.78) 55%, rgba(243, 112, 33, 0.4) 100%), url('{% static 'images/lpu_aerial_green_campus.jpg' %}'); background-size: cover; background-position: center; border-radius: 18px; min-height: 190px; padding: 2.2rem 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.18);">
+  <div class="lpu-page-hero-content" style="position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div>
+      <div class="lpu-hero-badge-pill">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+        <span>20 University Residences • BH-1 to BH-10 &bull; GH-1 to GH-10</span>
+      </div>
+      <h1 class="lpu-page-hero-title">
+        LPU Campus Hostels &amp; Residences
+      </h1>
+      <p class="lpu-page-hero-subtitle">
+        Explore living spaces across Punjab's largest university residential campus. Dynamic room allocations, real-time bed occupancy, and verified living facilities.
+      </p>
 
-  <div style="display: flex; gap: 0.75rem; align-items: center;">
-    <button type="button" class="btn btn-primary" onclick="openHostelModal()" id="btn-add-hostel">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-      </svg>
-      Add New Hostel
+      {% if is_admin_or_dsw %}
+        <div style="margin-top: 1.25rem;">
+          <button type="button" class="btn btn-primary" onclick="openHostelModal()" id="btn-add-hostel" style="box-shadow: 0 4px 14px rgba(243, 112, 33, 0.4);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            + Add New Hostel
+          </button>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Live Glassmorphism KPI Metrics Panel -->
+    <div class="lpu-hero-stats-panel">
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num">{{ total_hostels }}</span>
+        <span class="lpu-hero-stat-label">Hostels</span>
+      </div>
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num">{{ total_beds }}</span>
+        <span class="lpu-hero-stat-label">Total Beds</span>
+      </div>
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num">{{ occupied_beds }}</span>
+        <span class="lpu-hero-stat-label">Occupied</span>
+      </div>
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num" style="color: #4ADE80;">{{ vacant_beds }}</span>
+        <span class="lpu-hero-stat-label">Vacant</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive Toolbar: Filter Pills, Live Search & View Switcher -->
+<div class="hostels-toolbar-card">
+  <div class="toolbar-left">
+    <span class="toolbar-label">Filter:</span>
+    <button type="button" class="filter-tab-pill {% if gender_filter == 'ALL' or not gender_filter %}active{% endif %}" onclick="filterHostelsByGender('ALL')">
+      All Residences ({{ total_hostels }})
+    </button>
+    <button type="button" class="filter-tab-pill {% if gender_filter == 'MALE' %}active{% endif %}" onclick="filterHostelsByGender('MALE')">
+      Boys Hostels ({{ total_boys }})
+    </button>
+    <button type="button" class="filter-tab-pill {% if gender_filter == 'FEMALE' %}active{% endif %}" onclick="filterHostelsByGender('FEMALE')">
+      Girls Hostels ({{ total_girls }})
     </button>
   </div>
-</div>
 
-<!-- KPI Metric Cards -->
-<div class="grid-4" style="margin-bottom: 2rem;">
-  <!-- Total Hostels -->
-  <div class="kpi-card">
-    <div class="kpi-card-row">
-      <span class="kpi-card-num">{{ total_hostels }}</span>
-      <span class="badge badge-blue">Residences</span>
+  <div class="toolbar-right">
+    <!-- Live Search Input -->
+    <div class="toolbar-search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="hostel-search-input" placeholder="Search by name or code (e.g. BH-1, Girls)..." class="toolbar-search-input" oninput="liveSearchHostels()">
     </div>
-    <div class="kpi-card-label">Total Hostels ({{ total_boys }} Boys • {{ total_girls }} Girls)</div>
-  </div>
 
-  <!-- Total Capacity -->
-  <div class="kpi-card">
-    <div class="kpi-card-row">
-      <span class="kpi-card-num">{{ total_beds }}</span>
-      <span class="badge badge-teal">Capacity</span>
+    <!-- View Mode Switcher -->
+    <div class="view-switcher-box">
+      <button type="button" class="btn-view-toggle active" id="btn-view-grid" onclick="setViewMode('grid')" title="Visual Cards Showcase">
+        ⊞ Cards
+      </button>
+      <button type="button" class="btn-view-toggle" id="btn-view-table" onclick="setViewMode('table')" title="Data Table View">
+        ☰ Table
+      </button>
     </div>
-    <div class="kpi-card-label">Total Bed Spaces</div>
-  </div>
-
-  <!-- Occupied Beds -->
-  <div class="kpi-card">
-    <div class="kpi-card-row">
-      <span class="kpi-card-num">{{ occupied_beds }}</span>
-      <span class="badge badge-yellow">Occupied</span>
-    </div>
-    <div class="kpi-card-label">Allocated Residents</div>
-  </div>
-
-  <!-- Vacant Beds -->
-  <div class="kpi-card">
-    <div class="kpi-card-row">
-      <span class="kpi-card-num">{{ vacant_beds }}</span>
-      <span class="badge badge-green">Vacant</span>
-    </div>
-    <div class="kpi-card-label">Available for Swaps & Intake</div>
   </div>
 </div>
 
-<!-- Filter Toolbar -->
-<div class="card" style="padding: 1rem 1.25rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
-  <form method="GET" action="{% url 'hostels_list' %}" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-      <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Filter:</span>
-      <a href="{% url 'hostels_list' %}{% if search_query %}?q={{ search_query }}{% endif %}" 
-         class="btn btn-sm {% if gender_filter == 'ALL' %}btn-primary{% else %}btn-outline{% endif %}">
-        All ({{ total_hostels }})
-      </a>
-      <a href="{% url 'hostels_list' %}?gender=MALE{% if search_query %}&q={{ search_query }}{% endif %}" 
-         class="btn btn-sm {% if gender_filter == 'MALE' %}btn-primary{% else %}btn-outline{% endif %}">
-        Boys Hostels ({{ total_boys }})
-      </a>
-      <a href="{% url 'hostels_list' %}?gender=FEMALE{% if search_query %}&q={{ search_query }}{% endif %}" 
-         class="btn btn-sm {% if gender_filter == 'FEMALE' %}btn-primary{% else %}btn-outline{% endif %}">
-        Girls Hostels ({{ total_girls }})
-      </a>
-    </div>
+<!-- ========================================================================
+     VIEW 1: DYNAMIC INTERACTIVE 3D HOSTEL CARDS (DEFAULT & ANIMATED)
+     ======================================================================== -->
+<div id="hostels-grid-container" class="hostels-cards-grid">
+  {% for h in hostels %}
+    <div class="hostel-showcase-card" data-gender="{{ h.gender_type }}" data-code="{{ h.code|lower }}" data-name="{{ h.name|lower }}" style="animation-delay: {{ forloop.counter0|divisibleby:5 }}00ms;">
+      
+      <!-- Card Image Header with Thumbnail & Floating Badges -->
+      <div class="card-photo-banner" style="background-image: linear-gradient(180deg, rgba(8, 22, 40, 0.25) 0%, rgba(8, 22, 40, 0.85) 100%), 
+        {% if forloop.counter0|divisibleby:4 == 0 %}url('{% static 'images/lpu_campus_roundabout.jpg' %}')
+        {% elif forloop.counter0|divisibleby:4 == 1 %}url('{% static 'images/lpu_campus_walkway.jpg' %}')
+        {% elif forloop.counter0|divisibleby:4 == 2 %}url('{% static 'images/lpu_facade_emblem.jpg' %}')
+        {% else %}url('{% static 'images/lpu_aerial_green_campus.jpg' %}')
+        {% endif %};">
+        
+        <div class="card-banner-top-tags">
+          <span class="card-code-pill">{{ h.code }}</span>
+          {% if h.gender_type == 'MALE' %}
+            <span class="card-gender-badge gender-boys">👨 Boys Hostel</span>
+          {% elif h.gender_type == 'FEMALE' %}
+            <span class="card-gender-badge gender-girls">👩 Girls Hostel</span>
+          {% else %}
+            <span class="card-gender-badge gender-coed">🏢 Co-Ed</span>
+          {% endif %}
+        </div>
 
-    <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <input type="text" name="q" value="{{ search_query }}" placeholder="Search by name or code..." 
-             class="form-control" style="width: 220px; padding: 0.4rem 0.75rem; font-size: 0.85rem;" />
-      {% if gender_filter != 'ALL' %}
-        <input type="hidden" name="gender" value="{{ gender_filter }}" />
-      {% endif %}
-      <button type="submit" class="btn btn-outline btn-sm">Search</button>
-      {% if search_query or gender_filter != 'ALL' %}
-        <a href="{% url 'hostels_list' %}" class="btn btn-outline btn-sm" style="color: var(--text-muted);">Reset</a>
-      {% endif %}
+        <div class="card-banner-bottom-text">
+          <h3 class="hostel-card-title">{{ h.name }}</h3>
+          <span class="hostel-card-warden">Warden: {{ h.warden.get_full_name|default:"University In-Charge" }}</span>
+        </div>
+      </div>
+
+      <!-- Card Body Content -->
+      <div class="hostel-card-body">
+        
+        <!-- Capacity & Vacancy Stats Row -->
+        <div class="hostel-metrics-row">
+          <div class="metric-col">
+            <span class="metric-label">Total Beds</span>
+            <span class="metric-val">{{ h.total_capacity }}</span>
+          </div>
+          <div class="metric-col">
+            <span class="metric-label">Blocks</span>
+            <span class="metric-val">{{ h.blocks.count }}</span>
+          </div>
+          <div class="metric-col">
+            <span class="metric-label">Available</span>
+            <span class="metric-val" style="color: #059669; font-weight: 800;">{{ h.vacant_beds_count }} Vacant</span>
+          </div>
+        </div>
+
+        <!-- Animated Occupancy Progress Gauge -->
+        <div class="occupancy-gauge-box">
+          <div class="gauge-header">
+            <span class="gauge-title">Occupancy Rate</span>
+            <span class="gauge-pct">{{ h.occupancy_pct }}% Full</span>
+          </div>
+          <div class="gauge-track">
+            <div class="gauge-fill" style="width: {{ h.occupancy_pct }}%;"></div>
+          </div>
+        </div>
+
+        <!-- Amenities Highlights -->
+        <div class="amenities-chip-row">
+          <span class="amenity-chip">📶 Wi-Fi</span>
+          <span class="amenity-chip">🛡️ 24/7 Security</span>
+          <span class="amenity-chip">🍽️ Mess</span>
+          <span class="amenity-chip">⚡ Power Backup</span>
+        </div>
+
+        <!-- Action Row -->
+        <div class="hostel-card-footer">
+          {% if user.is_authenticated and user.is_student %}
+            <a href="{% url 'create_request' %}" class="btn-card-action">
+              Request Room Swap →
+            </a>
+          {% else %}
+            <a href="{% url 'login' %}?next={% url 'hostels_list' %}" class="btn-card-action">
+              Sign In to Exchange →
+            </a>
+          {% endif %}
+
+          {% if is_admin_or_dsw %}
+            <div class="admin-card-actions">
+              <form method="POST" action="{% url 'hostel_toggle_status' h.pk %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-admin-mini" title="Toggle active status">
+                  {% if h.is_active %}Active{% else %}Inactive{% endif %}
+                </button>
+              </form>
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+
     </div>
-  </form>
+  {% empty %}
+    <div class="no-hostels-alert">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏢</div>
+      <h3>No Hostels Found</h3>
+      <p>No residences matched your filter criteria.</p>
+    </div>
+  {% endfor %}
 </div>
 
-<!-- Hostels Data Table -->
-<div class="card" style="padding: 0; overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 2.5rem;">
+<!-- ========================================================================
+     VIEW 2: DATA TABLE VIEW (TOGGLEABLE)
+     ======================================================================== -->
+<div id="hostels-table-container" class="card" style="display: none; padding: 0; overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 2.5rem; border-top: 3px solid #F37021;">
   <div style="overflow-x: auto;">
     <table class="data-table">
       <thead>
         <tr>
           <th style="width: 110px;">Code</th>
           <th>Hostel Name</th>
-          <th style="width: 130px;">Category</th>
+          <th style="width: 140px;">Category</th>
           <th style="width: 110px;">Blocks</th>
-          <th style="width: 150px;">Bed Capacity</th>
-          <th style="width: 120px;">Status</th>
-          <th style="width: 160px; text-align: right;">Actions</th>
+          <th style="width: 160px;">Bed Capacity</th>
+          <th style="width: 120px;">Occupancy</th>
+          <th style="width: 100px;">Status</th>
+          {% if is_admin_or_dsw %}<th style="width: 140px; text-align: right;">Admin Controls</th>{% endif %}
         </tr>
       </thead>
       <tbody>
         {% for h in hostels %}
-          <tr>
+          <tr class="table-hostel-row" data-gender="{{ h.gender_type }}" data-code="{{ h.code|lower }}" data-name="{{ h.name|lower }}">
             <td>
               <span class="badge {% if h.gender_type == 'MALE' %}badge-blue{% elif h.gender_type == 'FEMALE' %}badge-purple{% else %}badge-teal{% endif %}" style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700;">
                 {{ h.code }}
@@ -122,22 +225,16 @@
                 {{ h.name }}
               </div>
               <div style="font-size: 0.75rem; color: var(--text-muted);">
-                Warden: {{ h.warden.get_full_name|default:"Unassigned" }}
+                Warden: {{ h.warden.get_full_name|default:"University In-Charge" }}
               </div>
             </td>
             <td>
               {% if h.gender_type == 'MALE' %}
-                <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #1E40AF; font-size: 0.8rem; font-weight: 600;">
-                  Boys Hostel
-                </span>
+                <span style="color: #1E40AF; font-size: 0.8rem; font-weight: 700;">Boys Hostel</span>
               {% elif h.gender_type == 'FEMALE' %}
-                <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #7C3AED; font-size: 0.8rem; font-weight: 600;">
-                  Girls Hostel
-                </span>
+                <span style="color: #7C3AED; font-size: 0.8rem; font-weight: 700;">Girls Hostel</span>
               {% else %}
-                <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: #0D9488; font-size: 0.8rem; font-weight: 600;">
-                  Co-Ed Residence
-                </span>
+                <span style="color: #F37021; font-size: 0.8rem; font-weight: 700;">Co-Ed</span>
               {% endif %}
             </td>
             <td>
@@ -148,53 +245,31 @@
                 <strong style="font-size: 0.95rem; color: var(--navy-800);">{{ h.total_capacity }}</strong>
                 <span style="font-size: 0.75rem; color: var(--text-muted);">beds</span>
               </div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.15rem;">
+              <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 0.15rem;">
                 <span style="color: #059669; font-weight: 600;">{{ h.vacant_beds_count }} vacant</span> • 
                 <span style="color: #D97706; font-weight: 600;">{{ h.occupied_beds_count }} occupied</span>
               </div>
             </td>
             <td>
+              <span class="badge badge-teal" style="font-weight: 700;">{{ h.occupancy_pct }}% Full</span>
+            </td>
+            <td>
               {% if h.is_active %}
                 <span class="badge badge-green">Active</span>
               {% else %}
-                <span class="badge badge-neutral" style="background: #E2E8F0; color: #64748B;">Inactive</span>
+                <span class="badge badge-neutral">Inactive</span>
               {% endif %}
             </td>
-            <td style="text-align: right;">
-              <div style="display: inline-flex; gap: 0.4rem; align-items: center;">
-                <!-- Toggle Status Form -->
+            {% if is_admin_or_dsw %}
+              <td style="text-align: right;">
                 <form method="POST" action="{% url 'hostel_toggle_status' h.pk %}" style="display: inline;">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;" title="Toggle active status">
+                  <button type="submit" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.5rem; font-size: 0.72rem;">
                     {% if h.is_active %}Disable{% else %}Enable{% endif %}
                   </button>
                 </form>
-
-                <!-- Delete Form -->
-                <form method="POST" action="{% url 'hostel_delete' h.pk %}" style="display: inline;" 
-                      onsubmit="return confirm('Are you sure you want to delete {{ h.name }} ({{ h.code }})? All vacant rooms and beds in this hostel will be removed.');">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-outline btn-sm" 
-                          style="padding: 0.25rem 0.5rem; font-size: 0.75rem; color: #EF4444; border-color: #FECACA;" 
-                          title="Delete Hostel"
-                          {% if h.occupied_beds_count > 0 %}disabled title="Cannot delete: Hostel has occupied beds"{% endif %}>
-                    Delete
-                  </button>
-                </form>
-              </div>
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="7" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
-              <div style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">No Hostels Found</div>
-              <p style="font-size: 0.85rem; max-width: 400px; margin: 0 auto 1rem;">
-                No hostels matched your search criteria. Click below to add a new hostel.
-              </p>
-              <button type="button" class="btn btn-primary btn-sm" onclick="openHostelModal()">
-                + Add New Hostel
-              </button>
-            </td>
+              </td>
+            {% endif %}
           </tr>
         {% endfor %}
       </tbody>
@@ -202,10 +277,10 @@
   </div>
 </div>
 
-<!-- Add New Hostel Modal -->
+<!-- Add New Hostel Modal (For Admin & Staff) -->
+{% if is_admin_or_dsw %}
 <div id="hostelModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 1050; align-items: center; justify-content: center; padding: 1.5rem; backdrop-filter: blur(2px);">
-  <div class="card" style="width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: var(--shadow-xl); border-radius: var(--radius-lg); position: relative; animation: modalFadeIn 0.2s ease;">
-    <!-- Modal Header -->
+  <div class="card" style="width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: var(--shadow-xl); border-radius: var(--radius-lg); position: relative;">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-card); padding-bottom: 1rem;">
       <div>
         <h3 style="margin: 0 0 0.25rem; font-size: 1.25rem; color: var(--navy-800);">Add New Hostel</h3>
@@ -213,39 +288,23 @@
           Create a residence and automatically provision its blocks, rooms, and beds.
         </p>
       </div>
-      <button type="button" onclick="closeHostelModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; cursor: pointer; color: var(--text-muted); padding: 0.25rem;">
-        &times;
-      </button>
+      <button type="button" onclick="closeHostelModal()" style="background: none; border: none; font-size: 1.5rem; line-height: 1; cursor: pointer; color: var(--text-muted);">&times;</button>
     </div>
 
-    <!-- Modal Form -->
     <form method="POST" action="{% url 'hostel_create' %}">
       {% csrf_token %}
-      
       <div style="display: flex; flex-direction: column; gap: 1rem;">
-        <!-- Hostel Name -->
         <div>
-          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; text-transform: uppercase;">
-            Hostel Name *
-          </label>
-          <input type="text" name="name" required placeholder="e.g., Boys Hostel 11 or Tagore Bhawan" 
-                 class="form-control" style="width: 100%; padding: 0.6rem 0.85rem; font-size: 0.9rem;" />
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; text-transform: uppercase;">Hostel Name *</label>
+          <input type="text" name="name" required placeholder="e.g., Boys Hostel 11" class="form-control" style="width: 100%; padding: 0.6rem 0.85rem; font-size: 0.9rem;" />
         </div>
-
-        <!-- Code and Category -->
         <div class="grid-2" style="gap: 1rem;">
           <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; text-transform: uppercase;">
-              Code *
-            </label>
-            <input type="text" name="code" required placeholder="e.g., BH-11" 
-                   class="form-control" style="width: 100%; padding: 0.6rem 0.85rem; font-size: 0.9rem; font-family: var(--font-mono); text-transform: uppercase;" />
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; text-transform: uppercase;">Code *</label>
+            <input type="text" name="code" required placeholder="e.g., BH-11" class="form-control" style="width: 100%; padding: 0.6rem 0.85rem; font-size: 0.9rem; text-transform: uppercase;" />
           </div>
-
           <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; text-transform: uppercase;">
-              Category *
-            </label>
+            <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem; text-transform: uppercase;">Category *</label>
             <select name="gender_type" class="form-select" style="width: 100%; padding: 0.6rem 0.85rem; font-size: 0.9rem;">
               <option value="MALE" selected>Boys Hostel</option>
               <option value="FEMALE">Girls Hostel</option>
@@ -253,88 +312,490 @@
             </select>
           </div>
         </div>
-
-        <!-- Structural Configuration -->
-        <div style="background: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-top: 0.5rem;">
-          <div style="font-size: 0.8rem; font-weight: 700; color: var(--navy-800); text-transform: uppercase; margin-bottom: 0.75rem;">
-            Auto-Provisioning Settings
-          </div>
-          
-          <div class="grid-3" style="gap: 0.75rem; margin-bottom: 0.75rem;">
-            <div>
-              <label style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;">
-                Blocks (e.g. A, B)
-              </label>
-              <input type="number" name="blocks_count" value="2" min="1" max="6" class="form-control" style="width: 100%; padding: 0.4rem 0.6rem; font-size: 0.85rem;" />
-            </div>
-
-            <div>
-              <label style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;">
-                Floors / Block
-              </label>
-              <input type="number" name="floors_count" value="3" min="1" max="8" class="form-control" style="width: 100%; padding: 0.4rem 0.6rem; font-size: 0.85rem;" />
-            </div>
-
-            <div>
-              <label style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;">
-                Rooms / Floor
-              </label>
-              <input type="number" name="rooms_per_floor" value="4" min="1" max="15" class="form-control" style="width: 100%; padding: 0.4rem 0.6rem; font-size: 0.85rem;" />
-            </div>
-          </div>
-
-          <div>
-            <label style="display: block; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.25rem;">
-              Room Sharing Profile
-            </label>
-            <select name="room_type_pattern" class="form-select" style="width: 100%; padding: 0.4rem 0.6rem; font-size: 0.85rem;">
-              <option value="diverse" selected>Diverse Mix (1, 2, 3, 4, 7 & 8-Seater Rooms)</option>
-              <option value="mixed">Mixed (50% Double Sharing + 50% Single Occupancy)</option>
-              <option value="single">All Single Occupancy Rooms (1 bed per room)</option>
-              <option value="double">All Double Sharing Rooms (2 beds per room)</option>
-              <option value="triple">All Triple Sharing Rooms (3 beds per room)</option>
-              <option value="quad">All Four Sharing Rooms (4 beds per room)</option>
-              <option value="dorm7">All 7-Seater Dormitories (7 beds per room)</option>
-              <option value="dorm8">All 8-Seater Dormitories (8 beds per room)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Submit & Cancel Actions -->
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
-          <button type="button" class="btn btn-outline" onclick="closeHostelModal()">
-            Cancel
-          </button>
-          <button type="submit" class="btn btn-primary" id="btn-submit-hostel">
-            Provision Hostel & Rooms
-          </button>
+          <button type="button" class="btn btn-outline" onclick="closeHostelModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Provision Hostel &amp; Rooms</button>
         </div>
       </div>
     </form>
   </div>
 </div>
+{% endif %}
 
+<!-- ========================================================================
+     STYLING: ANIMATED 3D CARDS & INTERACTIVE EFFECTS
+     ======================================================================== -->
+<style>
+  .hostels-toolbar-card {
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 0.85rem 1.25rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+    border: 1px solid #E2E8F0;
+    border-left: 4px solid #F37021;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 0.25rem;
+  }
+
+  .filter-tab-pill {
+    background: #F8FAFC;
+    color: #475569;
+    border: 1px solid #CBD5E1;
+    font-size: 0.825rem;
+    font-weight: 700;
+    padding: 0.4rem 0.95rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .filter-tab-pill:hover {
+    background: #FFF7ED;
+    border-color: #F37021;
+    color: #EA580C;
+    transform: translateY(-1px);
+  }
+
+  .filter-tab-pill.active {
+    background: linear-gradient(135deg, #F37021 0%, #EA580C 100%);
+    color: #FFFFFF;
+    border-color: #EA580C;
+    box-shadow: 0 4px 12px rgba(243, 112, 33, 0.35);
+  }
+
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 0.85rem;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .toolbar-search-input {
+    padding: 0.45rem 0.85rem 0.45rem 2rem;
+    font-size: 0.825rem;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
+    width: 240px;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .toolbar-search-input:focus {
+    border-color: #F37021;
+    box-shadow: 0 0 0 3px rgba(243, 112, 33, 0.15);
+    width: 270px;
+  }
+
+  .view-switcher-box {
+    display: inline-flex;
+    background: #F1F5F9;
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid #E2E8F0;
+  }
+
+  .btn-view-toggle {
+    background: transparent;
+    border: none;
+    padding: 4px 10px;
+    font-size: 0.775rem;
+    font-weight: 700;
+    color: #64748B;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-view-toggle.active {
+    background: #FFFFFF;
+    color: #0F172A;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  /* 3D Showcase Card Grid */
+  .hostels-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .hostel-showcase-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.07);
+    border: 1px solid #E2E8F0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    animation: fadeInUp 0.45s ease backwards;
+  }
+
+  .hostel-showcase-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px -10px rgba(243, 112, 33, 0.18), 0 0 0 1px rgba(243, 112, 33, 0.25);
+    border-color: #FDBA74;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-photo-banner {
+    height: 125px;
+    background-size: cover;
+    background-position: center;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    transition: transform 0.5s ease;
+  }
+
+  .card-banner-top-tags {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+  }
+
+  .card-code-pill {
+    background: #081628;
+    color: #FDBA74;
+    font-size: 0.75rem;
+    font-weight: 800;
+    font-family: monospace;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(243, 112, 33, 0.4);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-gender-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    backdrop-filter: blur(6px);
+  }
+
+  .gender-boys {
+    background: rgba(30, 64, 175, 0.75);
+    color: #DBEAFE;
+    border: 1px solid rgba(147, 197, 253, 0.3);
+  }
+
+  .gender-girls {
+    background: rgba(124, 58, 237, 0.75);
+    color: #EDE9FE;
+    border: 1px solid rgba(196, 181, 253, 0.3);
+  }
+
+  .gender-coed {
+    background: rgba(243, 112, 33, 0.8);
+    color: #FFFFFF;
+    border: 1px solid rgba(254, 215, 170, 0.4);
+  }
+
+  .card-banner-bottom-text {
+    color: #FFFFFF;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  }
+
+  .hostel-card-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1.2;
+    color: #FFFFFF;
+  }
+
+  .hostel-card-warden {
+    font-size: 0.72rem;
+    color: #FED7AA;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .hostel-card-body {
+    padding: 1.1rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    flex: 1;
+  }
+
+  .hostel-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: #F8FAFC;
+    border-radius: 10px;
+    padding: 0.6rem 0.5rem;
+    text-align: center;
+    border: 1px solid #E2E8F0;
+  }
+
+  .metric-col {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #E2E8F0;
+  }
+
+  .metric-col:last-child {
+    border-right: none;
+  }
+
+  .metric-label {
+    font-size: 0.68rem;
+    color: #64748B;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .metric-val {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #0F172A;
+    margin-top: 1px;
+  }
+
+  .occupancy-gauge-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .gauge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.74rem;
+  }
+
+  .gauge-title {
+    color: #64748B;
+    font-weight: 600;
+  }
+
+  .gauge-pct {
+    font-weight: 800;
+    color: #F37021;
+  }
+
+  .gauge-track {
+    height: 7px;
+    background: #E2E8F0;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+
+  .gauge-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10B981 0%, #F59E0B 65%, #F37021 100%);
+    border-radius: 9999px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .amenities-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .amenity-chip {
+    font-size: 0.68rem;
+    font-weight: 600;
+    background: #F1F5F9;
+    color: #475569;
+    padding: 2px 7px;
+    border-radius: 5px;
+  }
+
+  .hostel-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #F1F5F9;
+    margin-top: auto;
+  }
+
+  .btn-card-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: #FFF7ED;
+    color: #C2410C;
+    border: 1.5px solid #FED7AA;
+    padding: 0.55rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .btn-card-action:hover {
+    background: #F37021;
+    color: #FFFFFF;
+    border-color: #F37021;
+    box-shadow: 0 4px 12px rgba(243, 112, 33, 0.3);
+    transform: translateY(-1px);
+  }
+
+  .btn-admin-mini {
+    background: #F1F5F9;
+    color: #475569;
+    border: 1px solid #CBD5E1;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .no-hostels-alert {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3.5rem 1rem;
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1.5px dashed #CBD5E1;
+    color: #64748B;
+  }
+</style>
+
+<!-- ========================================================================
+     JAVASCRIPT: INSTANT REAL-TIME SEARCH, GENDER FILTER & VIEW TOGGLE
+     ======================================================================== -->
 <script>
+  let currentGenderFilter = '{{ gender_filter|default:"ALL" }}';
+
+  function filterHostelsByGender(gender) {
+    currentGenderFilter = gender;
+    
+    // Update active pill styling
+    document.querySelectorAll('.filter-tab-pill').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event?.target?.classList.add('active');
+
+    applyHostelFilters();
+  }
+
+  function liveSearchHostels() {
+    applyHostelFilters();
+  }
+
+  function applyHostelFilters() {
+    const query = (document.getElementById('hostel-search-input')?.value || '').toLowerCase().trim();
+    
+    // Filter Card Grid
+    const cards = document.querySelectorAll('.hostel-showcase-card');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const g = card.getAttribute('data-gender');
+      const code = card.getAttribute('data-code') || '';
+      const name = card.getAttribute('data-name') || '';
+
+      const matchGender = (currentGenderFilter === 'ALL') || (g === currentGenderFilter);
+      const matchSearch = (!query) || (code.includes(query) || name.includes(query));
+
+      if (matchGender && matchSearch) {
+        card.style.display = 'flex';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    // Filter Table Rows
+    const rows = document.querySelectorAll('.table-hostel-row');
+    rows.forEach(row => {
+      const g = row.getAttribute('data-gender');
+      const code = row.getAttribute('data-code') || '';
+      const name = row.getAttribute('data-name') || '';
+
+      const matchGender = (currentGenderFilter === 'ALL') || (g === currentGenderFilter);
+      const matchSearch = (!query) || (code.includes(query) || name.includes(query));
+
+      row.style.display = (matchGender && matchSearch) ? '' : 'none';
+    });
+  }
+
+  function setViewMode(mode) {
+    const gridEl = document.getElementById('hostels-grid-container');
+    const tableEl = document.getElementById('hostels-table-container');
+    const btnGrid = document.getElementById('btn-view-grid');
+    const btnTable = document.getElementById('btn-view-table');
+
+    if (mode === 'grid') {
+      if (gridEl) gridEl.style.display = 'grid';
+      if (tableEl) tableEl.style.display = 'none';
+      btnGrid?.classList.add('active');
+      btnTable?.classList.remove('active');
+    } else {
+      if (gridEl) gridEl.style.display = 'none';
+      if (tableEl) tableEl.style.display = 'block';
+      btnGrid?.classList.remove('active');
+      btnTable?.classList.add('active');
+    }
+  }
+
   function openHostelModal() {
     const modal = document.getElementById('hostelModal');
-    if (modal) {
-      modal.style.display = 'flex';
-    }
+    if (modal) modal.style.display = 'flex';
   }
 
   function closeHostelModal() {
     const modal = document.getElementById('hostelModal');
-    if (modal) {
-      modal.style.display = 'none';
-    }
+    if (modal) modal.style.display = 'none';
   }
 
-  // Close modal when clicking on backdrop
   window.addEventListener('click', function(e) {
     const modal = document.getElementById('hostelModal');
-    if (e.target === modal) {
-      closeHostelModal();
-    }
+    if (e.target === modal) closeHostelModal();
   });
 </script>
 {% endblock %}

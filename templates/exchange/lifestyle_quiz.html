@@ -1,20 +1,24 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Roommate Lifestyle & Compatibility Quiz — Campus Exchange{% endblock %}
+{% block title %}Roommate Lifestyle & Compatibility Quiz — Lovely Professional University{% endblock %}
 
 {% block content %}
-<div class="page-header" style="margin-bottom: 2rem;">
-  <div class="page-title-group">
-    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-      <span class="badge badge-teal" style="font-size: 0.75rem;">🤝 Roommate Compatibility Engine</span>
+<!-- LPU Lifestyle Quiz Hero Banner -->
+<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.78) 55%, rgba(243, 112, 33, 0.4) 100%), url('{% static 'images/lpu_campus_walkway.jpg' %}'); background-size: cover; background-position: center; border-radius: 16px; min-height: 180px; padding: 2rem 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.18);">
+  <div class="lpu-page-hero-content" style="position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div>
+      <div class="lpu-hero-badge-pill">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+        <span>Roommate Compatibility Matcher • 100-Point Scoring</span>
+      </div>
+      <h1 class="lpu-page-hero-title">
+        Roommate Lifestyle &amp; Compatibility Profile
+      </h1>
+      <p class="lpu-page-hero-subtitle">
+        Configure your sleep schedule, study habits, and room preferences to find harmonious living partners across LPU residences.
+      </p>
     </div>
-    <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--navy-800); margin: 0;">
-      Roommate Lifestyle &amp; Preference Profile
-    </h1>
-    <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">
-      Set your living habits to find high-compatibility swap rotations and like-minded roommates.
-    </p>
   </div>
 </div>
 
@@ -31,7 +35,7 @@
         </label>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
           {% for val, label in sleep_choices %}
-            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.sleep_schedule == val %}#0D9488{% else %}#E2E8F0{% endif %}; background: {% if profile.sleep_schedule == val %}#F0FDFA{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.sleep_schedule == val %}#F37021{% else %}#E2E8F0{% endif %}; background: {% if profile.sleep_schedule == val %}#FFF7ED{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
               <input type="radio" name="sleep_schedule" value="{{ val }}" {% if profile.sleep_schedule == val %}checked{% endif %}>
               <span>{{ label }}</span>
             </label>
@@ -46,7 +50,7 @@
         </label>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
           {% for val, label in study_choices %}
-            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.study_habit == val %}#0D9488{% else %}#E2E8F0{% endif %}; background: {% if profile.study_habit == val %}#F0FDFA{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.study_habit == val %}#F37021{% else %}#E2E8F0{% endif %}; background: {% if profile.study_habit == val %}#FFF7ED{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
               <input type="radio" name="study_habit" value="{{ val }}" {% if profile.study_habit == val %}checked{% endif %}>
               <span>{{ label }}</span>
             </label>
@@ -61,7 +65,7 @@
         </label>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
           {% for val, label in ac_choices %}
-            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.ac_preference == val %}#0D9488{% else %}#E2E8F0{% endif %}; background: {% if profile.ac_preference == val %}#F0FDFA{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.ac_preference == val %}#F37021{% else %}#E2E8F0{% endif %}; background: {% if profile.ac_preference == val %}#FFF7ED{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
               <input type="radio" name="ac_preference" value="{{ val }}" {% if profile.ac_preference == val %}checked{% endif %}>
               <span>{{ label }}</span>
             </label>
@@ -76,7 +80,7 @@
         </label>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem;">
           {% for val, label in clean_choices %}
-            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.cleanliness == val %}#0D9488{% else %}#E2E8F0{% endif %}; background: {% if profile.cleanliness == val %}#F0FDFA{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+            <label style="display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 1rem; border: 1.5px solid {% if profile.cleanliness == val %}#F37021{% else %}#E2E8F0{% endif %}; background: {% if profile.cleanliness == val %}#FFF7ED{% else %}#FFFFFF{% endif %}; border-radius: 10px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
               <input type="radio" name="cleanliness" value="{{ val }}" {% if profile.cleanliness == val %}checked{% endif %}>
               <span>{{ label }}</span>
             </label>

@@ -18,7 +18,7 @@ class RBACMiddleware:
 
         # Public paths that never require auth
         public_prefixes = ['/login/', '/signup/', '/ping/', '/static/', '/media/', '/django-admin/']
-        is_public = path == '/' or any(path.startswith(p) for p in public_prefixes)
+        is_public = path == '/' or path == '/hostels/' or path == '/hostels' or any(path.startswith(p) for p in public_prefixes)
 
         if not is_public and not user.is_authenticated:
             return redirect(f"/login/?next={path}")
@@ -39,10 +39,10 @@ class RBACMiddleware:
                 messages.error(request, "Access Denied: Dean of Student Welfare (DSW) or Administrative role required.")
                 return redirect('/dashboard/')
 
-            # Hostel management (Admin and DSW only)
-            if path.startswith('/hostels/') and not (user.is_dsw or user.is_admin_role):
-                messages.error(request, "Access Denied: Administrator or DSW role required to manage hostels.")
-                return redirect('/dashboard/')
+            # Hostel mutation management (Create, Delete, Toggle restricted to Admin and DSW only)
+            if (path.startswith('/hostels/create/') or '/delete/' in path or '/toggle/' in path) and not (user.is_dsw or user.is_admin_role):
+                messages.error(request, "Access Denied: Administrator or DSW role required to modify hostels.")
+                return redirect('/hostels/')
 
             # Student-only exchange routes
             if (path.startswith('/exchange-requests/') or path.startswith('/matches/')) and not user.is_student:

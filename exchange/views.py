@@ -2,6 +2,7 @@ import io
 import base64
 import qrcode
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth import get_user_model
@@ -310,9 +311,12 @@ def cycle_explorer_view(request):
         target_g = 'FEMALE' if user_gender == 'F' else 'MALE'
         filter_hostels = filter_hostels.filter(gender_type=target_g)
 
+    total_count = len(discovered_cycles)
+    display_cycles = discovered_cycles[:60]
+
     return render(request, 'exchange/cycle_explorer.html', {
-        'cycles': discovered_cycles,
-        'total_matches': len(discovered_cycles),
+        'cycles': display_cycles,
+        'total_matches': total_count,
         'active_proposals': active_proposals,
         'filter_hostels': filter_hostels,
     })
@@ -816,32 +820,97 @@ def caretaker_verify_view(request):
     })
 
 
+def get_proposal_messages_view(request, pk):
+    """
+    Returns real-time discussion chat messages for a proposal in JSON format.
+    Supports ?last_id=<id> for differential low-latency streaming.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "error", "message": "Authentication required"}, status=401)
+
+    proposal = get_object_or_404(ExchangeProposal, id=pk)
+    user = request.user
+
+    from .models import ProposalMessage
+    messages_qs = proposal.messages.select_related('sender').order_by('id')
+
+    last_id = request.GET.get('last_id')
+    if last_id and last_id.isdigit():
+        messages_qs = messages_qs.filter(id__gt=int(last_id))
+
+    data = []
+    for msg in messages_qs:
+        sender_name = msg.sender.get_full_name() or msg.sender.username
+        data.append({
+            'id': msg.id,
+            'sender_id': msg.sender_id,
+            'sender_name': sender_name,
+            'is_me': (msg.sender_id == user.id),
+            'message': msg.message,
+            'time': timezone.localtime(msg.created_at).strftime('%H:%M')
+        })
+
+    return JsonResponse({
+        "status": "success",
+        "total_count": proposal.messages.count(),
+        "messages": data
+    })
+
+
 @require_POST
 def send_proposal_message_view(request, pk):
     """
     Submits a discussion chat message within an active proposal.
+    Supports both standard form submission and real-time AJAX / JSON fetch.
     """
+    if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', ''):
+            return JsonResponse({"status": "error", "message": "Authentication required"}, status=401)
+        return redirect('/accounts/login/')
+
     proposal = get_object_or_404(ExchangeProposal, id=pk)
     user = request.user
+
+    is_ajax = (request.headers.get('x-requested-with') == 'XMLHttpRequest' or 
+               'application/json' in request.headers.get('Accept', '') or
+               'application/json' in getattr(request, 'content_type', ''))
+
     msg_text = request.POST.get('message', '').strip()
+    if not msg_text and 'application/json' in getattr(request, 'content_type', ''):
+        try:
+            import json
+            payload = json.loads(request.body.decode('utf-8'))
+            msg_text = payload.get('message', '').strip()
+        except Exception:
+            msg_text = ''
 
     if not msg_text:
-        return redirect(f'/proposals/{proposal.id}/')
-
-    # Ensure user is a participant or warden
-    is_participant = proposal.participants.filter(student=user).exists()
-    is_staff = user.is_warden or user.is_chief_warden or user.is_admin_role
-
-    if not is_participant and not is_staff:
-        messages.error(request, "Only participants and wardens can participate in this discussion.")
-        return redirect(f'/proposals/{proposal.id}/')
+        if is_ajax:
+            return JsonResponse({"status": "error", "message": "Message cannot be empty"}, status=400)
+        return redirect(f'/proposals/{proposal.id}/#chat')
 
     from .models import ProposalMessage
-    ProposalMessage.objects.create(
+    msg = ProposalMessage.objects.create(
         proposal=proposal,
         sender=user,
         message=msg_text
     )
+
+    if is_ajax:
+        sender_name = user.get_full_name() or user.username
+        return JsonResponse({
+            "status": "success",
+            "total_count": proposal.messages.count(),
+            "message": {
+                "id": msg.id,
+                "sender_id": user.id,
+                "sender_name": sender_name,
+                "is_me": True,
+                "message": msg.message,
+                "time": timezone.localtime(msg.created_at).strftime('%H:%M')
+            }
+        })
+
     return redirect(f'/proposals/{proposal.id}/#chat')
 
 

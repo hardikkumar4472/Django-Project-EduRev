@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 56" fill="none">
+  <!-- LPU Stylized Geometric Sunburst / Diamond Emblem -->
+  <g transform="translate(4, 3)">
+    <!-- Top facets -->
+    <polygon points="24,2 14,16 24,18" fill="#FFB066"/>
+    <polygon points="24,2 24,18 34,16" fill="#FF8F3D"/>
+    <!-- Upper side facets -->
+    <polygon points="14,16 2,24 16,26" fill="#F37021"/>
+    <polygon points="34,16 46,24 32,26" fill="#FA8231"/>
+    <!-- Center diamond facets -->
+    <polygon points="24,18 16,26 24,34" fill="#EA580C"/>
+    <polygon points="24,18 24,34 32,26" fill="#F37021"/>
+    <polygon points="14,16 24,18 16,26" fill="#FF8F3D"/>
+    <polygon points="34,16 24,18 32,26" fill="#FFB066"/>
+    <!-- Lower side facets -->
+    <polygon points="2,24 12,36 16,26" fill="#D85604"/>
+    <polygon points="46,24 36,36 32,26" fill="#EA580C"/>
+    <!-- Bottom facets -->
+    <polygon points="16,26 12,36 24,34" fill="#C2410C"/>
+    <polygon points="32,26 36,36 24,34" fill="#D85604"/>
+    <polygon points="12,36 24,48 24,34" fill="#9A3412"/>
+    <polygon points="36,36 24,48 24,34" fill="#C2410C"/>
+    <!-- Central spark accent -->
+    <circle cx="24" cy="26" r="2.5" fill="#FFF7ED" opacity="0.9"/>
+  </g>
+
+  <!-- Typography: LOVELY PROFESSIONAL UNIVERSITY -->
+  <text x="62" y="21" font-family="'Inter', 'Arial Black', -apple-system, sans-serif" font-size="14.5" font-weight="900" fill="#1A1D20" letter-spacing="0.06em">LOVELY</text>
+  <text x="127" y="21" font-family="'Inter', 'Arial Black', -apple-system, sans-serif" font-size="14.5" font-weight="900" fill="#F37021" letter-spacing="0.06em">PROFESSIONAL</text>
+  <text x="62" y="36" font-family="'Inter', 'Arial Black', -apple-system, sans-serif" font-size="13" font-weight="800" fill="#1A1D20" letter-spacing="0.12em">UNIVERSITY</text>
+  
+  <!-- Slogan line -->
+  <text x="62" y="47" font-family="'Inter', -apple-system, sans-serif" font-size="6.8" font-weight="600" fill="#EA580C" letter-spacing="0.05em">Transforming Education, Transforming the World</text>
+
+  <!-- Subtle divider bar -->
+  <rect x="62" y="39" width="206" height="1.5" fill="#FDBA74" rx="0.75" opacity="0.7"/>
+</svg>
+

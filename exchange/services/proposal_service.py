@@ -48,6 +48,9 @@ class ProposalService:
 
             # Add participants
             participants = match_data.get('participants', [])
+            participant_student_ids = [p['student_id'] for p in participants]
+            creator_in_cycle = bool(creator and creator.id in participant_student_ids)
+
             for idx, p in enumerate(participants):
                 student_id = p['student_id']
                 student = User.objects.get(id=student_id)
@@ -55,9 +58,19 @@ class ProposalService:
                 target_bed = Bed.objects.get(id=p['target_bed_id'])
                 req_id = p.get('request_id')
 
-                # If creator is the one initiating, mark as ACCEPTED right away
-                resp = ProposalParticipant.ParticipantResponse.ACCEPTED if student == creator else ProposalParticipant.ParticipantResponse.PENDING
-                resp_at = now if student == creator else None
+                target_hostel = target_bed.room.block.hostel
+                if student.gender == User.Gender.MALE and target_hostel.gender_type != 'MALE':
+                    raise ValueError(f"Strict Gender Residency Policy Violation: Male student {student.username} cannot be allocated to {target_hostel.name}.")
+                if student.gender == User.Gender.FEMALE and target_hostel.gender_type != 'FEMALE':
+                    raise ValueError(f"Strict Gender Residency Policy Violation: Female student {student.username} cannot be allocated to {target_hostel.name}.")
+
+                # Proposer is automatically marked as ACCEPTED:
+                # - If the initiating user is in the cycle, their acceptance is recorded.
+                # - If the initiator is not in the cycle (e.g. open cycle or staff action),
+                #   the lead participant (order 1 / idx 0) is the originator and is marked ACCEPTED.
+                is_proposer = (student == creator) if creator_in_cycle else (idx == 0)
+                resp = ProposalParticipant.ParticipantResponse.ACCEPTED if is_proposer else ProposalParticipant.ParticipantResponse.PENDING
+                resp_at = now if is_proposer else None
 
                 ProposalParticipant.objects.create(
                     proposal=proposal,

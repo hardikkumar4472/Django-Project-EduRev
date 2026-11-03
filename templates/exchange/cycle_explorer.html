@@ -1,16 +1,38 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Find Your Next Room — Campus Exchange{% endblock %}
+{% block title %}Find Your Next Room — Lovely Professional University{% endblock %}
 
 {% block content %}
 <!-- ========================================================================
      SCREEN 4: FIND YOUR NEXT ROOM (MATCHES BROWSER)
      ======================================================================== -->
-<div class="page-header" style="margin-bottom: 1.25rem;">
-  <div class="page-title-group">
-    <h1>Find Your Next Room</h1>
-    <p>Here are the best compatible exchanges for you.</p>
+<!-- LPU Modern Roundabout Hero Banner -->
+<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.78) 55%, rgba(243, 112, 33, 0.4) 100%), url('{% static 'images/lpu_campus_roundabout.jpg' %}'); background-size: cover; background-position: center; border-radius: 16px; min-height: 180px; padding: 2rem 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.18);">
+  <div class="lpu-page-hero-content" style="position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div>
+      <div class="lpu-hero-badge-pill">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+        <span>Intelligent Exchange Engine • Verified LPU Residencies</span>
+      </div>
+      <h1 class="lpu-page-hero-title">
+        Find Your Next Room at LPU
+      </h1>
+      <p class="lpu-page-hero-subtitle">
+        Discover compatible 2-party direct swaps and multi-hop cyclic exchange chains across Boys Hostels (BH-1 to BH-10) and Girls Hostels (GH-1 to GH-10).
+      </p>
+    </div>
+    
+    <div class="lpu-hero-stats-panel">
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num">{{ proposals|length|default:"0" }}</span>
+        <span class="lpu-hero-stat-label">Active Matches</span>
+      </div>
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num" style="color: #4ADE80;">100%</span>
+        <span class="lpu-hero-stat-label">Audited</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -177,7 +199,7 @@
             {% for p in c.participants %}
               <div style="display: flex; justify-content: space-between; align-items: center; color: var(--navy-800); margin-bottom: 0.35rem; gap: 0.5rem; flex-wrap: wrap;">
                 <span><strong>{{ p.student_name|default:p.university_id }}</strong></span>
-                <span style="color: #0D9488; font-weight: 600; text-align: right;">
+                <span style="color: #F37021; font-weight: 600; text-align: right;">
                   {{ p.current_hostel_code|default:p.current_hostel }} (Rm {{ p.current_room }})
                   <span style="color: #64748B; font-weight: 400;">→</span>
                   {{ p.target_hostel_code|default:p.target_hostel }} (Rm {{ p.target_room }})
@@ -191,7 +213,11 @@
               {% csrf_token %}
               <input type="hidden" name="cycle_index" value="{{ forloop.counter0 }}">
               <button type="submit" class="btn btn-teal" style="width: 100%; font-weight: 700;">
-                Initiate Official Proposal →
+                {% if c.is_direct_match %}
+                  Initiate Official Proposal (You Accept ✓) →
+                {% else %}
+                  Initiate Proposal for Students →
+                {% endif %}
               </button>
             </form>
           </div>
@@ -244,8 +270,8 @@
             margin: 10,
             color: {
               background: '#1E293B',
-              border: '#0D9488',
-              highlight: { background: '#0F766E', border: '#14B8A6' }
+              border: '#F37021',
+              highlight: { background: '#C2410C', border: '#FB923C' }
             },
             font: { color: '#F8FAFC', face: 'Inter', size: 12, bold: true },
             borderWidth: 2,

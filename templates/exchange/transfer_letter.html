@@ -1,28 +1,28 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Official Room Transfer Certificate — {{ transfer.transfer_code }}{% endblock %}
+{% block title %}Official Room Transfer Certificate — Lovely Professional University ({{ transfer.transfer_code }}){% endblock %}
 
 {% block content %}
 <!-- Top Action Bar (Screen Only) -->
 <div class="print-hide" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; max-width: 920px; margin-left: auto; margin-right: auto;">
   <div>
     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-      <a href="{% url 'transfers_list' %}" style="text-decoration: none; font-size: 0.85rem; font-weight: 700; color: #64748B; display: inline-flex; align-items: center; gap: 0.35rem;">
+      <a href="{% url 'transfers_list' %}" style="text-decoration: none; font-size: 0.85rem; font-weight: 700; color: #EA580C; display: inline-flex; align-items: center; gap: 0.35rem;">
         ← Back to Transfers
       </a>
-      <span style="color: #CBD5E1;">•</span>
+      <span style="color: #FED7AA;">•</span>
       <span class="badge badge-green" style="font-size: 0.75rem; font-weight: 700;">
         ✓ Verified Allocation Order
       </span>
     </div>
-    <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--navy-800); margin: 0;">
+    <h1 style="font-size: 1.6rem; font-weight: 800; color: #1E293B; margin: 0;">
       Room Reallocation Certificate
     </h1>
   </div>
 
   <div style="display: flex; gap: 0.75rem;">
-    <button onclick="window.print();" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.4rem; font-weight: 700; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);">
+    <button onclick="window.print();" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.4rem; font-weight: 700;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 6 2 18 2 18 9"></polyline>
         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -38,36 +38,34 @@
      ========================================================================= -->
 <div class="official-pass-card" style="max-width: 920px; margin: 0 auto 3rem auto; background: #FFFFFF; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08); overflow: hidden; position: relative;">
 
-  <!-- Decorative Top Banner -->
-  <div style="height: 8px; background: linear-gradient(90deg, #0F2942 0%, #0D9488 50%, #3B82F6 100%);"></div>
+  <!-- Decorative Top Banner in LPU Orange Gradient -->
+  <div style="height: 9px; background: linear-gradient(90deg, #F37021 0%, #EA580C 50%, #1E293B 100%);"></div>
 
   <div style="padding: 2.75rem 3rem;">
 
     <!-- University Header & Seal -->
     <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 2rem; border-bottom: 2px solid #F1F5F9; gap: 1.5rem; flex-wrap: wrap;">
       <div style="display: flex; gap: 1.25rem; align-items: center;">
-        <div style="width: 68px; height: 68px; border-radius: 14px; background: #0F2942; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #FFFFFF; box-shadow: 0 8px 16px -4px rgba(15, 41, 66, 0.25);">
-          🏛️
-        </div>
+        <img src="{% static 'images/lpu_crest.svg' %}" alt="LPU Crest" style="width: 72px; height: 72px; display: block; filter: drop-shadow(0 4px 8px rgba(243, 112, 33, 0.25));">
         <div>
-          <div style="font-size: 0.75rem; font-weight: 800; color: #0D9488; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">
-            University Housing &amp; Residence Directorate
+          <div style="font-size: 0.75rem; font-weight: 800; color: #EA580C; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">
+            Lovely Professional University • Residence Affairs
           </div>
-          <h2 style="font-size: 1.45rem; font-weight: 900; color: #0F2942; margin: 0; line-height: 1.25;">
-            Office of the Chief Warden
+          <h2 style="font-size: 1.45rem; font-weight: 900; color: #1E293B; margin: 0; line-height: 1.25;">
+            Office of the Chief Warden &amp; DSW
           </h2>
           <div style="font-size: 0.85rem; color: #64748B; margin-top: 0.25rem;">
-            Official Post-Allocation Room Reassignment Order
+            Official Post-Allocation Room Reassignment Order • Phagwara, Punjab
           </div>
         </div>
       </div>
 
       <!-- Right Pass Badge -->
       <div style="text-align: right; min-width: 200px;">
-        <div style="display: inline-block; background: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; font-weight: 800; font-size: 0.75rem; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">
-          ● Certified Transfer
+        <div style="display: inline-block; background: #FFF7ED; border: 1px solid #FED7AA; color: #C2410C; font-weight: 800; font-size: 0.75rem; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">
+          ● Certified LPU Transfer
         </div>
-        <div style="font-family: monospace; font-size: 1rem; font-weight: 800; color: #0F2942; letter-spacing: -0.01em;">
+        <div style="font-family: monospace; font-size: 1rem; font-weight: 800; color: #1E293B; letter-spacing: -0.01em;">
           {{ transfer.transfer_code }}
         </div>
         <div style="font-size: 0.75rem; color: #94A3B8; margin-top: 0.15rem;">
@@ -80,26 +78,26 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
       
       <!-- Student Card -->
-      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.25rem;">
-        <div style="font-size: 0.725rem; font-weight: 800; color: #64748B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.25rem; border-left: 3.5px solid #F37021;">
+        <div style="font-size: 0.725rem; font-weight: 800; color: #EA580C; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
           <span>👤</span> Resident Beneficiary
         </div>
-        <div style="font-size: 1.15rem; font-weight: 800; color: #0F2942; margin-bottom: 0.25rem;">
+        <div style="font-size: 1.15rem; font-weight: 800; color: #1E293B; margin-bottom: 0.25rem;">
           {{ transfer.student.get_full_name|default:transfer.student.username }}
         </div>
         <div style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; color: #475569; margin-top: 0.65rem;">
-          <div><span style="color: #94A3B8;">Roll / Uni ID:</span> <strong>{{ transfer.student.university_id }}</strong></div>
+          <div><span style="color: #94A3B8;">Registration / Uni ID:</span> <strong>{{ transfer.student.university_id }}</strong></div>
           <div><span style="color: #94A3B8;">Gender:</span> <strong>{{ transfer.student.get_gender_display }}</strong></div>
-          <div><span style="color: #94A3B8;">Phone:</span> <strong>{{ transfer.student.phone|default:"On Campus Registry" }}</strong></div>
+          <div><span style="color: #94A3B8;">Phone:</span> <strong>{{ transfer.student.phone|default:"LPU Student Registry" }}</strong></div>
         </div>
       </div>
 
       <!-- Authorization Card -->
-      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.25rem;">
+      <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.25rem; border-left: 3.5px solid #1E293B;">
         <div style="font-size: 0.725rem; font-weight: 800; color: #64748B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
           <span>🛡️</span> Administrative Authority
         </div>
-        <div style="font-size: 1.15rem; font-weight: 800; color: #0F2942; margin-bottom: 0.25rem;">
+        <div style="font-size: 1.15rem; font-weight: 800; color: #1E293B; margin-bottom: 0.25rem;">
           {{ transfer.approved_by.get_full_name|default:transfer.approved_by.username }}
         </div>
         <div style="display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; color: #475569; margin-top: 0.65rem;">
@@ -113,7 +111,7 @@
 
     <!-- Room Reallocation Visual Comparison (Before vs After) -->
     <div style="margin: 2rem 0;">
-      <div style="font-size: 0.8rem; font-weight: 800; color: #0F2942; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <div style="font-size: 0.8rem; font-weight: 800; color: #1E293B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
         <span>🔄</span> Official Allotment Transition
       </div>
 
@@ -138,7 +136,7 @@
 
         <!-- Direction Arrow -->
         <div style="display: flex; align-items: center; justify-content: center; padding: 0 0.5rem;">
-          <div style="width: 44px; height: 44px; border-radius: 50%; background: #0F2942; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 800; box-shadow: 0 4px 10px rgba(15, 41, 66, 0.2);">
+          <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #F37021 0%, #D85604 100%); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 800; box-shadow: 0 4px 10px rgba(243, 112, 33, 0.35);">
             →
           </div>
         </div>
@@ -163,18 +161,18 @@
       </div>
     </div>
 
-    <!-- Security QR Verification & Handover Instructions Section -->
-    <div style="margin-top: 2rem; padding-top: 1.75rem; border-top: 2px dashed #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+    <!-- Handover Checklist & QR Verification -->
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.5rem; margin: 2rem 0; display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;">
       
       <!-- Handover Instructions -->
       <div style="flex: 1; min-width: 320px;">
-        <div style="font-size: 0.8rem; font-weight: 800; color: #0F2942; text-transform: uppercase; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+        <div style="font-size: 0.8rem; font-weight: 800; color: #1E293B; text-transform: uppercase; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
           <span>📋</span> Mandatory Handover Instructions
         </div>
         <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.825rem; color: #64748B; line-height: 1.7;">
-          <li>Present this printed certificate or QR code to the <strong>Hostel Caretaker</strong> upon moving.</li>
-          <li>Surrender existing room keys and complete the room inventory checklist.</li>
-          <li>Possession of new bed is sanctioned for immediate occupancy.</li>
+          <li>Present this printed certificate or digital QR to the <strong>LPU Hostel Caretaker</strong> upon moving.</li>
+          <li>Surrender existing room keys and complete the room inventory checklist at the caretaker desk.</li>
+          <li>Possession of new bed is sanctioned for immediate occupancy under university regulations.</li>
         </ul>
         <div style="margin-top: 0.75rem; font-family: monospace; font-size: 0.75rem; color: #94A3B8; background: #F8FAFC; padding: 6px 10px; border-radius: 6px; border: 1px solid #E2E8F0; word-break: break-all;">
           Security Auth Token: <strong>{{ transfer.verification_token }}</strong>
@@ -184,20 +182,16 @@
       <!-- QR Code & Digital Signature Seal -->
       <div style="display: flex; gap: 1.5rem; align-items: center;">
         
-        <!-- Official Seal / Stamp -->
+        <!-- Official LPU Seal / Stamp -->
         <div style="text-align: center; width: 110px;">
-          <div style="width: 80px; height: 80px; margin: 0 auto; border: 3px double #0D9488; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #0D9488; transform: rotate(-10deg);">
-            <div style="font-size: 0.55rem; font-weight: 900; letter-spacing: 0.05em;">UNIVERSITY</div>
-            <div style="font-size: 0.9rem;">✓</div>
-            <div style="font-size: 0.55rem; font-weight: 900; letter-spacing: 0.05em;">APPROVED</div>
-          </div>
-          <div style="font-size: 0.7rem; font-weight: 700; color: #64748B; margin-top: 0.4rem;">Registrar Seal</div>
+          <img src="{% static 'images/lpu_seal.svg' %}" alt="LPU Seal" style="width: 84px; height: 84px; margin: 0 auto; display: block; transform: rotate(-5deg);">
+          <div style="font-size: 0.7rem; font-weight: 700; color: #EA580C; margin-top: 0.4rem;">Registrar Seal</div>
         </div>
 
         <!-- Scannable QR -->
-        <div style="text-align: center; background: #FFFFFF; padding: 0.75rem; border-radius: 12px; border: 1px solid #CBD5E1; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <div style="text-align: center; background: #FFFFFF; padding: 0.75rem; border-radius: 12px; border: 1px solid #FED7AA; box-shadow: 0 4px 12px rgba(243, 112, 33, 0.08);">
           <img src="data:image/png;base64,{{ qr_base64 }}" alt="Transfer Verification QR" style="width: 110px; height: 110px; display: block;">
-          <div style="font-size: 0.675rem; font-weight: 700; color: #64748B; margin-top: 0.35rem;">
+          <div style="font-size: 0.675rem; font-weight: 700; color: #EA580C; margin-top: 0.35rem;">
             Scan to Verify
           </div>
         </div>
@@ -206,21 +200,20 @@
 
     </div>
 
-    <!-- Signatures Row -->
     <!-- Signatures Row with Auto-Generated Verified Digital Signatures -->
     <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid #F1F5F9; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; text-align: center;">
       
       <!-- Student Digital Signature -->
       <div>
         <div style="height: 48px; border-bottom: 1.5px solid #CBD5E1; margin-bottom: 0.5rem; display: flex; align-items: flex-end; justify-content: center; position: relative;">
-          <span style="font-family: 'Brush Script MT', 'Dancing Script', 'Caveat', cursive, sans-serif; font-size: 1.45rem; color: #1E3A8A; font-weight: 700; transform: rotate(-2deg); letter-spacing: 0.02em;">
+          <span style="font-family: 'Brush Script MT', 'Dancing Script', 'Caveat', cursive, sans-serif; font-size: 1.45rem; color: #EA580C; font-weight: 700; transform: rotate(-2deg); letter-spacing: 0.02em;">
             {{ transfer.student.get_full_name|default:transfer.student.username }}
           </span>
           <span style="position: absolute; right: 2px; bottom: 4px; font-size: 0.6rem; color: #059669; font-weight: 700; background: #ECFDF5; padding: 1px 4px; border-radius: 3px;">
             e-Signed
           </span>
         </div>
-        <div style="font-size: 0.78rem; font-weight: 700; color: #0F2942;">Resident Student Signature</div>
+        <div style="font-size: 0.78rem; font-weight: 700; color: #1E293B;">Resident Student Signature</div>
         <div style="font-size: 0.7rem; color: #64748B;">{{ transfer.student.get_full_name }} ({{ transfer.student.university_id }})</div>
       </div>
 
@@ -230,30 +223,29 @@
           <span style="font-family: 'Brush Script MT', 'Dancing Script', 'Caveat', cursive, sans-serif; font-size: 1.35rem; color: #475569; font-weight: 700; transform: rotate(-1deg);">
             M. K. Sharma
           </span>
-          <span style="position: absolute; right: 2px; bottom: 4px; font-size: 0.6rem; color: #2563EB; font-weight: 700; background: #EFF6FF; padding: 1px 4px; border-radius: 3px;">
+          <span style="position: absolute; right: 2px; bottom: 4px; font-size: 0.6rem; color: #EA580C; font-weight: 700; background: #FFF7ED; padding: 1px 4px; border-radius: 3px;">
             Keys Exchanged
           </span>
         </div>
-        <div style="font-size: 0.78rem; font-weight: 700; color: #0F2942;">Hostel Caretaker Verification</div>
+        <div style="font-size: 0.78rem; font-weight: 700; color: #1E293B;">Hostel Caretaker Verification</div>
         <div style="font-size: 0.7rem; color: #64748B;">Senior Residence Caretaker · In-Charge</div>
       </div>
 
       <!-- Warden Digital Signature -->
       <div>
-        <div style="height: 48px; border-bottom: 1.5px solid #0D9488; margin-bottom: 0.5rem; display: flex; align-items: flex-end; justify-content: center; position: relative;">
-          <span style="font-family: 'Brush Script MT', 'Dancing Script', 'Caveat', cursive, sans-serif; font-size: 1.5rem; color: #0F2942; font-weight: 700; transform: rotate(-3deg);">
+        <div style="height: 48px; border-bottom: 1.5px solid #F37021; margin-bottom: 0.5rem; display: flex; align-items: flex-end; justify-content: center; position: relative;">
+          <span style="font-family: 'Brush Script MT', 'Dancing Script', 'Caveat', cursive, sans-serif; font-size: 1.5rem; color: #1E293B; font-weight: 700; transform: rotate(-3deg);">
             {{ transfer.approved_by.first_name }} {{ transfer.approved_by.last_name }}
           </span>
-          <span style="position: absolute; right: 2px; bottom: 4px; font-size: 0.6rem; color: #0D9488; font-weight: 700; background: #F0FDFA; padding: 1px 4px; border-radius: 3px;">
+          <span style="position: absolute; right: 2px; bottom: 4px; font-size: 0.6rem; color: #C2410C; font-weight: 700; background: #FFF7ED; padding: 1px 4px; border-radius: 3px;">
             Authorized ✓
           </span>
         </div>
-        <div style="font-size: 0.78rem; font-weight: 700; color: #0F2942;">Warden / Authorizing Officer</div>
-        <div style="font-size: 0.7rem; color: #0D9488; font-weight: 700;">{{ transfer.approved_by.get_role_display }}</div>
+        <div style="font-size: 0.78rem; font-weight: 700; color: #1E293B;">Warden / Authorizing Officer</div>
+        <div style="font-size: 0.7rem; color: #EA580C; font-weight: 700;">{{ transfer.approved_by.get_role_display }}</div>
       </div>
 
     </div>
-
 
   </div>
 </div>
@@ -280,6 +272,7 @@
       border-radius: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
+    }
   }
 </style>
 
@@ -311,4 +304,3 @@
   });
 </script>
 {% endblock %}
-

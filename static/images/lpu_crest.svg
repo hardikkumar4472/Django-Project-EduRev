@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
+  <!-- Circular background badge -->
+  <defs>
+    <radialGradient id="lpuBadgeGlow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FF9F43"/>
+      <stop offset="60%" stop-color="#F37021"/>
+      <stop offset="100%" stop-color="#C2410C"/>
+    </radialGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#7C2D12" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <circle cx="28" cy="28" r="26" fill="url(#lpuBadgeGlow)" filter="url(#shadow)"/>
+  <circle cx="28" cy="28" r="24.5" fill="none" stroke="#FED7AA" stroke-width="1" stroke-dasharray="2 1.5"/>
+
+  <!-- LPU Stylized Geometric Sunburst / Diamond Facets -->
+  <g transform="translate(4, 4)">
+    <!-- Top facets -->
+    <polygon points="24,4 15,17 24,19" fill="#FFF7ED"/>
+    <polygon points="24,4 24,19 33,17" fill="#FFEDD5"/>
+    <!-- Upper side facets -->
+    <polygon points="15,17 4,24 17,26" fill="#FDBA74"/>
+    <polygon points="33,17 44,24 31,26" fill="#FED7AA"/>
+    <!-- Center diamond facets -->
+    <polygon points="24,19 17,26 24,33" fill="#EA580C"/>
+    <polygon points="24,19 24,33 31,26" fill="#C2410C"/>
+    <polygon points="15,17 24,19 17,26" fill="#FFFFFF"/>
+    <polygon points="33,17 24,19 31,26" fill="#FFEDD5"/>
+    <!-- Lower side facets -->
+    <polygon points="4,24 13,35 17,26" fill="#C2410C"/>
+    <polygon points="44,24 35,35 31,26" fill="#9A3412"/>
+    <!-- Bottom facets -->
+    <polygon points="17,26 13,35 24,33" fill="#7C2D12"/>
+    <polygon points="31,26 35,35 24,33" fill="#7C2D12"/>
+    <polygon points="13,35 24,44 24,33" fill="#431407"/>
+    <polygon points="35,35 24,44 24,33" fill="#431407"/>
+    <!-- Central spark accent -->
+    <circle cx="24" cy="26" r="2.5" fill="#FFFFFF"/>
+  </g>
+</svg>
+

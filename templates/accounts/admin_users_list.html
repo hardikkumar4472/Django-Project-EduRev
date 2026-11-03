@@ -1,63 +1,54 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}User & Role Management — Campus Exchange{% endblock %}
+{% block title %}User & Role Management — Lovely Professional University{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<div class="page-header" style="margin-bottom: 1.5rem;">
-  <div class="page-title-group">
-    <h1>User & Role Management</h1>
-    <p>Assign, modify, or reclassify roles across Student, Warden, Chief Warden, DSW, and Administrator accounts.</p>
-  </div>
+<!-- LPU User & Role Management Hero Banner -->
+<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.78) 55%, rgba(243, 112, 33, 0.4) 100%), url('{% static 'images/lpu_campus_roundabout.jpg' %}'); background-size: cover; background-position: center; border-radius: 16px; min-height: 180px; padding: 2rem 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.18);">
+  <div class="lpu-page-hero-content" style="position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div>
+      <div class="lpu-hero-badge-pill">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+        <span>Official Directory Management • Division of Student Welfare</span>
+      </div>
+      <h1 class="lpu-page-hero-title">
+        User &amp; Role Governance
+      </h1>
+      <p class="lpu-page-hero-subtitle">
+        Assign, provision, and reclassify access privileges across Students, Wardens, Chief Wardens, DSW Deans, and Administrators.
+      </p>
 
-  <div style="display: flex; gap: 0.75rem; align-items: center;">
-    <button type="button" class="btn btn-primary" onclick="openCreateUserModal()" id="btn-create-user">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-      </svg>
-      Add New User
-    </button>
-  </div>
-</div>
-
-<!-- KPI Metric Cards -->
-<div class="grid-4" style="margin-bottom: 2rem;">
-  <!-- Total Users -->
-  <div class="kpi-card">
-    <div class="kpi-card-row">
-      <span class="kpi-card-num">{{ total_users }}</span>
-      <span class="badge badge-blue">Total</span>
+      <div style="margin-top: 1rem;">
+        <button type="button" class="btn btn-primary" onclick="openCreateUserModal()" id="btn-create-user" style="box-shadow: 0 4px 14px rgba(243, 112, 33, 0.4);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.35rem;">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add New User
+        </button>
+      </div>
     </div>
-    <div class="kpi-card-label">Registered Accounts</div>
-  </div>
 
-  <!-- Students -->
-  <div class="kpi-card">
-    <div class="kpi-card-row">
-      <span class="kpi-card-num">{{ students_count }}</span>
-      <span class="badge badge-teal">Students</span>
+    <!-- Live Glassmorphism Metric Panel -->
+    <div class="lpu-hero-stats-panel">
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num">{{ total_users }}</span>
+        <span class="lpu-hero-stat-label">Total Users</span>
+      </div>
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num">{{ students_count }}</span>
+        <span class="lpu-hero-stat-label">Students</span>
+      </div>
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num">{{ wardens_count }}</span>
+        <span class="lpu-hero-stat-label">Wardens</span>
+      </div>
+      <div class="lpu-hero-stat-item">
+        <span class="lpu-hero-stat-num" style="color: #FDBA74;">{{ admins_count|add:dsw_count }}</span>
+        <span class="lpu-hero-stat-label">Staff / DSW</span>
+      </div>
     </div>
-    <div class="kpi-card-label">Resident Students</div>
-  </div>
-
-  <!-- Wardens -->
-  <div class="kpi-card">
-    <div class="kpi-card-row">
-      <span class="kpi-card-num">{{ wardens_count }}</span>
-      <span class="badge badge-yellow">Wardens</span>
-    </div>
-    <div class="kpi-card-label">Hostel & Chief Wardens</div>
-  </div>
-
-  <!-- Admins & DSW -->
-  <div class="kpi-card">
-    <div class="kpi-card-row">
-      <span class="kpi-card-num">{{ admins_count|add:dsw_count }}</span>
-      <span class="badge badge-purple">Staff</span>
-    </div>
-    <div class="kpi-card-label">{{ admins_count }} Admins • {{ dsw_count }} DSW</div>
   </div>
 </div>
 
@@ -124,7 +115,7 @@
           <tr>
             <td>
               <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <div style="width: 36px; height: 36px; border-radius: 50%; background: #0F2942; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; border: 1.5px solid #E2E8F0; text-transform: uppercase;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #F37021 0%, #D85604 100%); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; border: 1.5px solid #E2E8F0; text-transform: uppercase;">
                   {{ u.first_name|slice:":1" }}{{ u.last_name|slice:":1"|default:u.username|slice:":1" }}
                 </div>
                 <div>

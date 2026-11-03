@@ -3,118 +3,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Campus Exchange — University Hostel Room Exchange{% endblock %}</title>
-  
-  <!-- Google Fonts: Inter & Caveat -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <title>{% block title %}LPU Campus Exchange — Lovely Professional University{% endblock %}</title>
   
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <!-- LPU Official Crest Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'images/lpu_official_logo.png' %}">
+  
+  <!-- Google Fonts: Inter, Kalam, & Caveat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&family=Kalam:wght@700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2.2">
+  <link rel="stylesheet" href="{% static 'css/lpu_landing.css' %}?v=2.2">
+  
+  <style>
+    /* Direct resilient fallback styles for universal portal elements */
+    .lpu-portal-footer {
+      width: 100%;
+      background: #081628;
+      color: #94A3B8;
+      border-top: 3px solid #F37021;
+      padding: 3rem 2rem 1.75rem;
+      margin-top: auto;
+    }
+    .lpu-footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2rem;
+    }
+    .lpu-footer-brand-desc {
+      font-size: 0.825rem;
+      line-height: 1.6;
+      color: #94A3B8;
+      margin-top: 0.75rem;
+      max-width: 380px;
+    }
+    .lpu-footer-title {
+      color: #FFFFFF;
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .lpu-footer-links {
+      list-style: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .lpu-footer-links li {
+      list-style: none !important;
+    }
+    .lpu-footer-links li a {
+      color: #94A3B8 !important;
+      text-decoration: none !important;
+      font-size: 0.825rem;
+      transition: all 0.2s ease;
+    }
+    .lpu-footer-links li a:hover {
+      color: #F37021 !important;
+      transform: translateX(3px);
+    }
+    .lpu-footer-bottom {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.775rem;
+      color: #64748B;
+    }
+    @media (max-width: 960px) {
+      .lpu-footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .lpu-footer-inner { grid-template-columns: 1fr; }
+    }
+  </style>
   {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="{% if request.path == '/' %}landing-page-body{% endif %}">
 
   <!-- ========================================================================
-  <!-- Top Navigation Bar -->
+  <!-- Top Navigation Bar matching Reference Mockup -->
   <header class="top-navbar">
     <div class="navbar-inner">
       
-      <!-- Brand Crest & Title -->
+      <!-- LPU Official Logo with Emblem and Tagline -->
       <div class="brand-section">
-        <a href="{% url 'landing' %}" class="brand-link">
-          <div class="brand-crest">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3l9 7H3z"/>
-            </svg>
+        <a href="{% url 'landing' %}" class="lpu-brand-combo" title="Lovely Professional University">
+          <img src="{% static 'images/lpu_official_logo.png' %}" alt="Lovely Professional University Emblem" class="lpu-emblem-img">
+          <div class="lpu-brand-text">
+            <div class="lpu-brand-heading">
+              <span class="brand-dark">LOVELY</span><span class="brand-orange">PROFESSIONAL</span>
+              <span class="brand-dark brand-uni">UNIVERSITY</span>
+            </div>
+            <div class="lpu-brand-slogan">Transforming Education &bull; Transforming the World</div>
           </div>
-          <div class="brand-title">Campus Exchange</div>
         </a>
-
-        <!-- Nav Menu -->
-        <nav>
-          <ul class="nav-menu">
-            <li class="nav-item {% if request.path == '/' %}active{% endif %}">
-              <a href="{% url 'landing' %}">Home</a>
-            </li>
-            {% if user.is_authenticated %}
-              {% if user.is_student %}
-                <li class="nav-item {% if request.path == '/dashboard/' %}active{% endif %}">
-                  <a href="{% url 'dashboard' %}">Dashboard</a>
-                </li>
-                <li class="nav-item {% if request.path == '/exchange-requests/new/' %}active{% endif %}">
-                  <a href="{% url 'create_request' %}">New Request</a>
-                </li>
-                <li class="nav-item {% if '/proposals/' in request.path or request.path == '/matches/' %}active{% endif %}">
-                  <a href="{% url 'matches' %}">Matches</a>
-                </li>
-                <li class="nav-item {% if request.path == '/lifestyle/quiz/' %}active{% endif %}">
-                  <a href="{% url 'lifestyle_quiz' %}">🤝 Quiz</a>
-                </li>
-                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
-                  <a href="{% url 'transfers_list' %}">Transfers</a>
-                </li>
-              {% elif user.role == 'warden' %}
-                <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
-                  <a href="{% url 'warden_approvals' %}">Approval Queue</a>
-                </li>
-                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
-                  <a href="{% url 'transfers_list' %}">Transfers</a>
-                </li>
-                <li class="nav-item {% if request.path == '/caretaker/verify/' %}active{% endif %}">
-                  <a href="{% url 'caretaker_verify' %}">🔑 Key Desk</a>
-                </li>
-              {% elif user.role == 'chief_warden' %}
-                <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
-                  <a href="{% url 'warden_approvals' %}">Approvals Oversight</a>
-                </li>
-                <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
-                  <a href="{% url 'dean_analytics' %}">Analytics</a>
-                </li>
-                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
-                  <a href="{% url 'transfers_list' %}">Transfers</a>
-                </li>
-                <li class="nav-item {% if request.path == '/caretaker/verify/' %}active{% endif %}">
-                  <a href="{% url 'caretaker_verify' %}">🔑 Key Desk</a>
-                </li>
-              {% elif user.role == 'dsw' %}
-                <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
-
-                  <a href="{% url 'hostels_list' %}">Hostels</a>
-                </li>
-                <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
-                  <a href="{% url 'dean_analytics' %}">Analytics</a>
-                </li>
-                <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
-                  <a href="{% url 'transfers_list' %}">Transfers</a>
-                </li>
-              {% elif user.is_admin_role %}
-                <li class="nav-item {% if '/admin/users/' in request.path %}active{% endif %}">
-                  <a href="{% url 'admin_users_list' %}">Users</a>
-                </li>
-                <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
-                  <a href="{% url 'hostels_list' %}">Hostels</a>
-                </li>
-                <li class="nav-item {% if '/admin/policies/' in request.path %}active{% endif %}">
-                  <a href="{% url 'admin_policies' %}">Policies</a>
-                </li>
-                <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
-                  <a href="{% url 'warden_approvals' %}">Approvals</a>
-                </li>
-                <li class="nav-item {% if '/dean/' in request.path or '/admin/analytics/' in request.path %}active{% endif %}">
-                  <a href="{% url 'dean_analytics' %}">Analytics</a>
-                </li>
-                <li class="nav-item {% if '/django-admin/' in request.path or '/admin/' in request.path and '/admin/users/' not in request.path and '/admin/policies/' not in request.path %}active{% endif %}">
-                  <a href="/django-admin/" target="_blank">⚙️ Django Admin</a>
-                </li>
-              {% endif %}
-            {% endif %}
-          </ul>
-        </nav>
       </div>
 
-      <!-- Right Controls: Notification Bell & Profile -->
+      <!-- Nav Menu -->
+      <nav>
+        <ul class="nav-menu">
+          <li class="nav-item {% if request.path == '/' %}active{% endif %}">
+            <a href="{% url 'landing' %}">Home</a>
+          </li>
+          <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+            <a href="{% url 'hostels_list' %}">Hostels</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% if request.path == '/' %}#how-it-works{% else %}/#how-it-works{% endif %}">How It Works</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% if request.path == '/' %}#guidelines{% else %}/#guidelines{% endif %}">Guidelines</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% if request.path == '/' %}#support{% else %}/#support{% endif %}">Help &amp; Support</a>
+          </li>
+
+          {% if user.is_authenticated %}
+            {% if user.is_student %}
+              <li class="nav-item {% if request.path == '/dashboard/' %}active{% endif %}">
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+              </li>
+              <li class="nav-item {% if request.path == '/exchange-requests/new/' %}active{% endif %}">
+                <a href="{% url 'create_request' %}">New Request</a>
+              </li>
+              <li class="nav-item {% if '/proposals/' in request.path or request.path == '/matches/' %}active{% endif %}">
+                <a href="{% url 'matches' %}">Matches</a>
+              </li>
+              <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                <a href="{% url 'transfers_list' %}">Transfers</a>
+              </li>
+            {% elif user.role == 'warden' %}
+              <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
+                <a href="{% url 'warden_approvals' %}">Queue</a>
+              </li>
+              <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                <a href="{% url 'transfers_list' %}">Transfers</a>
+              </li>
+              <li class="nav-item {% if request.path == '/caretaker/verify/' %}active{% endif %}">
+                <a href="{% url 'caretaker_verify' %}">🔑 Key Desk</a>
+              </li>
+            {% elif user.role == 'chief_warden' %}
+              <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
+                <a href="{% url 'warden_approvals' %}">Oversight</a>
+              </li>
+              <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
+                <a href="{% url 'dean_analytics' %}">Analytics</a>
+              </li>
+              <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                <a href="{% url 'transfers_list' %}">Transfers</a>
+              </li>
+            {% elif user.role == 'dsw' %}
+              <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
+                <a href="{% url 'dean_analytics' %}">Analytics</a>
+              </li>
+              <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                <a href="{% url 'transfers_list' %}">Transfers</a>
+              </li>
+            {% elif user.is_admin_role %}
+              <li class="nav-item {% if '/admin/users/' in request.path %}active{% endif %}">
+                <a href="{% url 'admin_users_list' %}">Users</a>
+              </li>
+              <li class="nav-item {% if '/admin/policies/' in request.path %}active{% endif %}">
+                <a href="{% url 'admin_policies' %}">Policies</a>
+              </li>
+              <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
+                <a href="{% url 'dean_analytics' %}">Analytics</a>
+              </li>
+              <li class="nav-item">
+                <a href="/django-admin/" target="_blank">⚙️ Admin</a>
+              </li>
+            {% endif %}
+          {% endif %}
+        </ul>
+      </nav>
+
+      <!-- Right Controls: Sign In to Portal Pill Button -->
       <div class="navbar-controls">
         {% if user.is_authenticated %}
           <!-- Notification Bell -->
@@ -129,40 +207,38 @@
           </a>
 
           <!-- Dynamic User Profile Header -->
-          <div class="user-profile-header">
-            <div style="width: 34px; height: 34px; border-radius: 50%; background: #0F2942; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; border: 2px solid #E2E8F0; text-transform: uppercase;">
+          <a href="{% url 'dashboard' %}" class="user-profile-header" style="text-decoration: none;">
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #F37021 0%, #D85604 100%); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; border: 2px solid #FED7AA; text-transform: uppercase; box-shadow: 0 2px 6px rgba(243, 112, 33, 0.3);">
               {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1"|default:user.username|slice:":1" }}
             </div>
             <div class="user-meta-header">
               <span class="user-name-header">{{ user.get_full_name|default:user.username }}</span>
               <span class="user-sub-header">
                 {% if user.is_student %}
-                  {% if user_allocated_bed %}
-                    {{ user_allocated_bed.room.block.hostel.code }} • {{ user_allocated_bed.room.room_number }} ({{ user_allocated_bed.bed_number }})
-                  {% else %}
-                    Student • {{ user.university_id }}
-                  {% endif %}
+                  {{ user.university_id }}
                 {% elif user.role == 'chief_warden' %}
                   Chief Warden
                 {% elif user.role == 'warden' %}
                   Hostel Warden
                 {% elif user.role == 'dsw' %}
-                  Dean of Student Welfare
-                {% elif user.is_admin_role %}
-                  Administrator
+                  DSW Dean
                 {% else %}
-                  {{ user.university_id }}
+                  Administrator
                 {% endif %}
               </span>
             </div>
-          </div>
+          </a>
 
           <a href="{% url 'logout' %}" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;">
             Sign Out
           </a>
         {% else %}
-          <a href="{% url 'login' %}" class="btn btn-primary btn-sm">
-            Sign In to Portal
+          <a href="{% url 'login' %}" class="lpu-btn-nav-signin">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Sign In to Portal →</span>
           </a>
         {% endif %}
       </div>
@@ -171,11 +247,11 @@
   </header>
 
   <!-- Main Content Area -->
-  <main class="main-container">
+  <main class="main-container {% if request.path == '/' %}landing-main-bleed{% endif %}">
     {% if messages %}
-      <div style="margin-bottom: 1.5rem;">
+      <div style="padding: 1rem 2rem 0 2rem; max-width: 1400px; margin: 0 auto;">
         {% for message in messages %}
-          <div class="alert" style="padding: 0.75rem 1.25rem; border-radius: var(--radius-md); background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500;">
+          <div class="alert" style="padding: 0.75rem 1.25rem; border-radius: var(--radius-md); background: #FFF7ED; border: 1px solid #FED7AA; color: #C2410C; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600;">
             {{ message }}
           </div>
         {% endfor %}
@@ -184,6 +260,82 @@
 
     {% block content %}{% endblock %}
   </main>
+
+  <!-- Universal LPU Portal Footer (Hidden on focused Auth screens) -->
+  {% if request.path != '/login/' and request.path != '/signup/' %}
+  <footer class="lpu-portal-footer">
+    <div class="lpu-footer-inner">
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+          <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU Logo" style="width: 42px; height: 42px; border-radius: 50%;">
+          <div>
+            <div style="color: #FFFFFF; font-size: 1.05rem; font-weight: 900; line-height: 1;">
+              LOVELY <span style="color: #F37021;">PROFESSIONAL</span>
+            </div>
+            <div style="color: #FFFFFF; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.08em; line-height: 1.2;">
+              UNIVERSITY
+            </div>
+          </div>
+        </div>
+        <p class="lpu-footer-brand-desc">
+          Official hostel allocation and room exchange management platform. Providing equitable, audited 2-party and multi-hop cyclic swaps for 30,000+ residents.
+        </p>
+        <div style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.06); padding: 0.35rem 0.85rem; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.12); font-size: 0.75rem; color: #FED7AA; font-weight: 700;">
+          <span>🏆 NAAC A++ Accredited</span>
+          <span>•</span>
+          <span>Ranked Top University</span>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="lpu-footer-title">Residences</h4>
+        <ul class="lpu-footer-links">
+          <li><a href="{% url 'hostels_list' %}?gender=MALE">Boys Hostels (BH-1 to BH-10)</a></li>
+          <li><a href="{% url 'hostels_list' %}?gender=FEMALE">Girls Hostels (GH-1 to GH-10)</a></li>
+          <li><a href="{% url 'hostels_list' %}">Room Capacity Directory</a></li>
+          <li><a href="{% if request.path == '/' %}#guidelines{% else %}/#guidelines{% endif %}">Hostel Rules &amp; Curfew</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="lpu-footer-title">Portal Navigation</h4>
+        <ul class="lpu-footer-links">
+          <li><a href="{% url 'landing' %}">Home &amp; Overview</a></li>
+          <li><a href="{% url 'dashboard' %}">Student Cockpit</a></li>
+          <li><a href="{% url 'matches' %}">Find Compatible Rooms</a></li>
+          <li><a href="{% url 'lifestyle_quiz' %}">Compatibility Quiz</a></li>
+          <li><a href="{% url 'transfers_list' %}">Executed Transfers Log</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="lpu-footer-title">Institutional Desk</h4>
+        <ul class="lpu-footer-links">
+          <li style="color: #CBD5E1; font-size: 0.8rem; line-height: 1.4;">
+            <strong>Chief Warden Central Office</strong><br>
+            Block 32, Central Administrative Wing<br>
+            Phagwara, Punjab - 144411
+          </li>
+          <li style="color: #CBD5E1; font-size: 0.8rem; margin-top: 0.4rem;">
+            📞 <strong>Helpline:</strong> +91 1824 517000
+          </li>
+          <li style="color: #CBD5E1; font-size: 0.8rem;">
+            ✉️ <strong>Support:</strong> hostel.exchange@lpu.co.in
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="lpu-footer-bottom">
+      <div>
+        &copy; {% now "Y" %} Lovely Professional University. All Rights Reserved.
+      </div>
+      <div>
+        Transforming Education &bull; Transforming the World
+      </div>
+    </div>
+  </footer>
+  {% endif %}
 
   <script src="{% static 'js/app.js' %}"></script>
   {% block extra_js %}{% endblock %}

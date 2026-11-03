@@ -17,16 +17,15 @@ def require_admin_or_dsw(view_func):
         return view_func(request, *args, **kwargs)
     return _wrapped_view
 
-@login_required
-@require_admin_or_dsw
 def hostels_list_view(request):
     """
-    Lists all hostels with room/bed capacity statistics, active status, and dynamic CRUD actions.
+    Public, unauthenticated showcase of all LPU hostels dynamically fetched from the database,
+    with capacity statistics, occupancy rates, and administrative controls for staff.
     """
     gender_filter = request.GET.get('gender', 'ALL')
     search_query = request.GET.get('q', '').strip()
 
-    hostels_qs = Hostel.objects.all().order_by('gender_type', 'code')
+    hostels_qs = Hostel.objects.all().prefetch_related('blocks').order_by('gender_type', 'code')
 
     if gender_filter in [Hostel.GenderType.MALE, Hostel.GenderType.FEMALE, Hostel.GenderType.COED]:
         hostels_qs = hostels_qs.filter(gender_type=gender_filter)
@@ -44,8 +43,20 @@ def hostels_list_view(request):
     occupied_beds = Bed.objects.filter(occupancy_status=Bed.OccupancyStatus.OCCUPIED).count()
     vacant_beds = Bed.objects.filter(occupancy_status=Bed.OccupancyStatus.VACANT).count()
 
+    hostels_list = list(hostels_qs)
+    for h in hostels_list:
+        cap = h.total_capacity
+        occ = h.occupied_beds_count
+        h.occupancy_pct = int(round((occ / cap * 100))) if cap > 0 else 0
+
+    is_admin_or_dsw = request.user.is_authenticated and (
+        getattr(request.user, 'is_admin_role', False) or 
+        getattr(request.user, 'is_dsw', False) or 
+        getattr(request.user, 'role', '') in ['warden', 'chief_warden']
+    )
+
     context = {
-        'hostels': hostels_qs,
+        'hostels': hostels_list,
         'gender_filter': gender_filter,
         'search_query': search_query,
         'total_hostels': total_hostels,
@@ -54,6 +65,7 @@ def hostels_list_view(request):
         'total_beds': total_beds,
         'occupied_beds': occupied_beds,
         'vacant_beds': vacant_beds,
+        'is_admin_or_dsw': is_admin_or_dsw,
         'GenderType': Hostel.GenderType,
     }
     return render(request, 'hostel/hostels_list.html', context)

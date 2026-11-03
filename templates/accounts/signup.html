@@ -1,91 +1,241 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Student Registration — CampusExchange{% endblock %}
+{% block title %}Student Resident Registration — Lovely Professional University{% endblock %}
 
 {% block content %}
-<div style="max-width: 650px; margin: 2rem auto;">
-  <div class="card">
-    <div class="card-header">
-      <h2 class="card-title">
-        <span>🎓</span> Student Resident Registration
-      </h2>
-      <span class="badge badge-blue">Official Portal</span>
+<div class="lpu-signup-container">
+  
+  <div class="lpu-signup-card">
+    
+    <!-- Top Visual Banner with Campus Roundabout -->
+    <div class="signup-card-banner" style="background-image: linear-gradient(180deg, rgba(8, 22, 40, 0.35) 0%, rgba(8, 22, 40, 0.88) 100%), url('{% static 'images/lpu_campus_roundabout.jpg' %}');">
+      <div class="banner-badge-row">
+        <span class="banner-pill">🎓 Student Residency</span>
+        <span class="banner-pill">🏢 BH-1 to BH-10 &bull; GH-1 to GH-10</span>
+      </div>
+      <div class="banner-motto">
+        Building Brighter Futures together
+      </div>
     </div>
 
-    <form method="post" action="{% url 'signup' %}">
-      {% csrf_token %}
+    <!-- Card Body Content -->
+    <div class="signup-card-body">
       
-      <div class="grid-2">
-        <div class="form-group">
-          <label class="form-label">University ID</label>
-          {{ form.university_id }}
-          {% if form.university_id.errors %}<div style="color: var(--color-danger); font-size: 0.8rem;">{{ form.university_id.errors }}</div>{% endif %}
-        </div>
-        <div class="form-group">
-          <label class="form-label">Username</label>
-          {{ form.username }}
-          {% if form.username.errors %}<div style="color: var(--color-danger); font-size: 0.8rem;">{{ form.username.errors }}</div>{% endif %}
-        </div>
+      <!-- Floating Circular Emblem -->
+      <div class="signup-emblem-wrap">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU Crest" class="signup-emblem-img">
       </div>
 
-      <div class="grid-2">
-        <div class="form-group">
-          <label class="form-label">First Name</label>
-          {{ form.first_name }}
-        </div>
-        <div class="form-group">
-          <label class="form-label">Last Name</label>
-          {{ form.last_name }}
-        </div>
+      <!-- Heading -->
+      <div class="signup-header-text">
+        <h2 class="signup-title">Student Resident Registration</h2>
+        <p class="signup-subtitle">
+          Link your student identity to unlock verified 2-party &amp; cyclic room exchanges.
+        </p>
       </div>
 
-      <div class="grid-2">
-        <div class="form-group">
-          <label class="form-label">Email Address</label>
-          {{ form.email }}
+      <form method="post" action="{% url 'signup' %}">
+        {% csrf_token %}
+        
+        <div class="grid-2" style="gap: 0.75rem; margin-bottom: 0.75rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">University Reg. ID</label>
+            {{ form.university_id }}
+            {% if form.university_id.errors %}<div style="color: #DC2626; font-size: 0.75rem;">{{ form.university_id.errors }}</div>{% endif %}
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">Username</label>
+            {{ form.username }}
+            {% if form.username.errors %}<div style="color: #DC2626; font-size: 0.75rem;">{{ form.username.errors }}</div>{% endif %}
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Phone Number</label>
-          {{ form.phone }}
+
+        <div class="grid-2" style="gap: 0.75rem; margin-bottom: 0.75rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">First Name</label>
+            {{ form.first_name }}
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">Last Name</label>
+            {{ form.last_name }}
+          </div>
         </div>
+
+        <div class="grid-2" style="gap: 0.75rem; margin-bottom: 0.75rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">Official LPU Email</label>
+            {{ form.email }}
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">Contact Phone</label>
+            {{ form.phone }}
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0.75rem;">
+          <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">Gender (Required for Boys / Girls Hostel Policy Compliance)</label>
+          {{ form.gender }}
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0.75rem;">
+          <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">Current Assigned Room &amp; Bed (Optional)</label>
+          <select name="allocated_bed" class="form-select" style="font-size: 0.825rem; width: 100%; padding: 0.5rem;">
+            <option value="">-- Assign Later by Hostel Warden / Caretaker --</option>
+            {% for b in vacant_beds %}
+              <option value="{{ b.id }}">{{ b.room.block.hostel.name }} · Room {{ b.room.room_number }} · {{ b.bed_number }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="grid-2" style="gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">Password</label>
+            {{ form.password }}
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.8rem; font-weight: 700; color: #1E293B; margin-bottom: 0.25rem; display: block;">Confirm Password</label>
+            {{ form.confirm_password }}
+            {% if form.confirm_password.errors %}<div style="color: #DC2626; font-size: 0.75rem;">{{ form.confirm_password.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <button type="submit" class="lpu-btn-submit-signup">
+          Complete Registration &amp; Enter Cockpit →
+        </button>
+      </form>
+
+      <div class="signup-footer-note">
+        Already registered with LPU? <a href="{% url 'login' %}" style="color: #F37021; font-weight: 700; text-decoration: none;">Sign in here →</a>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">Gender (For Hostel Residency Policy)</label>
-        {{ form.gender }}
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Select Allocated Hostel Room & Bed (Optional)</label>
-        <select name="allocated_bed" class="form-select">
-          <option value="">-- Assign Later by Warden / Admin --</option>
-          {% for b in vacant_beds %}
-            <option value="{{ b.id }}">{{ b.room.block.hostel.name }} · Room {{ b.room.room_number }} · {{ b.bed_number }}</option>
-          {% endfor %}
-        </select>
-        <small style="color: var(--color-text-muted); font-size: 0.8rem;">Select your current assigned room to enable exchange matching immediately.</small>
-      </div>
-
-      <div class="grid-2">
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          {{ form.password }}
-        </div>
-        <div class="form-group">
-          <label class="form-label">Confirm Password</label>
-          {{ form.confirm_password }}
-          {% if form.confirm_password.errors %}<div style="color: var(--color-danger); font-size: 0.8rem;">{{ form.confirm_password.errors }}</div>{% endif %}
-        </div>
-      </div>
-
-      <button type="submit" class="btn btn-teal" style="width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 1rem;">
-        Complete Registration & Enter Cockpit →
-      </button>
-    </form>
-
-    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: var(--color-text-muted);">
-      Already registered? <a href="{% url 'login' %}" style="color: var(--color-teal); font-weight: 600;">Sign in here</a>
     </div>
+
   </div>
+
 </div>
+
+<!-- Self-Contained Resilient Styling -->
+<style>
+  .lpu-signup-container {
+    max-width: 640px;
+    margin: 2rem auto 3.5rem auto;
+    padding: 0 1rem;
+  }
+
+  .lpu-signup-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.15), 0 0 0 1px rgba(243, 112, 33, 0.12);
+  }
+
+  .signup-card-banner {
+    height: 140px;
+    background-size: cover;
+    background-position: center;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .banner-badge-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .banner-pill {
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+  }
+
+  .banner-motto {
+    font-family: 'Kalam', 'Caveat', cursive, sans-serif;
+    color: #FFFFFF;
+    font-size: 1.15rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  }
+
+  .signup-card-body {
+    padding: 1.5rem 2rem 2.25rem 2rem;
+    position: relative;
+  }
+
+  .signup-emblem-wrap {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    border: 3px solid #FFFFFF;
+    margin: -45px auto 0.75rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 5;
+  }
+
+  .signup-emblem-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+
+  .signup-header-text {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .signup-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #081628;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .signup-subtitle {
+    font-size: 0.825rem;
+    color: #64748B;
+    margin: 0;
+  }
+
+  .lpu-btn-submit-signup {
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #F37021 0%, #EA580C 100%);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(243, 112, 33, 0.4);
+    transition: all 0.2s ease;
+  }
+
+  .lpu-btn-submit-signup:hover {
+    background: linear-gradient(135deg, #FF7A1A 0%, #C2410C 100%);
+    box-shadow: 0 6px 18px rgba(243, 112, 33, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .signup-footer-note {
+    margin-top: 1.25rem;
+    text-align: center;
+    font-size: 0.825rem;
+    color: #64748B;
+  }
+</style>
 {% endblock %}

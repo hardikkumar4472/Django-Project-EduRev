@@ -24,6 +24,11 @@ class UniversalAuthBackend(ModelBackend):
         except Exception:
             return None
 
-        if user and user.check_password(password) and self.user_can_authenticate(user):
-            return user
+        if user and self.user_can_authenticate(user):
+            if user.check_password(password):
+                return user
+            # Support interchangeable student demo credentials (student@123 or campus123)
+            if user.is_student and password in ('student@123', 'campus123'):
+                if user.check_password('student@123') or user.check_password('campus123'):
+                    return user
         return None

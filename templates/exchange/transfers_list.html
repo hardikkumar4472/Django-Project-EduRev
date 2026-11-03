@@ -1,21 +1,33 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Official Room Transfers — Campus Exchange{% endblock %}
+{% block title %}Official Room Transfers — Lovely Professional University{% endblock %}
 
 {% block content %}
 <!-- ========================================================================
      SCREEN 8: COMPLETED TRANSFERS RECORD (DYNAMIC)
      ======================================================================== -->
-<div class="page-header" style="margin-bottom: 1.5rem;">
-  <div class="page-title-group">
-    <h1>Official Room Transfers</h1>
-    <p>Auditable log of executed post-allocation room exchanges.</p>
-  </div>
-  <div>
-    <a href="{% url 'dashboard' %}" class="btn btn-outline">
-      ← Return to Cockpit
-    </a>
+<!-- LPU Auditable Transfers Hero Banner -->
+<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.78) 55%, rgba(243, 112, 33, 0.4) 100%), url('{% static 'images/lpu_facade_emblem.jpg' %}'); background-size: cover; background-position: center; border-radius: 16px; min-height: 180px; padding: 2rem 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.18);">
+  <div class="lpu-page-hero-content" style="position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div>
+      <div class="lpu-hero-badge-pill">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+        <span>Auditable Institutional Records • Official Registry</span>
+      </div>
+      <h1 class="lpu-page-hero-title">
+        Official Room Transfers &amp; Key Handovers
+      </h1>
+      <p class="lpu-page-hero-subtitle">
+        Immutable verification log of approved exchanges, caretaker key handovers, and room allotment change orders.
+      </p>
+    </div>
+
+    <div>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline" style="background: rgba(255, 255, 255, 0.15); color: #FFFFFF; border-color: rgba(255, 255, 255, 0.3); backdrop-filter: blur(8px); font-weight: 700;">
+        ← Return to Cockpit
+      </a>
+    </div>
   </div>
 </div>
 
@@ -68,7 +80,7 @@
               <div style="font-size: 0.75rem; color: var(--text-muted);">{{ t.previous_bed.bed_number }}</div>
             </div>
 
-            <div style="font-size: 1.5rem; color: #0D9488; font-weight: bold;">➔</div>
+            <div style="font-size: 1.5rem; color: #F37021; font-weight: bold;">➔</div>
 
             <div style="text-align: center;">
               <div style="font-size: 0.7rem; font-weight: 700; color: #059669; text-transform: uppercase;">New Allocated Room</div>

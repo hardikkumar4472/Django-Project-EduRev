@@ -1,87 +1,369 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Campus Exchange — A Better Home for Every Student{% endblock %}
+{% block title %}LPU Hostel Room Exchange Portal — Lovely Professional University{% endblock %}
 
 {% block content %}
 <!-- ========================================================================
-     SCREEN 1: LANDING PAGE (HERO & SHOWCASE)
+     LOVELY PROFESSIONAL UNIVERSITY (LPU) OFFICIAL HOSTEL LANDING PAGE
+     Enhanced with fluid animations, micro-interactions, and visual fidelity
      ======================================================================== -->
-<div class="hero-wrapper-box">
-  <!-- Script Tag floating top right of the hero -->
-  <div class="hero-script-tag">
-    <span>Same Campus, New Possibilities</span>
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F2942" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="22" y1="2" x2="11" y2="13"></line>
-      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+
+<div class="lpu-landing-page">
+
+  <!-- HERO SECTION -->
+  <section class="lpu-hero-container">
+    
+    <!-- Ambient Floating Glow Spheres -->
+    <div class="hero-ambient-orb-1"></div>
+    <div class="hero-ambient-orb-2"></div>
+
+    <!-- Top-Left Decorative Curved Ribbon SVG -->
+    <svg class="lpu-hero-decor-curve" viewBox="0 0 180 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M-10,30 C50,15 110,75 80,165 C60,225 0,250 -30,240" stroke="#FED7AA" stroke-width="2.5" stroke-linecap="round" fill="none"/>
     </svg>
-  </div>
 
-  <div>
-    <h1 class="hero-main-title">
-      A Better<br>
-      Home for Every<br>
-      Student
-    </h1>
+    <!-- Top Dot Grid Pattern -->
+    <div class="lpu-hero-decor-dots"></div>
 
-    <p class="hero-sub-text">
-      An official, transparent and auditable platform for hostel room exchanges. Request, match, approve and move — all in one place.
-    </p>
+    <div class="lpu-hero-grid">
+      
+      <!-- LEFT COLUMN CONTENT -->
+      <div class="lpu-hero-left">
+        
+        <!-- Portal Tag Pill with Live Pulse Dot -->
+        <div class="lpu-portal-pill">
+          <span class="portal-pill-badge">
+            <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+            LPU
+          </span>
+          <span class="portal-pill-text">Hostel Management Portal</span>
+          <span class="live-indicator-dot" title="Portal Active"></span>
+        </div>
 
-    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-      {% if user.is_authenticated %}
-        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
-          Go to Cockpit →
-        </a>
-      {% else %}
-        <a href="{% url 'login' %}" class="btn btn-primary btn-lg">
-          Sign In to Portal →
-        </a>
-      {% endif %}
+        <!-- Main Headline -->
+        <h1 class="lpu-hero-headline">
+          A Better<br>
+          <span class="highlight-lpu-orange">Room at LPU</span><br>
+          For Every Student
+        </h1>
+
+        <!-- Lead Description -->
+        <p class="lpu-hero-desc">
+          The official, auditable room exchange portal for Lovely Professional University. Seamlessly request, discover 2-party and multi-hop cyclic swaps across <strong>Boys Hostels (BH-1 to BH-10)</strong> and <strong>Girls Hostels (GH-1 to GH-10)</strong>, obtain digital warden approval, and verify caretaker key handovers.
+        </p>
+
+        <!-- CTA Buttons with Micro-Lift and Shimmer -->
+        <div class="lpu-hero-cta-row">
+          {% if user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="lpu-btn-cta-primary">
+              <span>🚀 Go to Student Cockpit →</span>
+            </a>
+          {% else %}
+            <a href="{% url 'login' %}" class="lpu-btn-cta-primary">
+              <span style="font-size: 1.15rem;">🎓</span>
+              <span>Sign In with University ID →</span>
+            </a>
+          {% endif %}
+          
+          <a href="{% url 'hostels_list' %}" class="lpu-btn-cta-outline">
+            <span style="font-size: 1.15rem;">🏢</span>
+            <span>Explore LPU Hostels</span>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: CAMPUS SUNSET PANORAMA & FLOATING 3D POLAROID -->
+      <div class="lpu-hero-right">
+        
+        <!-- Main Sunset Canvas with Gentle Hover Parallax -->
+        <div class="campus-sunset-frame">
+          <img src="{% static 'images/lpu_campus_sunset.jpg' %}" alt="Lovely Professional University Campus at Sunset" class="campus-sunset-img">
+        </div>
+
+        <!-- Cursive Script in the Sky (Top Right) -->
+        <div class="sky-script-tag">
+          <span class="sky-script-text">
+            Transforming<br>Education<br>Transforming the World
+          </span>
+          <svg class="sky-script-underline" width="130" height="12" viewBox="0 0 130 12" fill="none">
+            <path d="M3,9 C40,2 90,3 127,7" stroke="#F37021" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Floating Polaroid Card with 3D Bobbing Animation -->
+        <div class="floating-polaroid-box">
+          <div class="polaroid-white-card">
+            <div class="polaroid-inner-photo">
+              <img src="{% static 'images/lpu_campus_sunset.jpg' %}" alt="LPU Campus Life">
+            </div>
+            <div class="polaroid-caption-tag">
+              <span class="pin">📍</span>
+              <span>LPU CAMPUS</span>
+            </div>
+          </div>
+
+          <!-- Cursive Pointer Arrow -->
+          <div class="polaroid-arrow-pointer">
+            <svg width="46" height="46" viewBox="0 0 50 50" fill="none">
+              <path d="M12,42 C20,20 32,15 44,14" stroke="#F37021" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+              <polygon points="44,9 49,15 42,19" fill="#F37021"/>
+            </svg>
+            <span class="pointer-script-text">Your Home Away From Home</span>
+          </div>
+        </div>
+
+      </div>
+
     </div>
-  </div>
 
-  <div>
-    <img src="{% static 'images/campus_hero.jpg' %}" alt="Campus Architecture" class="hero-building-photo">
-  </div>
-</div>
+  </section>
 
-<!-- Floating Stats Bar matching Screen 1 -->
-<div class="hero-floating-stats">
-  <div class="hero-stat-col">
-    <span class="hero-stat-num">{{ total_hostels }}</span>
-    <span class="hero-stat-lbl">Hostels</span>
-  </div>
+  <!-- ========================================================================
+       CURVED DUAL-TONE WAVE FOOTER (NAVY & ORANGE)
+       Seamless unified SVG background with 4-column feature cards and right tagline
+       ======================================================================== -->
+  <section class="lpu-wave-footer-section">
+    <!-- Continuous Seamless SVG Background joining Navy and Orange -->
+    <div class="lpu-wave-bg-wrap">
+      <img src="{% static 'images/lpu_footer_wave.svg' %}" alt="" class="lpu-wave-svg-bg" aria-hidden="true">
+    </div>
 
-  <div class="hero-stat-col">
-    <span class="hero-stat-num">{{ total_students }}</span>
-    <span class="hero-stat-lbl">Resident Students</span>
-  </div>
+    <!-- Inner Content Container placed over the wave -->
+    <div class="lpu-wave-content-container">
+      
+      <!-- NAVY ZONE (LEFT): 4 Features strictly in 1 single clean row -->
+      <div class="wave-navy-features-row">
+        
+        <div class="wave-feature-card">
+          <div class="wave-feature-icon">🔄</div>
+          <div class="wave-feature-meta">
+            <span class="wave-feature-title">Easy Room Exchange</span>
+            <span class="wave-feature-sub">2-party &amp; multi-hop swaps</span>
+          </div>
+        </div>
 
-  <div class="hero-stat-col">
-    <span class="hero-stat-num">{{ completed_transfers }}</span>
-    <span class="hero-stat-lbl">Transfers Completed</span>
-  </div>
+        <div class="wave-feature-card">
+          <div class="wave-feature-icon">🛡️</div>
+          <div class="wave-feature-meta">
+            <span class="wave-feature-title">Digital Approvals</span>
+            <span class="wave-feature-sub">Warden &amp; caretaker verification</span>
+          </div>
+        </div>
 
-  <div class="hero-stat-col">
-    <span class="hero-stat-num" style="display: flex; align-items: center; gap: 0.4rem; font-size: 1.4rem;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F2942" stroke-width="2.3">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-      Official
-    </span>
-    <span class="hero-stat-lbl">&amp; Auditable</span>
-  </div>
+        <div class="wave-feature-card">
+          <div class="wave-feature-icon">🏢</div>
+          <div class="wave-feature-meta">
+            <span class="wave-feature-title">All Hostels Covered</span>
+            <span class="wave-feature-sub">BH-1 to BH-10 &bull; GH-1 to GH-10</span>
+          </div>
+        </div>
 
-  <!-- University Housing Portal Motto -->
-  <div class="hero-testimonial-group">
-    <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <span style="font-size: 1.5rem;">🏛️</span>
-      <div>
-        <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-800);">Official University Portal</div>
-        <div style="font-size: 0.75rem; color: var(--text-secondary);">Direct &amp; Multi-Party Exchange Verification</div>
+        <div class="wave-feature-card">
+          <div class="wave-feature-icon">👥</div>
+          <div class="wave-feature-meta">
+            <span class="wave-feature-title">Secure &amp; Transparent</span>
+            <span class="wave-feature-sub">Official LPU portal</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ORANGE ZONE (RIGHT): Cursive Tagline & Architectural Silhouette -->
+      <div class="wave-orange-showcase">
+        <div class="orange-script-block">
+          <span class="orange-script-text">
+            Building<br>Brighter Futures<br>together
+          </span>
+          <svg class="orange-script-swoosh" width="130" height="12" viewBox="0 0 130 12" fill="none">
+            <path d="M2,9 C35,2 85,3 125,7" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Architectural Heritage Silhouette -->
+        <div class="wave-heritage-silhouette-wrap">
+          <img src="{% static 'images/lpu_heritage_silhouette.svg' %}" alt="LPU Architecture" class="wave-heritage-img">
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       HOW IT WORKS SECTION (Interactive 4-Step Journey)
+       ======================================================================== -->
+  <section id="how-it-works" class="lpu-showcase-section">
+    <div style="text-align: center;">
+      <span class="section-badge-pill">Step-by-Step Transparency</span>
+      <h2 class="section-main-heading">How Room Exchange Works at LPU</h2>
+      <p class="section-sub-text">
+        Every room swap is governed by strict deterministic consistency, consensus protocols, and digital approvals.
+      </p>
+    </div>
+
+    <div class="step-journey-grid">
+      <div class="step-journey-card">
+        <div class="step-number-bubble">1</div>
+        <h3 class="step-card-title">Submit Preferences</h3>
+        <p class="step-card-text">
+          Specify your current room, preferred LPU hostels (BH-1 to BH-10 for male students, GH-1 to GH-10 for female students), floor, and room sharing types.
+        </p>
+      </div>
+
+      <div class="step-journey-card">
+        <div class="step-number-bubble">2</div>
+        <h3 class="step-card-title">Graph Swap Matching</h3>
+        <p class="step-card-text">
+          The cycle discovery engine searches for direct 2-way swaps and multi-hop rotations (A &rarr; B &rarr; C &rarr; A) to maximize swap opportunities.
+        </p>
+      </div>
+
+      <div class="step-journey-card">
+        <div class="step-number-bubble">3</div>
+        <h3 class="step-card-title">Consensus &amp; Approval</h3>
+        <p class="step-card-text">
+          All participating students accept the proposal unanimously. The Hostel Warden and Chief Warden review discipline records and digitally approve the pass.
+        </p>
+      </div>
+
+      <div class="step-journey-card">
+        <div class="step-number-bubble">4</div>
+        <h3 class="step-card-title">Move &amp; Key Handover</h3>
+        <p class="step-card-text">
+          Download your certified transfer pass with an encrypted QR code. Present it to the caretaker desk to verify room inspection and collect your new keys.
+        </p>
       </div>
     </div>
-  </div>
+
+    <!-- Live Multi-Party Rotation Demonstration Card -->
+    <div class="cycle-visualizer-card">
+      <div class="cycle-visualizer-grid">
+        <div>
+          <span style="font-size: 0.75rem; font-weight: 800; color: #FB923C; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(243, 112, 33, 0.2); padding: 3px 10px; border-radius: 9999px;">
+            Deterministic Cyclic Graph Matching
+          </span>
+          <h3 style="font-size: 1.85rem; font-weight: 900; margin: 0.75rem 0 0.75rem 0; color: #FFFFFF;">
+            Solving Deadlocks with Multi-Hop Swaps
+          </h3>
+          <p style="font-size: 0.9rem; color: #94A3B8; line-height: 1.7; margin-bottom: 1.5rem;">
+            When two students cannot swap directly, our algorithm connects a 3-way or 4-way circular chain. All participants move simultaneously with database row-level locking, ensuring zero partial transfers.
+          </p>
+          <div style="display: flex; gap: 0.75rem;">
+            <a href="{% url 'hostels_list' %}" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-weight: 700;">
+              Explore Hostels →
+            </a>
+          </div>
+        </div>
+
+        <div class="cycle-flow-diagram">
+          <div style="font-size: 0.8rem; font-weight: 800; color: #E2E8F0; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+            Sample 3-Party Rotation Chain:
+          </div>
+
+          <div class="cycle-node-row">
+            <div class="cycle-student-tag">
+              <span style="width: 26px; height: 26px; border-radius: 50%; background: #F37021; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800;">A</span>
+              <span>Aarav (BH-1 · Room 102)</span>
+            </div>
+            <span class="cycle-arrow-pulse">Wants BH-3 →</span>
+          </div>
+
+          <div class="cycle-node-row">
+            <div class="cycle-student-tag">
+              <span style="width: 26px; height: 26px; border-radius: 50%; background: #F37021; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800;">B</span>
+              <span>Rohan (BH-3 · Room 204)</span>
+            </div>
+            <span class="cycle-arrow-pulse">Wants BH-5 →</span>
+          </div>
+
+          <div class="cycle-node-row">
+            <div class="cycle-student-tag">
+              <span style="width: 26px; height: 26px; border-radius: 50%; background: #F37021; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800;">C</span>
+              <span>Nikhil (BH-5 · Room 310)</span>
+            </div>
+            <span class="cycle-arrow-pulse">Wants BH-1 → Complete!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUIDELINES SECTION -->
+  <section id="guidelines" style="background: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; padding: 4.5rem 2rem;">
+    <div style="max-width: 1340px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: center;">
+      <div>
+        <span class="section-badge-pill">Institutional Policy</span>
+        <h2 style="font-size: 2.15rem; font-weight: 900; color: #0F172A; margin: 0.85rem 0 1rem 0; letter-spacing: -0.02em;">
+          Official Guidelines &amp; Code of Conduct
+        </h2>
+        <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.92rem; color: #475569; line-height: 1.65;">
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;">✓</div>
+            <div><strong>Gender Segregation Enforced:</strong> Male students can only exchange rooms within Boys Hostels (BH-1 to BH-10); female students within Girls Hostels (GH-1 to GH-10).</div>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;">✓</div>
+            <div><strong>One Active Request at a Time:</strong> Students may maintain only one active request to prevent queue starvation and ensure swift cycle settlements.</div>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;">✓</div>
+            <div><strong>Mandatory Physical Inspection:</strong> Caretaker verification is required before electronic key handover is recorded in the central database.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 2.25rem; border: 2px solid #FED7AA; background: #FFFFFF; box-shadow: 0 16px 36px -6px rgba(243, 112, 33, 0.12); border-radius: 20px;">
+        <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.25rem;">
+          <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU" style="width: 52px; height: 52px; filter: drop-shadow(0 2px 6px rgba(243, 112, 33, 0.25));">
+          <div>
+            <div style="font-weight: 900; color: #1E293B; font-size: 1.1rem; line-height: 1.15;">Lovely Professional University</div>
+            <div style="font-size: 0.76rem; color: #EA580C; font-weight: 700; margin-top: 2px;">Division of Student Welfare &bull; Hostel Directorate</div>
+          </div>
+        </div>
+        <p style="font-size: 0.88rem; color: #64748B; line-height: 1.65; margin-bottom: 1.5rem;">
+          All room exchanges executed via this portal are recorded in university auditable logs. Need assistance or custom disability accommodations? Contact the Chief Warden's office directly.
+        </p>
+        <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+          <a href="{% url 'hostels_list' %}" class="btn btn-primary btn-sm" style="flex: 1; padding: 0.65rem 1rem; font-weight: 700;">
+            Hostels Directory →
+          </a>
+          <a href="{% url 'login' %}" class="btn btn-outline btn-sm" style="flex: 1; border-color: #FED7AA; color: #EA580C; padding: 0.65rem 1rem; font-weight: 700;">
+            Sign In with ID
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HELP & SUPPORT FOOTER -->
+  <footer id="support" style="background: #081628; color: #FFFFFF; padding: 3.5rem 2rem 2.5rem 2rem;">
+    <div style="max-width: 1340px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+      <div style="display: flex; align-items: center; gap: 0.85rem;">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU" style="width: 48px; height: 48px; filter: brightness(1.2);">
+        <div>
+          <div style="font-size: 1.05rem; font-weight: 900; color: #FFFFFF; letter-spacing: 0.03em;">
+            LOVELY PROFESSIONAL UNIVERSITY
+          </div>
+          <div style="font-size: 0.78rem; color: #F37021; font-weight: 600;">
+            Hostel Management &amp; Room Exchange Portal &bull; Phagwara, Punjab (India)
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1.75rem; font-size: 0.88rem; color: #94A3B8; flex-wrap: wrap;">
+        <a href="#how-it-works" style="color: #E2E8F0; text-decoration: none; font-weight: 600; transition: color 0.2s ease;">How It Works</a>
+        <a href="#guidelines" style="color: #E2E8F0; text-decoration: none; font-weight: 600; transition: color 0.2s ease;">Guidelines</a>
+        <a href="{% url 'hostels_list' %}" style="color: #E2E8F0; text-decoration: none; font-weight: 600; transition: color 0.2s ease;">Hostels Directory</a>
+        <a href="{% url 'login' %}" style="color: #F37021; font-weight: 700; text-decoration: none;">Student Sign In</a>
+      </div>
+    </div>
+
+    <div style="max-width: 1340px; margin: 2.5rem auto 0 auto; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.76rem; color: #64748B; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+      <div>&copy; 2026 Lovely Professional University. All rights reserved.</div>
+      <div>Official University Housing &bull; Division of Student Welfare.</div>
+    </div>
+  </footer>
+
 </div>
 {% endblock %}

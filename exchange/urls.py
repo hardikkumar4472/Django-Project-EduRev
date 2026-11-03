@@ -20,6 +20,7 @@ urlpatterns = [
     path('caretaker/verify/', views.caretaker_verify_view, name='caretaker_verify'),
 
     # Interactive Chat & Lifestyle
+    path('proposals/<int:pk>/messages/', views.get_proposal_messages_view, name='get_proposal_messages'),
     path('proposals/<int:pk>/messages/send/', views.send_proposal_message_view, name='send_proposal_message'),
     path('lifestyle/quiz/', views.lifestyle_quiz_view, name='lifestyle_quiz'),
 

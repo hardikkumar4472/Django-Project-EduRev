@@ -254,7 +254,7 @@ class Command(BaseCommand):
             proposal_type=ExchangeProposal.ProposalType.DIRECT,
             status=ExchangeProposal.ProposalStatus.PARTIALLY_ACCEPTED,
             compatibility_score=96.4,
-            expires_at=timezone.now() + timedelta(hours=36)
+            expires_at=timezone.now() + timedelta(days=14)
         )
         ProposalParticipant.objects.create(
             proposal=active_prop,
@@ -302,7 +302,7 @@ class Command(BaseCommand):
             proposal_type=ExchangeProposal.ProposalType.DIRECT,
             status=ExchangeProposal.ProposalStatus.READY_FOR_APPROVAL,
             compatibility_score=98.0,
-            expires_at=timezone.now() + timedelta(hours=48)
+            expires_at=timezone.now() + timedelta(days=14)
         )
         ProposalParticipant.objects.create(proposal=warden_prop, student=w_stu_a, request=r_wa, current_bed=w_stu_a.allocated_bed, target_bed=w_stu_b.allocated_bed, response=ProposalParticipant.ParticipantResponse.ACCEPTED, responded_at=timezone.now(), order_index=0)
         ProposalParticipant.objects.create(proposal=warden_prop, student=w_stu_b, request=r_wb, current_bed=w_stu_b.allocated_bed, target_bed=w_stu_a.allocated_bed, response=ProposalParticipant.ParticipantResponse.ACCEPTED, responded_at=timezone.now(), order_index=1)
