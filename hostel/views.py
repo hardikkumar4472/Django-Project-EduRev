@@ -20,7 +20,7 @@ def require_admin_or_dsw(view_func):
 def hostels_list_view(request):
     """
     Public, unauthenticated showcase of all LPU hostels dynamically fetched from the database,
-    with capacity statistics, occupancy rates, and administrative controls for staff.
+    displaying available room seater configurations and residential facilities.
     """
     gender_filter = request.GET.get('gender', 'ALL')
     search_query = request.GET.get('q', '').strip()
@@ -35,19 +35,33 @@ def hostels_list_view(request):
             Q(name__icontains=search_query) | Q(code__icontains=search_query)
         )
 
-    # Compute aggregate KPI metrics across all hostels
-    total_hostels = Hostel.objects.count()
-    total_boys = Hostel.objects.filter(gender_type=Hostel.GenderType.MALE).count()
-    total_girls = Hostel.objects.filter(gender_type=Hostel.GenderType.FEMALE).count()
-    total_beds = Bed.objects.count()
-    occupied_beds = Bed.objects.filter(occupancy_status=Bed.OccupancyStatus.OCCUPIED).count()
-    vacant_beds = Bed.objects.filter(occupancy_status=Bed.OccupancyStatus.VACANT).count()
-
     hostels_list = list(hostels_qs)
+
+    # Standard residential facilities offered across LPU Hostels
+    default_facilities = [
+        {'name': 'High-Speed Wi-Fi', 'icon': '📶'},
+        {'name': '24/7 Security & CCTV', 'icon': '🛡️'},
+        {'name': 'Central Mess & Dining', 'icon': '🍽️'},
+        {'name': '100% Power Backup', 'icon': '⚡'},
+        {'name': 'Purified RO Water', 'icon': '💧'},
+        {'name': 'Study & Reading Lounge', 'icon': '📚'},
+        {'name': 'Gym & Sports Arena', 'icon': '🏋️'},
+        {'name': 'Laundry & Housekeeping', 'icon': '🧺'},
+        {'name': '24/7 Emergency Care', 'icon': '🩺'},
+    ]
+
+    # Standard seater types available across all residences
+    seater_configs = [
+        {'code': 'SINGLE', 'label': '1-Seater Single', 'subtitle': 'AC / Non-AC with Attached Bath', 'icon': '🛏️'},
+        {'code': 'DOUBLE', 'label': '2-Seater Double', 'subtitle': 'AC & Non-AC Available', 'icon': '👥'},
+        {'code': 'TRIPLE', 'label': '3-Seater Triple', 'subtitle': 'AC & Non-AC Available', 'icon': '👥'},
+        {'code': 'FOUR_SHARING', 'label': '4-Seater Quad', 'subtitle': 'AC & Non-AC Available', 'icon': '🏢'},
+        {'code': 'DORMITORY', 'label': 'Dormitory (7 & 8-Bed)', 'subtitle': 'Spacious Study Setup', 'icon': '🛌'},
+    ]
+
     for h in hostels_list:
-        cap = h.total_capacity
-        occ = h.occupied_beds_count
-        h.occupancy_pct = int(round((occ / cap * 100))) if cap > 0 else 0
+        h.seaters_list = seater_configs
+        h.facilities_list = default_facilities
 
     is_admin_or_dsw = request.user.is_authenticated and (
         getattr(request.user, 'is_admin_role', False) or 
@@ -59,12 +73,8 @@ def hostels_list_view(request):
         'hostels': hostels_list,
         'gender_filter': gender_filter,
         'search_query': search_query,
-        'total_hostels': total_hostels,
-        'total_boys': total_boys,
-        'total_girls': total_girls,
-        'total_beds': total_beds,
-        'occupied_beds': occupied_beds,
-        'vacant_beds': vacant_beds,
+        'seater_configs': seater_configs,
+        'default_facilities': default_facilities,
         'is_admin_or_dsw': is_admin_or_dsw,
         'GenderType': Hostel.GenderType,
     }

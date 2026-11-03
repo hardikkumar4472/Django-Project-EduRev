@@ -4,19 +4,19 @@
 {% block title %}Explore LPU Campus Hostels — Lovely Professional University{% endblock %}
 
 {% block content %}
-<!-- LPU Aerial Green Campus Grand Hero Banner -->
-<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.78) 55%, rgba(243, 112, 33, 0.4) 100%), url('{% static 'images/lpu_aerial_green_campus.jpg' %}'); background-size: cover; background-position: center; border-radius: 18px; min-height: 190px; padding: 2.2rem 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.18);">
+<!-- LPU Campus Residences Grand Hero Banner (No Numbers) -->
+<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.82) 55%, rgba(243, 112, 33, 0.45) 100%), url('{% static 'images/lpu_aerial_green_campus.jpg' %}'); background-size: cover; background-position: center; border-radius: 18px; min-height: 180px; padding: 2.2rem 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.18);">
   <div class="lpu-page-hero-content" style="position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
-    <div>
+    <div style="max-width: 650px;">
       <div class="lpu-hero-badge-pill">
         <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
-        <span>20 University Residences • BH-1 to BH-10 &bull; GH-1 to GH-10</span>
+        <span>Lovely Professional University • Campus Residences &amp; Living Spaces</span>
       </div>
       <h1 class="lpu-page-hero-title">
         LPU Campus Hostels &amp; Residences
       </h1>
       <p class="lpu-page-hero-subtitle">
-        Explore living spaces across Punjab's largest university residential campus. Dynamic room allocations, real-time bed occupancy, and verified living facilities.
+        Explore student residential complexes across Punjab's largest university campus. Discover available room seater choices, AC and Non-AC arrangements, and verified campus facilities.
       </p>
 
       {% if is_admin_or_dsw %}
@@ -32,23 +32,28 @@
       {% endif %}
     </div>
 
-    <!-- Live Glassmorphism KPI Metrics Panel -->
-    <div class="lpu-hero-stats-panel">
-      <div class="lpu-hero-stat-item">
-        <span class="lpu-hero-stat-num">{{ total_hostels }}</span>
-        <span class="lpu-hero-stat-label">Hostels</span>
+    <!-- Highlights Panel: Verified Facilities & Seaters (Zero Bed Numbers) -->
+    <div class="lpu-hero-highlights-panel">
+      <div class="highlight-item">
+        <span class="highlight-icon">🛏️</span>
+        <div>
+          <strong class="highlight-title">Multiple Seater Options</strong>
+          <span class="highlight-sub">1, 2, 3, 4-Seater &amp; Dormitories</span>
+        </div>
       </div>
-      <div class="lpu-hero-stat-item">
-        <span class="lpu-hero-stat-num">{{ total_beds }}</span>
-        <span class="lpu-hero-stat-label">Total Beds</span>
+      <div class="highlight-item">
+        <span class="highlight-icon">❄️</span>
+        <div>
+          <strong class="highlight-title">Climate Controlled</strong>
+          <span class="highlight-sub">AC &amp; Non-AC Accommodations</span>
+        </div>
       </div>
-      <div class="lpu-hero-stat-item">
-        <span class="lpu-hero-stat-num">{{ occupied_beds }}</span>
-        <span class="lpu-hero-stat-label">Occupied</span>
-      </div>
-      <div class="lpu-hero-stat-item">
-        <span class="lpu-hero-stat-num" style="color: #4ADE80;">{{ vacant_beds }}</span>
-        <span class="lpu-hero-stat-label">Vacant</span>
+      <div class="highlight-item">
+        <span class="highlight-icon">⚡</span>
+        <div>
+          <strong class="highlight-title">Full Amenities Campus</strong>
+          <span class="highlight-sub">Wi-Fi, 24/7 Power, Mess &amp; Security</span>
+        </div>
       </div>
     </div>
   </div>
@@ -59,13 +64,13 @@
   <div class="toolbar-left">
     <span class="toolbar-label">Filter:</span>
     <button type="button" class="filter-tab-pill {% if gender_filter == 'ALL' or not gender_filter %}active{% endif %}" onclick="filterHostelsByGender('ALL')">
-      All Residences ({{ total_hostels }})
+      All Residences
     </button>
     <button type="button" class="filter-tab-pill {% if gender_filter == 'MALE' %}active{% endif %}" onclick="filterHostelsByGender('MALE')">
-      Boys Hostels ({{ total_boys }})
+      Boys Hostels
     </button>
     <button type="button" class="filter-tab-pill {% if gender_filter == 'FEMALE' %}active{% endif %}" onclick="filterHostelsByGender('FEMALE')">
-      Girls Hostels ({{ total_girls }})
+      Girls Hostels
     </button>
   </div>
 
@@ -89,99 +94,110 @@
 </div>
 
 <!-- ========================================================================
-     VIEW 1: DYNAMIC INTERACTIVE 3D HOSTEL CARDS (DEFAULT & ANIMATED)
+     VIEW 1: CLEAN DYNAMIC HOSTEL CARDS (NO IMAGES, NO BED NUMBERS)
+     SHOWCASES: ROOM SEATERS AVAILABLE + FACILITIES
      ======================================================================== -->
 <div id="hostels-grid-container" class="hostels-cards-grid">
   {% for h in hostels %}
-    <div class="hostel-showcase-card" data-gender="{{ h.gender_type }}" data-code="{{ h.code|lower }}" data-name="{{ h.name|lower }}" style="animation-delay: {{ forloop.counter0|divisibleby:5 }}00ms;">
+    <div class="hostel-clean-card" data-gender="{{ h.gender_type }}" data-code="{{ h.code|lower }}" data-name="{{ h.name|lower }}">
       
-      <!-- Card Image Header with Thumbnail & Floating Badges -->
-      <div class="card-photo-banner" style="background-image: linear-gradient(180deg, rgba(8, 22, 40, 0.25) 0%, rgba(8, 22, 40, 0.85) 100%), 
-        {% if forloop.counter0|divisibleby:4 == 0 %}url('{% static 'images/lpu_campus_roundabout.jpg' %}')
-        {% elif forloop.counter0|divisibleby:4 == 1 %}url('{% static 'images/lpu_campus_walkway.jpg' %}')
-        {% elif forloop.counter0|divisibleby:4 == 2 %}url('{% static 'images/lpu_facade_emblem.jpg' %}')
-        {% else %}url('{% static 'images/lpu_aerial_green_campus.jpg' %}')
-        {% endif %};">
-        
-        <div class="card-banner-top-tags">
-          <span class="card-code-pill">{{ h.code }}</span>
+      <!-- Card Header: Code Badge + Category + Title + Warden (No image) -->
+      <div class="clean-card-header {% if h.gender_type == 'MALE' %}header-male{% elif h.gender_type == 'FEMALE' %}header-female{% else %}header-coed{% endif %}">
+        <div class="clean-header-top">
+          <span class="hostel-code-badge">{{ h.code }}</span>
           {% if h.gender_type == 'MALE' %}
-            <span class="card-gender-badge gender-boys">👨 Boys Hostel</span>
+            <span class="gender-pill pill-male">👨 Boys Hostel</span>
           {% elif h.gender_type == 'FEMALE' %}
-            <span class="card-gender-badge gender-girls">👩 Girls Hostel</span>
+            <span class="gender-pill pill-female">👩 Girls Hostel</span>
           {% else %}
-            <span class="card-gender-badge gender-coed">🏢 Co-Ed</span>
+            <span class="gender-pill pill-coed">🏢 Co-Ed Residence</span>
           {% endif %}
         </div>
 
-        <div class="card-banner-bottom-text">
-          <h3 class="hostel-card-title">{{ h.name }}</h3>
-          <span class="hostel-card-warden">Warden: {{ h.warden.get_full_name|default:"University In-Charge" }}</span>
-        </div>
+        <h3 class="hostel-name-heading">{{ h.name }}</h3>
+        <p class="hostel-warden-line">
+          <span class="warden-icon">👤</span> Warden: {{ h.warden.get_full_name|default:"University In-Charge" }}
+        </p>
       </div>
 
-      <!-- Card Body Content -->
-      <div class="hostel-card-body">
+      <!-- Card Content: Seaters + Facilities -->
+      <div class="clean-card-body">
         
-        <!-- Capacity & Vacancy Stats Row -->
-        <div class="hostel-metrics-row">
-          <div class="metric-col">
-            <span class="metric-label">Total Beds</span>
-            <span class="metric-val">{{ h.total_capacity }}</span>
+        <!-- Available Room Seater Options -->
+        <div class="feature-block">
+          <div class="feature-block-title">
+            <span class="title-icon">🛏️</span> Available Room Seaters
           </div>
-          <div class="metric-col">
-            <span class="metric-label">Blocks</span>
-            <span class="metric-val">{{ h.blocks.count }}</span>
-          </div>
-          <div class="metric-col">
-            <span class="metric-label">Available</span>
-            <span class="metric-val" style="color: #059669; font-weight: 800;">{{ h.vacant_beds_count }} Vacant</span>
-          </div>
-        </div>
-
-        <!-- Animated Occupancy Progress Gauge -->
-        <div class="occupancy-gauge-box">
-          <div class="gauge-header">
-            <span class="gauge-title">Occupancy Rate</span>
-            <span class="gauge-pct">{{ h.occupancy_pct }}% Full</span>
-          </div>
-          <div class="gauge-track">
-            <div class="gauge-fill" style="width: {{ h.occupancy_pct }}%;"></div>
-          </div>
-        </div>
-
-        <!-- Amenities Highlights -->
-        <div class="amenities-chip-row">
-          <span class="amenity-chip">📶 Wi-Fi</span>
-          <span class="amenity-chip">🛡️ 24/7 Security</span>
-          <span class="amenity-chip">🍽️ Mess</span>
-          <span class="amenity-chip">⚡ Power Backup</span>
-        </div>
-
-        <!-- Action Row -->
-        <div class="hostel-card-footer">
-          {% if user.is_authenticated and user.is_student %}
-            <a href="{% url 'create_request' %}" class="btn-card-action">
-              Request Room Swap →
-            </a>
-          {% else %}
-            <a href="{% url 'login' %}?next={% url 'hostels_list' %}" class="btn-card-action">
-              Sign In to Exchange →
-            </a>
-          {% endif %}
-
-          {% if is_admin_or_dsw %}
-            <div class="admin-card-actions">
-              <form method="POST" action="{% url 'hostel_toggle_status' h.pk %}" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn-admin-mini" title="Toggle active status">
-                  {% if h.is_active %}Active{% else %}Inactive{% endif %}
-                </button>
-              </form>
+          <div class="seater-capsules-grid">
+            <div class="seater-capsule">
+              <span class="seater-name">1-Seater Single</span>
+              <span class="seater-tag">AC / Non-AC • Attached Bath</span>
             </div>
-          {% endif %}
+            <div class="seater-capsule">
+              <span class="seater-name">2-Seater Double</span>
+              <span class="seater-tag">AC &amp; Non-AC Available</span>
+            </div>
+            <div class="seater-capsule">
+              <span class="seater-name">3-Seater Triple</span>
+              <span class="seater-tag">AC &amp; Non-AC Available</span>
+            </div>
+            <div class="seater-capsule">
+              <span class="seater-name">4-Seater Quad</span>
+              <span class="seater-tag">AC &amp; Non-AC Available</span>
+            </div>
+            <div class="seater-capsule">
+              <span class="seater-name">Dormitory (7 &amp; 8-Bed)</span>
+              <span class="seater-tag">Spacious Study Setup</span>
+            </div>
+          </div>
         </div>
 
+        <!-- Facilities & Amenities -->
+        <div class="feature-block">
+          <div class="feature-block-title">
+            <span class="title-icon">✨</span> Facilities &amp; Amenities
+          </div>
+          <div class="facility-badges-wrap">
+            <span class="facility-tag"><span class="fac-icon">📶</span> Wi-Fi Campus</span>
+            <span class="facility-tag"><span class="fac-icon">🛡️</span> 24/7 Security &amp; CCTV</span>
+            <span class="facility-tag"><span class="fac-icon">🍽️</span> Central Mess &amp; Dining</span>
+            <span class="facility-tag"><span class="fac-icon">⚡</span> 100% Power Backup</span>
+            <span class="facility-tag"><span class="fac-icon">💧</span> RO Purified Drinking Water</span>
+            <span class="facility-tag"><span class="fac-icon">📚</span> Quiet Reading Lounge</span>
+            <span class="facility-tag"><span class="fac-icon">🏋️</span> Gym &amp; Sports Area</span>
+            <span class="facility-tag"><span class="fac-icon">🧺</span> Laundry Services</span>
+            <span class="facility-tag"><span class="fac-icon">🩺</span> 24/7 Medical Care</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Card Action Footer -->
+      <div class="clean-card-footer">
+        {% if user.is_authenticated and user.is_student %}
+          <a href="{% url 'create_request' %}" class="btn-clean-action">
+            Apply for Room Exchange →
+          </a>
+        {% elif user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="btn-clean-action">
+            Go to Management Dashboard →
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}?next={% url 'hostels_list' %}" class="btn-clean-action">
+            Sign In to Exchange Room →
+          </a>
+        {% endif %}
+
+        {% if is_admin_or_dsw %}
+          <div style="margin-top: 0.5rem; display: flex; justify-content: flex-end;">
+            <form method="POST" action="{% url 'hostel_toggle_status' h.pk %}" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn-admin-status-pill" title="Toggle active status">
+                Status: {% if h.is_active %}<span style="color: #059669;">Active</span>{% else %}<span style="color: #DC2626;">Inactive</span>{% endif %} (Click to toggle)
+              </button>
+            </form>
+          </div>
+        {% endif %}
       </div>
 
     </div>
@@ -195,21 +211,20 @@
 </div>
 
 <!-- ========================================================================
-     VIEW 2: DATA TABLE VIEW (TOGGLEABLE)
+     VIEW 2: DATA TABLE VIEW (NO NUMBERS, SHOWS SEATERS & FACILITIES)
      ======================================================================== -->
 <div id="hostels-table-container" class="card" style="display: none; padding: 0; overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 2.5rem; border-top: 3px solid #F37021;">
   <div style="overflow-x: auto;">
     <table class="data-table">
       <thead>
         <tr>
-          <th style="width: 110px;">Code</th>
-          <th>Hostel Name</th>
+          <th style="width: 100px;">Code</th>
+          <th style="width: 220px;">Hostel Name</th>
           <th style="width: 140px;">Category</th>
-          <th style="width: 110px;">Blocks</th>
-          <th style="width: 160px;">Bed Capacity</th>
-          <th style="width: 120px;">Occupancy</th>
+          <th>Available Room Seaters</th>
+          <th>Facilities Included</th>
           <th style="width: 100px;">Status</th>
-          {% if is_admin_or_dsw %}<th style="width: 140px; text-align: right;">Admin Controls</th>{% endif %}
+          {% if is_admin_or_dsw %}<th style="width: 120px; text-align: right;">Action</th>{% endif %}
         </tr>
       </thead>
       <tbody>
@@ -238,20 +253,24 @@
               {% endif %}
             </td>
             <td>
-              <strong style="color: var(--navy-800);">{{ h.blocks.count }}</strong> Blocks
-            </td>
-            <td>
-              <div style="display: flex; align-items: baseline; gap: 0.35rem;">
-                <strong style="font-size: 0.95rem; color: var(--navy-800);">{{ h.total_capacity }}</strong>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">beds</span>
-              </div>
-              <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 0.15rem;">
-                <span style="color: #059669; font-weight: 600;">{{ h.vacant_beds_count }} vacant</span> • 
-                <span style="color: #D97706; font-weight: 600;">{{ h.occupied_beds_count }} occupied</span>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                <span class="table-micro-pill">1-Seater (AC/Non-AC)</span>
+                <span class="table-micro-pill">2-Seater (AC/Non-AC)</span>
+                <span class="table-micro-pill">3-Seater (AC/Non-AC)</span>
+                <span class="table-micro-pill">4-Seater (AC/Non-AC)</span>
+                <span class="table-micro-pill">Dormitory (7/8-Bed)</span>
               </div>
             </td>
             <td>
-              <span class="badge badge-teal" style="font-weight: 700;">{{ h.occupancy_pct }}% Full</span>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                <span class="table-fac-pill">📶 Wi-Fi</span>
+                <span class="table-fac-pill">🛡️ Security</span>
+                <span class="table-fac-pill">🍽️ Mess</span>
+                <span class="table-fac-pill">⚡ Power Backup</span>
+                <span class="table-fac-pill">💧 RO Water</span>
+                <span class="table-fac-pill">📚 Study Room</span>
+                <span class="table-fac-pill">🏋️ Gym</span>
+              </div>
             </td>
             <td>
               {% if h.is_active %}
@@ -314,7 +333,7 @@
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
           <button type="button" class="btn btn-outline" onclick="closeHostelModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Provision Hostel &amp; Rooms</button>
+          <button type="submit" class="btn btn-primary">Provision Hostel</button>
         </div>
       </div>
     </form>
@@ -323,9 +342,58 @@
 {% endif %}
 
 <!-- ========================================================================
-     STYLING: ANIMATED 3D CARDS & INTERACTIVE EFFECTS
+     STYLING: CLEAN, ATTRACTIVE HOSTEL CARDS (NO IMAGES, NO BED NUMBERS)
      ======================================================================== -->
 <style>
+  /* Hero Highlights Panel (replaces bed numbers) */
+  .lpu-hero-highlights-panel {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 14px;
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    min-width: 290px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  .highlight-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .highlight-icon {
+    font-size: 1.35rem;
+    background: rgba(255, 255, 255, 0.15);
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .highlight-title {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1.2;
+  }
+
+  .highlight-sub {
+    display: block;
+    font-size: 0.75rem;
+    color: #FED7AA;
+    margin-top: 1px;
+  }
+
+  /* Toolbar */
   .hostels-toolbar-card {
     background: #FFFFFF;
     border-radius: 14px;
@@ -446,220 +514,227 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   }
 
-  /* 3D Showcase Card Grid */
+  /* Hostels Clean Cards Grid */
   .hostels-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 1.5rem;
     margin-bottom: 3rem;
   }
 
-  .hostel-showcase-card {
+  .hostel-clean-card {
     background: #FFFFFF;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.07);
+    box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.07);
     border: 1px solid #E2E8F0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-    animation: fadeInUp 0.45s ease backwards;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    animation: fadeInUp 0.4s ease backwards;
   }
 
-  .hostel-showcase-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px -10px rgba(243, 112, 33, 0.18), 0 0 0 1px rgba(243, 112, 33, 0.25);
+  .hostel-clean-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 36px -8px rgba(243, 112, 33, 0.18), 0 0 0 1.5px rgba(243, 112, 33, 0.35);
     border-color: #FDBA74;
   }
 
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .card-photo-banner {
-    height: 125px;
-    background-size: cover;
-    background-position: center;
-    padding: 0.85rem 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  /* Clean Card Header (No Photo Banner) */
+  .clean-card-header {
+    padding: 1.15rem 1.25rem 0.95rem;
+    border-bottom: 1px solid #F1F5F9;
     position: relative;
-    transition: transform 0.5s ease;
   }
 
-  .card-banner-top-tags {
+  .header-male {
+    background: linear-gradient(180deg, #F0F7FF 0%, #FFFFFF 100%);
+    border-top: 4px solid #2563EB;
+  }
+
+  .header-female {
+    background: linear-gradient(180deg, #FAF5FF 0%, #FFFFFF 100%);
+    border-top: 4px solid #9333EA;
+  }
+
+  .header-coed {
+    background: linear-gradient(180deg, #FFF7ED 0%, #FFFFFF 100%);
+    border-top: 4px solid #F37021;
+  }
+
+  .clean-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+  }
+
+  .hostel-code-badge {
+    font-family: monospace;
+    font-size: 0.8rem;
+    font-weight: 800;
+    background: #0F172A;
+    color: #FDBA74;
+    padding: 3px 9px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  .gender-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 9999px;
+  }
+
+  .pill-male {
+    background: #DBEAFE;
+    color: #1E40AF;
+  }
+
+  .pill-female {
+    background: #F3E8FF;
+    color: #6B21A8;
+  }
+
+  .pill-coed {
+    background: #FFEDD5;
+    color: #C2410C;
+  }
+
+  .hostel-name-heading {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #0F172A;
+    margin: 0 0 0.25rem;
+    line-height: 1.25;
+  }
+
+  .hostel-warden-line {
+    margin: 0;
+    font-size: 0.775rem;
+    color: #64748B;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.4rem;
+    gap: 0.35rem;
   }
 
-  .card-code-pill {
-    background: #081628;
-    color: #FDBA74;
-    font-size: 0.75rem;
-    font-weight: 800;
-    font-family: monospace;
-    padding: 3px 8px;
-    border-radius: 6px;
-    border: 1px solid rgba(243, 112, 33, 0.4);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  .warden-icon {
+    opacity: 0.7;
   }
 
-  .card-gender-badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 9999px;
-    backdrop-filter: blur(6px);
-  }
-
-  .gender-boys {
-    background: rgba(30, 64, 175, 0.75);
-    color: #DBEAFE;
-    border: 1px solid rgba(147, 197, 253, 0.3);
-  }
-
-  .gender-girls {
-    background: rgba(124, 58, 237, 0.75);
-    color: #EDE9FE;
-    border: 1px solid rgba(196, 181, 253, 0.3);
-  }
-
-  .gender-coed {
-    background: rgba(243, 112, 33, 0.8);
-    color: #FFFFFF;
-    border: 1px solid rgba(254, 215, 170, 0.4);
-  }
-
-  .card-banner-bottom-text {
-    color: #FFFFFF;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
-  }
-
-  .hostel-card-title {
-    font-size: 1.1rem;
-    font-weight: 800;
-    margin: 0;
-    line-height: 1.2;
-    color: #FFFFFF;
-  }
-
-  .hostel-card-warden {
-    font-size: 0.72rem;
-    color: #FED7AA;
-    display: block;
-    margin-top: 2px;
-  }
-
-  .hostel-card-body {
-    padding: 1.1rem 1.15rem;
+  /* Clean Card Body */
+  .clean-card-body {
+    padding: 1.15rem 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 1.15rem;
     flex: 1;
   }
 
-  .hostel-metrics-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    background: #F8FAFC;
-    border-radius: 10px;
-    padding: 0.6rem 0.5rem;
-    text-align: center;
-    border: 1px solid #E2E8F0;
-  }
-
-  .metric-col {
+  .feature-block {
     display: flex;
     flex-direction: column;
-    border-right: 1px solid #E2E8F0;
+    gap: 0.55rem;
   }
 
-  .metric-col:last-child {
-    border-right: none;
-  }
-
-  .metric-label {
-    font-size: 0.68rem;
-    color: #64748B;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-
-  .metric-val {
-    font-size: 0.88rem;
+  .feature-block-title {
+    font-size: 0.74rem;
     font-weight: 800;
-    color: #0F172A;
-    margin-top: 1px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
-  .occupancy-gauge-box {
+  .title-icon {
+    font-size: 0.9rem;
+  }
+
+  /* Seater Capsules */
+  .seater-capsules-grid {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
 
-  .gauge-header {
+  .seater-capsule {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.74rem;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 0.45rem 0.65rem;
+    transition: all 0.15s ease;
   }
 
-  .gauge-title {
-    color: #64748B;
+  .seater-capsule:hover {
+    background: #FFF7ED;
+    border-color: #FDBA74;
+  }
+
+  .seater-name {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1E293B;
+  }
+
+  .seater-tag {
+    font-size: 0.7rem;
     font-weight: 600;
+    color: #C2410C;
+    background: #FFEDD5;
+    padding: 2px 7px;
+    border-radius: 4px;
   }
 
-  .gauge-pct {
-    font-weight: 800;
-    color: #F37021;
-  }
-
-  .gauge-track {
-    height: 7px;
-    background: #E2E8F0;
-    border-radius: 9999px;
-    overflow: hidden;
-  }
-
-  .gauge-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #10B981 0%, #F59E0B 65%, #F37021 100%);
-    border-radius: 9999px;
-    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .amenities-chip-row {
+  /* Facilities Badges */
+  .facility-badges-wrap {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
 
-  .amenity-chip {
-    font-size: 0.68rem;
+  .facility-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
     font-weight: 600;
     background: #F1F5F9;
-    color: #475569;
-    padding: 2px 7px;
-    border-radius: 5px;
+    color: #334155;
+    border: 1px solid #E2E8F0;
+    padding: 3px 8px;
+    border-radius: 6px;
+    transition: all 0.15s ease;
   }
 
-  .hostel-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding-top: 0.5rem;
+  .facility-tag:hover {
+    background: #E2E8F0;
+    color: #0F172A;
+  }
+
+  .fac-icon {
+    font-size: 0.8rem;
+  }
+
+  /* Card Footer */
+  .clean-card-footer {
+    padding: 1rem 1.25rem 1.15rem;
     border-top: 1px solid #F1F5F9;
-    margin-top: auto;
+    background: #FCFDFF;
   }
 
-  .btn-card-action {
+  .btn-clean-action {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -667,31 +742,58 @@
     background: #FFF7ED;
     color: #C2410C;
     border: 1.5px solid #FED7AA;
-    padding: 0.55rem 0.85rem;
-    border-radius: 8px;
-    font-size: 0.8rem;
+    padding: 0.6rem 1rem;
+    border-radius: 9px;
+    font-size: 0.85rem;
     font-weight: 700;
     text-decoration: none;
     transition: all 0.2s ease;
   }
 
-  .btn-card-action:hover {
+  .btn-clean-action:hover {
     background: #F37021;
     color: #FFFFFF;
     border-color: #F37021;
-    box-shadow: 0 4px 12px rgba(243, 112, 33, 0.3);
+    box-shadow: 0 4px 14px rgba(243, 112, 33, 0.35);
     transform: translateY(-1px);
   }
 
-  .btn-admin-mini {
-    background: #F1F5F9;
-    color: #475569;
-    border: 1px solid #CBD5E1;
-    padding: 0.35rem 0.6rem;
+  .btn-admin-status-pill {
+    background: transparent;
+    border: none;
     font-size: 0.72rem;
-    font-weight: 700;
-    border-radius: 6px;
+    font-weight: 600;
+    color: #64748B;
     cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+  }
+
+  .btn-admin-status-pill:hover {
+    color: #0F172A;
+  }
+
+  /* Table styling enhancements */
+  .table-micro-pill {
+    display: inline-block;
+    background: #EFF6FF;
+    color: #1E40AF;
+    border: 1px solid #BFDBFE;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 5px;
+  }
+
+  .table-fac-pill {
+    display: inline-block;
+    background: #F1F5F9;
+    color: #334155;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #E2E8F0;
   }
 
   .no-hostels-alert {
@@ -731,8 +833,7 @@
     const query = (document.getElementById('hostel-search-input')?.value || '').toLowerCase().trim();
     
     // Filter Card Grid
-    const cards = document.querySelectorAll('.hostel-showcase-card');
-    let visibleCount = 0;
+    const cards = document.querySelectorAll('.hostel-clean-card');
 
     cards.forEach(card => {
       const g = card.getAttribute('data-gender');
@@ -744,7 +845,6 @@
 
       if (matchGender && matchSearch) {
         card.style.display = 'flex';
-        visibleCount++;
       } else {
         card.style.display = 'none';
       }
