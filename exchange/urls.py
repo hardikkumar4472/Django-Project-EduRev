@@ -28,6 +28,13 @@ urlpatterns = [
     path('proposals/<int:pk>/messages/send/', views.send_proposal_message_view, name='send_proposal_message'),
     path('lifestyle/quiz/', views.lifestyle_quiz_view, name='lifestyle_quiz'),
 
+    # Real-Time Notifications Hub & JSON APIs
+    path('notifications/', views.notifications_page_view, name='notifications_page'),
+    path('api/notifications/', views.api_get_notifications, name='api_get_notifications'),
+    path('api/notifications/<int:pk>/read/', views.api_mark_notification_read, name='api_mark_notification_read'),
+    path('api/notifications/mark-all-read/', views.api_mark_all_notifications_read, name='api_mark_all_notifications_read'),
+    path('api/notifications/<int:pk>/delete/', views.api_delete_notification, name='api_delete_notification'),
+
     # Phase 17 & 18: Admin & Dean & Concurrency
     path('admin/policies/', views.admin_policies_view, name='admin_policies'),
     path('dean/analytics/', views.analytics_dashboard_view, name='dean_analytics'),

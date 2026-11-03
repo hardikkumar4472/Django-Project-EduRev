@@ -28,6 +28,9 @@ class RBACMiddleware:
         )
 
         if not is_public and not user.is_authenticated:
+            if path.startswith('/api/'):
+                from django.http import JsonResponse
+                return JsonResponse({"status": "unauthenticated", "error": "Authentication required"}, status=401)
             return redirect(f"/login/?next={path}")
 
         if user.is_authenticated:

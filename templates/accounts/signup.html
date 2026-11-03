@@ -3,20 +3,18 @@
 
 {% block title %}Student Resident Registration — Lovely Professional University{% endblock %}
 
+{% block body_class %}has-fullpage-bg{% endblock %}
+{% block body_style %}background-image: linear-gradient(180deg, rgba(8, 22, 40, 0.78) 0%, rgba(8, 22, 40, 0.92) 100%), url('{% static 'images/lpu_campus_roundabout.jpg' %}'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh;{% endblock %}
+
 {% block content %}
 <div class="lpu-signup-container">
   
   <div class="lpu-signup-card">
     
-    <!-- Top Visual Banner with Campus Roundabout -->
-    <div class="signup-card-banner" style="background-image: linear-gradient(180deg, rgba(8, 22, 40, 0.35) 0%, rgba(8, 22, 40, 0.88) 100%), url('{% static 'images/lpu_campus_roundabout.jpg' %}');">
-      <div class="banner-badge-row">
-        <span class="banner-pill">🎓 Student Residency</span>
-        <span class="banner-pill">🏢 BH-1 to BH-10 &bull; GH-1 to GH-10</span>
-      </div>
-      <div class="banner-motto">
-        Building Brighter Futures together
-      </div>
+    <!-- Clean Header Bar -->
+    <div style="background: #081628; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #F37021;">
+      <span class="banner-pill" style="background: rgba(255,255,255,0.12);">🎓 Student Registration</span>
+      <span style="font-size: 0.72rem; color: #FED7AA; font-weight: 600;">BH-1 to BH-10 &bull; GH-1 to GH-10</span>
     </div>
 
     <!-- Card Body Content -->

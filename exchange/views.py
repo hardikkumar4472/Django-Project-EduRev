@@ -967,3 +967,167 @@ def lifestyle_quiz_view(request):
         'ac_choices': StudentLifestyle.ACPreference.choices,
         'clean_choices': StudentLifestyle.Cleanliness.choices,
     })
+
+
+# ==============================================================================
+# REAL-TIME NOTIFICATIONS SYSTEM VIEWS & APIS
+# ==============================================================================
+
+def format_time_ago(dt):
+    if not dt:
+        return ""
+    now = timezone.now()
+    diff = now - dt
+    seconds = int(diff.total_seconds())
+    if seconds < 60:
+        return "Just now"
+    minutes = seconds // 60
+    if minutes < 60:
+        return f"{minutes}m ago"
+    hours = minutes // 60
+    if hours < 24:
+        return f"{hours}h ago"
+    days = hours // 24
+    if days == 1:
+        return "Yesterday"
+    if days < 7:
+        return f"{days}d ago"
+    return dt.strftime("%d %b")
+
+
+def get_notification_meta(ntype):
+    icons = {
+        'PROPOSAL_RECEIVED': {'icon': '🔄', 'badge': 'Proposal Match', 'color': '#F37021'},
+        'PARTICIPANT_ACCEPTED': {'icon': '✅', 'badge': 'Accepted', 'color': '#10B981'},
+        'PARTICIPANT_DECLINED': {'icon': '❌', 'badge': 'Declined', 'color': '#EF4444'},
+        'READY_FOR_APPROVAL': {'icon': '🏛️', 'badge': 'Warden Review', 'color': '#8B5CF6'},
+        'TRANSFER_COMPLETED': {'icon': '🎉', 'badge': 'Transfer Done', 'color': '#059669'},
+        'PROPOSAL_EXPIRED': {'icon': '⏰', 'badge': 'Expired', 'color': '#6B7280'},
+        'GENERAL_ALERT': {'icon': '📢', 'badge': 'Notice', 'color': '#F59E0B'},
+    }
+    return icons.get(ntype, {'icon': '🔔', 'badge': 'Alert', 'color': '#3B82F6'})
+
+
+def api_get_notifications(request):
+    """
+    Lightweight JSON API for real-time background polling & dropdown feed.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "unauthenticated", "unread_count": 0, "notifications": []}, status=401)
+
+    from .models import Notification
+    user = request.user
+    qs = Notification.objects.filter(recipient=user).order_by('-created_at')
+    unread_count = qs.filter(is_read=False).count()
+
+    unread_only = request.GET.get('unread_only') == 'true'
+    if unread_only:
+        qs = qs.filter(is_read=False)
+
+    limit = min(int(request.GET.get('limit', 20)), 50)
+    items = []
+    for n in qs[:limit]:
+        meta = get_notification_meta(n.notification_type)
+        items.append({
+            'id': n.id,
+            'title': n.title,
+            'message': n.message,
+            'notification_type': n.notification_type,
+            'type_badge': meta['badge'],
+            'type_color': meta['color'],
+            'icon': meta['icon'],
+            'is_read': n.is_read,
+            'link': n.link or '',
+            'created_at': n.created_at.strftime('%Y-%m-%d %H:%M'),
+            'time_ago': format_time_ago(n.created_at),
+        })
+
+    return JsonResponse({
+        "status": "success",
+        "unread_count": unread_count,
+        "notifications": items
+    })
+
+
+@require_POST
+def api_mark_notification_read(request, pk):
+    """
+    Mark single notification as read.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "unauthenticated"}, status=401)
+    from .models import Notification
+    notif = get_object_or_404(Notification, id=pk, recipient=request.user)
+    if not notif.is_read:
+        notif.is_read = True
+        notif.save(update_fields=['is_read'])
+    unread_count = Notification.objects.filter(recipient=request.user, is_read=False).count()
+    return JsonResponse({"status": "success", "unread_count": unread_count, "notification_id": pk})
+
+
+@require_POST
+def api_mark_all_notifications_read(request):
+    """
+    Mark all user notifications as read.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "unauthenticated"}, status=401)
+    from .models import Notification
+    Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
+    return JsonResponse({"status": "success", "unread_count": 0})
+
+
+@require_POST
+def api_delete_notification(request, pk):
+    """
+    Delete specific notification.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "unauthenticated"}, status=401)
+    from .models import Notification
+    notif = get_object_or_404(Notification, id=pk, recipient=request.user)
+    notif.delete()
+    unread_count = Notification.objects.filter(recipient=request.user, is_read=False).count()
+    return JsonResponse({"status": "success", "unread_count": unread_count})
+
+
+def notifications_page_view(request):
+    """
+    Dedicated Notifications Center page.
+    """
+    user = request.user
+    if not user.is_authenticated:
+        return redirect('/login/?next=/notifications/')
+
+    from .models import Notification
+    filter_type = request.GET.get('filter', 'all')
+    search_query = request.GET.get('q', '').strip()
+
+    qs = Notification.objects.filter(recipient=user).order_by('-created_at')
+    unread_total = qs.filter(is_read=False).count()
+
+    if filter_type == 'unread':
+        qs = qs.filter(is_read=False)
+    elif filter_type == 'proposals':
+        qs = qs.filter(notification_type__in=[
+            Notification.NotificationType.PROPOSAL_RECEIVED,
+            Notification.NotificationType.PARTICIPANT_ACCEPTED,
+            Notification.NotificationType.PARTICIPANT_DECLINED
+        ])
+    elif filter_type == 'transfers':
+        qs = qs.filter(notification_type=Notification.NotificationType.TRANSFER_COMPLETED)
+    elif filter_type == 'warden':
+        qs = qs.filter(notification_type=Notification.NotificationType.READY_FOR_APPROVAL)
+
+    if search_query:
+        qs = qs.filter(Q(title__icontains=search_query) | Q(message__icontains=search_query))
+
+    notifications = qs[:100]
+
+    return render(request, 'exchange/notifications_list.html', {
+        'notifications': notifications,
+        'unread_total': unread_total,
+        'total_count': qs.count(),
+        'filter_type': filter_type,
+        'search_query': search_query,
+    })

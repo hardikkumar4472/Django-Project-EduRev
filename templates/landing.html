@@ -12,8 +12,8 @@
 <div class="lpu-landing-page">
 
   <!-- HERO SECTION -->
-  <section class="lpu-hero-container">
-    
+  <section class="lpu-hero-container" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.82) 44%, rgba(8, 22, 40, 0.35) 75%, rgba(8, 22, 40, 0.12) 100%), url('{% static 'images/lpu_campus_sunset.jpg' %}');">
+
     <!-- Ambient Floating Glow Spheres -->
     <div class="hero-ambient-orb-1"></div>
     <div class="hero-ambient-orb-2"></div>
@@ -27,10 +27,10 @@
     <div class="lpu-hero-decor-dots"></div>
 
     <div class="lpu-hero-grid">
-      
+
       <!-- LEFT COLUMN CONTENT -->
       <div class="lpu-hero-left">
-        
+
         <!-- Portal Tag Pill with Live Pulse Dot -->
         <div class="lpu-portal-pill">
           <span class="portal-pill-badge">
@@ -65,7 +65,7 @@
               <span>Sign In with University ID →</span>
             </a>
           {% endif %}
-          
+
           <a href="{% url 'hostels_list' %}" class="lpu-btn-cta-outline">
             <span style="font-size: 1.15rem;">🏢</span>
             <span>Explore LPU Hostels</span>
@@ -74,47 +74,8 @@
 
       </div>
 
-      <!-- RIGHT COLUMN: CAMPUS SUNSET PANORAMA & FLOATING 3D POLAROID -->
-      <div class="lpu-hero-right">
-        
-        <!-- Main Sunset Canvas with Gentle Hover Parallax -->
-        <div class="campus-sunset-frame">
-          <img src="{% static 'images/lpu_campus_sunset.jpg' %}" alt="Lovely Professional University Campus at Sunset" class="campus-sunset-img">
-        </div>
-
-        <!-- Cursive Script in the Sky (Top Right) -->
-        <div class="sky-script-tag">
-          <span class="sky-script-text">
-            Transforming<br>Education<br>Transforming the World
-          </span>
-          <svg class="sky-script-underline" width="130" height="12" viewBox="0 0 130 12" fill="none">
-            <path d="M3,9 C40,2 90,3 127,7" stroke="#F37021" stroke-width="3.5" stroke-linecap="round"/>
-          </svg>
-        </div>
-
-        <!-- Floating Polaroid Card with 3D Bobbing Animation -->
-        <div class="floating-polaroid-box">
-          <div class="polaroid-white-card">
-            <div class="polaroid-inner-photo">
-              <img src="{% static 'images/lpu_campus_sunset.jpg' %}" alt="LPU Campus Life">
-            </div>
-            <div class="polaroid-caption-tag">
-              <span class="pin">📍</span>
-              <span>LPU CAMPUS</span>
-            </div>
-          </div>
-
-          <!-- Cursive Pointer Arrow -->
-          <div class="polaroid-arrow-pointer">
-            <svg width="46" height="46" viewBox="0 0 50 50" fill="none">
-              <path d="M12,42 C20,20 32,15 44,14" stroke="#F37021" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-              <polygon points="44,9 49,15 42,19" fill="#F37021"/>
-            </svg>
-            <span class="pointer-script-text">Your Home Away From Home</span>
-          </div>
-        </div>
-
-      </div>
+            <!-- RIGHT COLUMN: OPEN CAMPUS SUNSET PANORAMA -->
+      <div class="lpu-hero-right" aria-hidden="true"></div>
 
     </div>
 
@@ -132,10 +93,10 @@
 
     <!-- Inner Content Container placed over the wave -->
     <div class="lpu-wave-content-container">
-      
+
       <!-- NAVY ZONE (LEFT): 4 Features strictly in 1 single clean row -->
       <div class="wave-navy-features-row">
-        
+
         <div class="wave-feature-card">
           <div class="wave-feature-icon">🔄</div>
           <div class="wave-feature-meta">
@@ -304,7 +265,7 @@
 
       <!-- 6 Policy Cards Grid -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; margin-bottom: 3.5rem;">
-        
+
         <div class="card" style="padding: 1.75rem; border-left: 4px solid #F37021; background: #FFFFFF; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); border-radius: 14px;">
           <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🕒</div>
           <h3 style="font-size: 1.1rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">Biometric Curfew &amp; Movement</h3>
@@ -381,11 +342,319 @@
   </section>
 
   <!-- ========================================================================
+       WHAT STUDENTS SAY SECTION (3D CIRCULAR TESTIMONIAL CAROUSEL)
+       ======================================================================== -->
+  <section id="what-students-say" class="lpu-testimonials-section">
+    <!-- Subtle circular background orbit decoration -->
+    <div class="circular-orbit-decor" aria-hidden="true">
+      <div class="orbit-ring orbit-ring-outer"></div>
+      <div class="orbit-ring orbit-ring-inner"></div>
+    </div>
+
+    <div class="testimonials-header-wrap">
+      <span class="section-badge-pill">Hosteller Experiences</span>
+      <h2 class="testimonials-main-title">What Students Say About Us</h2>
+      <p class="testimonials-subtitle">
+        Over 2,400+ students across BH-1 to BH-10 and GH-1 to GH-10 have exchanged their rooms seamlessly with zero paperwork and instant digital approvals.
+      </p>
+
+      <div class="testimonials-stat-badges">
+        <span class="testi-stat-chip">⭐ <strong>4.9 / 5</strong> Overall Rating</span>
+        <span class="testi-stat-chip">🔄 <strong>2,400+</strong> Swaps Completed</span>
+        <span class="testi-stat-chip">⚡ <strong>99.4%</strong> Warden Approval Rate</span>
+      </div>
+    </div>
+
+    <!-- Circular 3D Carousel Stage -->
+    <div class="circular-stage-wrapper" id="circularTestimonialsCarousel">
+
+      <!-- Nav Button: Previous -->
+      <button class="circular-nav-btn prev-btn" id="circTestiPrev" aria-label="Previous Student Review">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <!-- Carousel Cards Track -->
+      <div class="circular-cards-track" id="circTestiTrack">
+
+        <!-- CARD 1: Aarav Sharma -->
+        <div class="circular-card" data-index="0">
+          <div class="card-quote-mark">“</div>
+          <div class="card-student-header">
+            <div class="student-avatar-circle" style="background: linear-gradient(135deg, #F37021, #EA580C);">
+              <span>AS</span>
+              <span class="verified-dot-badge" title="Verified LPU Student">✓</span>
+            </div>
+            <div class="student-info-meta">
+              <h4 class="student-name">Aarav Sharma</h4>
+              <span class="student-branch">B.Tech CSE &bull; 3rd Year</span>
+            </div>
+            <div class="student-stars">★★★★★</div>
+          </div>
+
+          <div class="route-exchange-pill">
+            <span class="route-tag-icon">🏠</span>
+            <span class="route-path">BH-4 <span class="route-arrow">➔</span> BH-7</span>
+            <span class="route-type-badge">4-Seater AC</span>
+          </div>
+
+          <p class="student-quote-body">
+            "Was struggling to find night-study peace in my old wing. Connected with a fellow coder from BH-7 through EDUREV, did the lifestyle quiz, and matched in 10 minutes. Warden approved it digitally the next morning!"
+          </p>
+
+          <div class="card-footer-stamp">
+            <span class="stamp-check">✓</span>
+            <span>Direct 2-Party Swap &bull; Warden Verified</span>
+          </div>
+        </div>
+
+        <!-- CARD 2: Ananya Verma -->
+        <div class="circular-card" data-index="1">
+          <div class="card-quote-mark">“</div>
+          <div class="card-student-header">
+            <div class="student-avatar-circle" style="background: linear-gradient(135deg, #EC4899, #8B5CF6);">
+              <span>AV</span>
+              <span class="verified-dot-badge" title="Verified LPU Student">✓</span>
+            </div>
+            <div class="student-info-meta">
+              <h4 class="student-name">Ananya Verma</h4>
+              <span class="student-branch">B.Des Fashion &bull; 2nd Year</span>
+            </div>
+            <div class="student-stars">★★★★★</div>
+          </div>
+
+          <div class="route-exchange-pill">
+            <span class="route-tag-icon">🏠</span>
+            <span class="route-path">GH-2 <span class="route-arrow">➔</span> GH-5</span>
+            <span class="route-type-badge">3-Seater</span>
+          </div>
+
+          <p class="student-quote-body">
+            "Moving closer to the design studio block saved me 25 minutes of walking every single morning. The multi-hop swap chain feature is unbelievable—3 students swapped simultaneously without any confusion."
+          </p>
+
+          <div class="card-footer-stamp">
+            <span class="stamp-check">✓</span>
+            <span>Multi-Hop Cycle &bull; 98% Compatibility</span>
+          </div>
+        </div>
+
+        <!-- CARD 3: Rohan Patel -->
+        <div class="circular-card" data-index="2">
+          <div class="card-quote-mark">“</div>
+          <div class="card-student-header">
+            <div class="student-avatar-circle" style="background: linear-gradient(135deg, #0284C7, #0F766E);">
+              <span>RP</span>
+              <span class="verified-dot-badge" title="Verified LPU Student">✓</span>
+            </div>
+            <div class="student-info-meta">
+              <h4 class="student-name">Rohan Patel</h4>
+              <span class="student-branch">MBA &bull; Final Year</span>
+            </div>
+            <div class="student-stars">★★★★★</div>
+          </div>
+
+          <div class="route-exchange-pill">
+            <span class="route-tag-icon">🏠</span>
+            <span class="route-path">BH-1 <span class="route-arrow">➔</span> BH-8</span>
+            <span class="route-type-badge">2-Seater AC</span>
+          </div>
+
+          <p class="student-quote-body">
+            "Zero paperwork hassle. We didn't have to stand in long warden office lines or wait days for physical signature stamps. The automated digital clearance letter was accepted at the caretaker desk in 2 minutes flat."
+          </p>
+
+          <div class="card-footer-stamp">
+            <span class="stamp-check">✓</span>
+            <span>Digital Clearance Letter &bull; 100% Hassle-Free</span>
+          </div>
+        </div>
+
+        <!-- CARD 4: Priya Sundaram -->
+        <div class="circular-card" data-index="3">
+          <div class="card-quote-mark">“</div>
+          <div class="card-student-header">
+            <div class="student-avatar-circle" style="background: linear-gradient(135deg, #10B981, #059669);">
+              <span>PS</span>
+              <span class="verified-dot-badge" title="Verified LPU Student">✓</span>
+            </div>
+            <div class="student-info-meta">
+              <h4 class="student-name">Priya Sundaram</h4>
+              <span class="student-branch">B.Tech ECE &bull; 2nd Year</span>
+            </div>
+            <div class="student-stars">★★★★★</div>
+          </div>
+
+          <div class="route-exchange-pill">
+            <span class="route-tag-icon">🏠</span>
+            <span class="route-path">GH-3 <span class="route-arrow">➔</span> GH-1</span>
+            <span class="route-type-badge">1-Seater Standard</span>
+          </div>
+
+          <p class="student-quote-body">
+            "Wanted a quiet single-seater room for GATE exam prep. Found a graduating senior completing tenure early. The platform handled the administrative rules, gender segregation, and cycle validation smoothly."
+          </p>
+
+          <div class="card-footer-stamp">
+            <span class="stamp-check">✓</span>
+            <span>Quiet Study Wing &bull; Caretaker Approved</span>
+          </div>
+        </div>
+
+        <!-- CARD 5: Vikramaditya Malhotra -->
+        <div class="circular-card" data-index="4">
+          <div class="card-quote-mark">“</div>
+          <div class="card-student-header">
+            <div class="student-avatar-circle" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+              <span>VM</span>
+              <span class="verified-dot-badge" title="Verified LPU Student">✓</span>
+            </div>
+            <div class="student-info-meta">
+              <h4 class="student-name">Vikramaditya Malhotra</h4>
+              <span class="student-branch">BBA LLB &bull; 4th Year</span>
+            </div>
+            <div class="student-stars">★★★★★</div>
+          </div>
+
+          <div class="route-exchange-pill">
+            <span class="route-tag-icon">🏠</span>
+            <span class="route-path">BH-5 <span class="route-arrow">➔</span> BH-2</span>
+            <span class="route-type-badge">3-Seater Cooler</span>
+          </div>
+
+          <p class="student-quote-body">
+            "Our whole basketball squad wanted to be together in BH-2 right beside the sports complex. Swapped my room in 3 days. Clean, transparent, authenticated, and completely approved by the Chief Warden."
+          </p>
+
+          <div class="card-footer-stamp">
+            <span class="stamp-check">✓</span>
+            <span>Sports Wing Transfer &bull; Verified Hosteller</span>
+          </div>
+        </div>
+
+        <!-- CARD 6: Ishita Gupta -->
+        <div class="circular-card" data-index="5">
+          <div class="card-quote-mark">“</div>
+          <div class="card-student-header">
+            <div class="student-avatar-circle" style="background: linear-gradient(135deg, #8B5CF6, #6366F1);">
+              <span>IG</span>
+              <span class="verified-dot-badge" title="Verified LPU Student">✓</span>
+            </div>
+            <div class="student-info-meta">
+              <h4 class="student-name">Ishita Gupta</h4>
+              <span class="student-branch">B.Sc Biotech &bull; 3rd Year</span>
+            </div>
+            <div class="student-stars">★★★★★</div>
+          </div>
+
+          <div class="route-exchange-pill">
+            <span class="route-tag-icon">🏠</span>
+            <span class="route-path">GH-6 <span class="route-arrow">➔</span> GH-4</span>
+            <span class="route-type-badge">4-Seater AC</span>
+          </div>
+
+          <p class="student-quote-body">
+            "The lifestyle quiz filter was an absolute lifesaver. I wanted non-smoking, early-riser roommates who keep study hours tidy. EDUREV Hostel Swapping System matched me with like-minded girls in GH-4 within 2 days!"
+          </p>
+
+          <div class="card-footer-stamp">
+            <span class="stamp-check">✓</span>
+            <span>Lifestyle Matched &bull; Perfect Roommates</span>
+          </div>
+        </div>
+
+        <!-- CARD 7: Siddharth Nair -->
+        <div class="circular-card" data-index="6">
+          <div class="card-quote-mark">“</div>
+          <div class="card-student-header">
+            <div class="student-avatar-circle" style="background: linear-gradient(135deg, #0EA5E9, #2563EB);">
+              <span>SN</span>
+              <span class="verified-dot-badge" title="Verified LPU Student">✓</span>
+            </div>
+            <div class="student-info-meta">
+              <h4 class="student-name">Siddharth Nair</h4>
+              <span class="student-branch">B.Tech Mechanical &bull; 3rd Year</span>
+            </div>
+            <div class="student-stars">★★★★★</div>
+          </div>
+
+          <div class="route-exchange-pill">
+            <span class="route-tag-icon">🏠</span>
+            <span class="route-path">BH-3 <span class="route-arrow">➔</span> BH-6</span>
+            <span class="route-type-badge">2-Seater Standard</span>
+          </div>
+
+          <p class="student-quote-body">
+            "The real-time notifications popped up the minute a room in BH-6 opened up. We reviewed each other's profiles, agreed on the swap, and keys were handed over by Saturday morning without a hitch!"
+          </p>
+
+          <div class="card-footer-stamp">
+            <span class="stamp-check">✓</span>
+            <span>Real-time Notification Match &bull; Key Handover Done</span>
+          </div>
+        </div>
+
+        <!-- CARD 8: Sneha Kulkarni -->
+        <div class="circular-card" data-index="7">
+          <div class="card-quote-mark">“</div>
+          <div class="card-student-header">
+            <div class="student-avatar-circle" style="background: linear-gradient(135deg, #EC4899, #F43F5E);">
+              <span>SK</span>
+              <span class="verified-dot-badge" title="Verified LPU Student">✓</span>
+            </div>
+            <div class="student-info-meta">
+              <h4 class="student-name">Sneha Kulkarni</h4>
+              <span class="student-branch">B.Pharm &bull; 2nd Year</span>
+            </div>
+            <div class="student-stars">★★★★★</div>
+          </div>
+
+          <div class="route-exchange-pill">
+            <span class="route-tag-icon">🏠</span>
+            <span class="route-path">GH-1 <span class="route-arrow">➔</span> GH-3</span>
+            <span class="route-type-badge">2-Seater AC</span>
+          </div>
+
+          <p class="student-quote-body">
+            "Hostel room changes used to take weeks of chasing signatures across blocks. With Hostel Swapping SystemV, caretaker biometric verification and instant digital transfer letters made the entire transition effortless."
+          </p>
+
+          <div class="card-footer-stamp">
+            <span class="stamp-check">✓</span>
+            <span>Digital Biometric Clearance &bull; Verified Hosteller</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Nav Button: Next -->
+      <button class="circular-nav-btn next-btn" id="circTestiNext" aria-label="Next Student Review">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+    </div>
+
+    <!-- Circular Navigation Indicators & Play/Pause -->
+    <div class="circular-controls-bar">
+      <div class="circular-dots-wrap" id="circTestiDots"></div>
+      <div class="circular-play-pause-wrap">
+        <button class="circular-play-toggle" id="circPlayToggle" title="Pause or Resume Auto-Rotation">
+          <span id="circPlayIcon">⏸</span>
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ========================================================================
        COMPREHENSIVE FAQS SECTION (INTERACTIVE ACCORDION)
        ======================================================================== -->
   <section id="faqs" style="padding: 5rem 2rem; background: #FFFFFF;">
     <div style="max-width: 1080px; margin: 0 auto;">
-      
+
       <div style="text-align: center; margin-bottom: 3.5rem;">
         <span class="section-badge-pill">Got Questions?</span>
         <h2 style="font-size: 2.35rem; font-weight: 900; color: #0F172A; margin: 0.85rem 0 0.85rem 0; letter-spacing: -0.02em;">
@@ -398,7 +667,7 @@
 
       <!-- FAQ Accordion List -->
       <div class="lpu-faq-accordion-list" style="display: flex; flex-direction: column; gap: 1rem;">
-        
+
         <details class="faq-item-card" open>
           <summary class="faq-item-question">
             <span class="q-icon">❓</span>
@@ -568,6 +837,189 @@
       color: #0F172A;
     }
   </style>
+
+  <!-- 3D Circular Testimonials Carousel Controller -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const track = document.getElementById('circTestiTrack');
+      if (!track) return;
+
+      const cards = Array.from(track.querySelectorAll('.circular-card'));
+      const total = cards.length;
+      if (total === 0) return;
+
+      const prevBtn = document.getElementById('circTestiPrev');
+      const nextBtn = document.getElementById('circTestiNext');
+      const dotsContainer = document.getElementById('circTestiDots');
+      const playToggle = document.getElementById('circPlayToggle');
+      const playIcon = document.getElementById('circPlayIcon');
+      const container = document.getElementById('circularTestimonialsCarousel');
+
+      let currentIndex = 0;
+      let autoPlayTimer = null;
+      let isPlaying = true;
+
+      // Build dot indicators
+      if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+        cards.forEach((_, i) => {
+          const dot = document.createElement('button');
+          dot.className = 'circular-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('aria-label', 'Go to student review ' + (i + 1));
+          dot.addEventListener('click', () => {
+            goTo(i);
+            restartTimer();
+          });
+          dotsContainer.appendChild(dot);
+        });
+      }
+      const dots = dotsContainer ? Array.from(dotsContainer.querySelectorAll('.circular-dot')) : [];
+
+      function update() {
+        const isMobile = window.innerWidth <= 640;
+        const isTablet = window.innerWidth <= 960;
+        const stepX = isMobile ? 180 : (isTablet ? 250 : 320);
+
+        cards.forEach((card, i) => {
+          // Circular shortest distance in range [-total/2, total/2]
+          let diff = i - currentIndex;
+          while (diff > total / 2) diff -= total;
+          while (diff < -total / 2) diff += total;
+
+          if (diff === 0) {
+            // Center Active Spotlight Card
+            card.style.transform = 'translateX(0px) scale(1) translateZ(0px) rotateY(0deg)';
+            card.style.opacity = '1';
+            card.style.zIndex = '12';
+            card.style.pointerEvents = 'auto';
+            card.classList.add('is-active');
+          } else if (diff === 1 || diff === -1) {
+            // Immediate Left / Right Flanking Cards
+            const sign = diff > 0 ? 1 : -1;
+            const rot = sign * (isMobile ? -10 : -18);
+            card.style.transform = `translateX(${sign * stepX}px) scale(0.85) translateZ(-110px) rotateY(${rot}deg)`;
+            card.style.opacity = isMobile ? '0.45' : '0.72';
+            card.style.zIndex = '6';
+            card.style.pointerEvents = 'auto';
+            card.classList.remove('is-active');
+          } else if (diff === 2 || diff === -2) {
+            // Secondary Outer Cards in Circular Orbit
+            const sign = diff > 0 ? 1 : -1;
+            const rot = sign * (isMobile ? -18 : -28);
+            card.style.transform = `translateX(${sign * stepX * 1.62}px) scale(0.68) translateZ(-240px) rotateY(${rot}deg)`;
+            card.style.opacity = isMobile ? '0' : '0.35';
+            card.style.zIndex = '3';
+            card.style.pointerEvents = isMobile ? 'none' : 'auto';
+            card.classList.remove('is-active');
+          } else {
+            // Back of the Circular Orbit (Hidden)
+            card.style.transform = 'translateX(0px) scale(0.4) translateZ(-400px)';
+            card.style.opacity = '0';
+            card.style.zIndex = '1';
+            card.style.pointerEvents = 'none';
+            card.classList.remove('is-active');
+          }
+        });
+
+        // Update Dots
+        dots.forEach((dot, idx) => {
+          dot.classList.toggle('active', idx === currentIndex);
+        });
+      }
+
+      function goTo(index) {
+        currentIndex = (index + total) % total;
+        update();
+      }
+
+      function next() { goTo(currentIndex + 1); }
+      function prev() { goTo(currentIndex - 1); }
+
+      if (prevBtn) prevBtn.addEventListener('click', () => { prev(); restartTimer(); });
+      if (nextBtn) nextBtn.addEventListener('click', () => { next(); restartTimer(); });
+
+      // Direct Click on any Flanking Card rotates it to front
+      cards.forEach((card, idx) => {
+        card.addEventListener('click', () => {
+          if (idx !== currentIndex) {
+            goTo(idx);
+            restartTimer();
+          }
+        });
+      });
+
+      // Auto-Rotation Timer
+      function startTimer() {
+        stopTimer();
+        if (isPlaying) {
+          autoPlayTimer = setInterval(next, 3800);
+        }
+      }
+
+      function stopTimer() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+        }
+      }
+
+      function restartTimer() {
+        stopTimer();
+        startTimer();
+      }
+
+      if (container) {
+        container.addEventListener('mouseenter', stopTimer);
+        container.addEventListener('mouseleave', () => { if (isPlaying) startTimer(); });
+
+        // Touch Swipe
+        let touchStartX = 0;
+        let touchEndX = 0;
+        container.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        container.addEventListener('touchend', (e) => {
+          touchEndX = e.changedTouches[0].screenX;
+          if (touchStartX - touchEndX > 45) {
+            next();
+            restartTimer();
+          } else if (touchEndX - touchStartX > 45) {
+            prev();
+            restartTimer();
+          }
+        }, { passive: true });
+      }
+
+      // Play / Pause Toggle
+      if (playToggle) {
+        playToggle.addEventListener('click', () => {
+          isPlaying = !isPlaying;
+          if (isPlaying) {
+            playIcon.textContent = '⏸';
+            startTimer();
+          } else {
+            playIcon.textContent = '▶';
+            stopTimer();
+          }
+        });
+      }
+
+      // Keyboard arrow navigation
+      window.addEventListener('keydown', (e) => {
+        if (!container) return;
+        const rect = container.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          if (e.key === 'ArrowLeft') { prev(); restartTimer(); }
+          else if (e.key === 'ArrowRight') { next(); restartTimer(); }
+        }
+      });
+
+      window.addEventListener('resize', update);
+      update();
+      startTimer();
+    });
+  </script>
 
 </div>
 {% endblock %}

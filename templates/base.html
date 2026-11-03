@@ -216,7 +216,7 @@
   </style>
   {% block extra_head %}{% endblock %}
 </head>
-<body class="{% if request.path == '/' %}landing-page-body{% endif %}">
+<body class="{% if request.path == '/' %}landing-page-body{% endif %} {% block body_class %}{% endblock %}" style="{% block body_style %}{% endblock %}">
 
   <!-- ========================================================================
        UNIVERSAL LPU 1-5S RANDOM SPLASH LOADER (MATCHING USER MOCKUP)
@@ -233,9 +233,13 @@
     </div>
   </div>
 
+  <!-- Real-Time Floating Notification Toast Container -->
+  <div id="lpu-toast-container" class="lpu-toast-container" aria-live="polite"></div>
+
   <!-- ========================================================================
        Top Navigation Bar matching Reference Mockup
        ======================================================================== -->
+  {% if request.path != '/login/' %}
   <header class="top-navbar">
     <div class="navbar-inner">
       
@@ -253,75 +257,117 @@
         </a>
       </div>
 
-      <!-- Nav Menu -->
+      <!-- Nav Menu (Strictly Filtered by User Role) -->
       <nav>
         <ul class="nav-menu">
-          <li class="nav-item {% if request.path == '/' %}active{% endif %}">
-            <a href="{% url 'landing' %}">Home</a>
-          </li>
-          <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
-            <a href="{% url 'hostels_list' %}">Hostels</a>
-          </li>
-          <li class="nav-item {% if request.path == '/how-it-works/' %}active{% endif %}">
-            <a href="{% url 'how_it_works' %}">How It Works</a>
-          </li>
-          <li class="nav-item {% if request.path == '/guidelines/' %}active{% endif %}">
-            <a href="{% url 'guidelines' %}">Guidelines</a>
-          </li>
-          <li class="nav-item {% if request.path == '/support/' or request.path == '/help-support/' %}active{% endif %}">
-            <a href="{% url 'support' %}">Help &amp; Support</a>
-          </li>
+          {% if not user.is_authenticated %}
+            <!-- Public / Guest Navigation -->
+            <li class="nav-item {% if request.path == '/' %}active{% endif %}">
+              <a href="{% url 'landing' %}">Home</a>
+            </li>
+            <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+              <a href="{% url 'hostels_list' %}">Hostels</a>
+            </li>
+            <li class="nav-item {% if request.path == '/how-it-works/' %}active{% endif %}">
+              <a href="{% url 'how_it_works' %}">How It Works</a>
+            </li>
+            <li class="nav-item {% if request.path == '/guidelines/' %}active{% endif %}">
+              <a href="{% url 'guidelines' %}">Guidelines</a>
+            </li>
+            <li class="nav-item {% if request.path == '/support/' or request.path == '/help-support/' %}active{% endif %}">
+              <a href="{% url 'support' %}">Help &amp; Support</a>
+            </li>
 
-          {% if user.is_authenticated %}
+          {% else %}
+            <!-- Authenticated Role-Specific Navigation -->
             {% if user.is_student %}
+              <!-- Student Role Navigation -->
               <li class="nav-item {% if request.path == '/dashboard/' %}active{% endif %}">
                 <a href="{% url 'dashboard' %}">Dashboard</a>
               </li>
               <li class="nav-item {% if request.path == '/exchange-requests/new/' %}active{% endif %}">
-                <a href="{% url 'create_request' %}">New Request</a>
+                <a href="{% url 'create_request' %}">Apply for Swap</a>
               </li>
               <li class="nav-item {% if '/proposals/' in request.path or request.path == '/matches/' %}active{% endif %}">
                 <a href="{% url 'matches' %}">Matches</a>
               </li>
+              <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+                <a href="{% url 'hostels_list' %}">Hostels</a>
+              </li>
               <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
                 <a href="{% url 'transfers_list' %}">Transfers</a>
               </li>
+              <li class="nav-item {% if request.path == '/support/' or request.path == '/help-support/' %}active{% endif %}">
+                <a href="{% url 'support' %}">Help &amp; Support</a>
+              </li>
+
             {% elif user.role == 'warden' %}
+              <!-- Hostel Warden Navigation -->
               <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
                 <a href="{% url 'warden_approvals' %}">Queue</a>
               </li>
-              <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
-                <a href="{% url 'transfers_list' %}">Transfers</a>
+              <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+                <a href="{% url 'hostels_list' %}">Hostels</a>
               </li>
               <li class="nav-item {% if request.path == '/caretaker/verify/' %}active{% endif %}">
                 <a href="{% url 'caretaker_verify' %}">🔑 Key Desk</a>
               </li>
+              <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                <a href="{% url 'transfers_list' %}">Transfers</a>
+              </li>
+              <li class="nav-item {% if request.path == '/support/' or request.path == '/help-support/' %}active{% endif %}">
+                <a href="{% url 'support' %}">Support</a>
+              </li>
+
             {% elif user.role == 'chief_warden' %}
+              <!-- Chief Warden Navigation -->
               <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
                 <a href="{% url 'warden_approvals' %}">Oversight</a>
               </li>
-              <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
-                <a href="{% url 'dean_analytics' %}">Analytics</a>
+              <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+                <a href="{% url 'hostels_list' %}">Hostels</a>
               </li>
               <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
                 <a href="{% url 'transfers_list' %}">Transfers</a>
               </li>
+              <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
+                <a href="{% url 'dean_analytics' %}">Analytics</a>
+              </li>
+              <li class="nav-item {% if request.path == '/support/' or request.path == '/help-support/' %}active{% endif %}">
+                <a href="{% url 'support' %}">Support</a>
+              </li>
+
             {% elif user.role == 'dsw' %}
+              <!-- Dean (DSW) Navigation -->
               <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
                 <a href="{% url 'dean_analytics' %}">Analytics</a>
+              </li>
+              <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+                <a href="{% url 'hostels_list' %}">Hostels</a>
               </li>
               <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
                 <a href="{% url 'transfers_list' %}">Transfers</a>
               </li>
+              <li class="nav-item {% if request.path == '/support/' or request.path == '/help-support/' %}active{% endif %}">
+                <a href="{% url 'support' %}">Support</a>
+              </li>
+
             {% elif user.is_admin_role %}
+              <!-- Administrator Navigation -->
               <li class="nav-item {% if '/admin/users/' in request.path %}active{% endif %}">
                 <a href="{% url 'admin_users_list' %}">Users</a>
               </li>
               <li class="nav-item {% if '/admin/policies/' in request.path %}active{% endif %}">
                 <a href="{% url 'admin_policies' %}">Policies</a>
               </li>
+              <li class="nav-item {% if '/hostels/' in request.path %}active{% endif %}">
+                <a href="{% url 'hostels_list' %}">Hostels</a>
+              </li>
               <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
                 <a href="{% url 'dean_analytics' %}">Analytics</a>
+              </li>
+              <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
+                <a href="{% url 'transfers_list' %}">Transfers</a>
               </li>
               <li class="nav-item">
                 <a href="/django-admin/" target="_blank">⚙️ Admin</a>
@@ -334,16 +380,52 @@
       <!-- Right Controls: Sign In to Portal Pill Button -->
       <div class="navbar-controls">
         {% if user.is_authenticated %}
-          <!-- Notification Bell -->
-          <a href="{% url 'dashboard' %}" class="nav-icon-bell" title="Notifications" style="position: relative;">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-            {% if unread_notifications_count > 0 %}
-              <span style="position: absolute; top: -3px; right: -3px; background: #EF4444; color: #FFFFFF; font-size: 0.65rem; padding: 1px 5px; border-radius: 10px; font-weight: 700;">{{ unread_notifications_count }}</span>
-            {% endif %}
-          </a>
+          <!-- Real-Time Interactive Notification Bell & Dropdown Hub -->
+          <div class="lpu-notif-wrapper" style="position: relative;">
+            <button type="button" id="lpu-notif-bell-btn" class="nav-icon-bell" title="Notifications" aria-expanded="false" style="position: relative; background: transparent; border: none; cursor: pointer; padding: 6px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; color: #1E293B; transition: all 0.2s ease;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span id="lpu-notif-badge" class="lpu-notif-badge-pill" style="{% if unread_notifications_count == 0 %}display: none;{% endif %}">
+                {{ unread_notifications_count }}
+              </span>
+            </button>
+
+            <!-- Floating Notification Dropdown Menu -->
+            <div id="lpu-notif-dropdown" class="lpu-notif-dropdown" style="display: none;">
+              <div class="lpu-notif-header">
+                <div class="lpu-notif-title-row">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1.05rem;">🔔</span>
+                    <strong style="font-size: 0.95rem; color: #0F172A;">Notifications</strong>
+                    <span id="lpu-notif-header-unread-count" class="lpu-notif-header-pill">{{ unread_notifications_count }} unread</span>
+                  </div>
+                  <button type="button" id="lpu-notif-mark-all-btn" class="lpu-notif-text-btn" title="Mark all as read">
+                    ✓ Mark all read
+                  </button>
+                </div>
+                <div class="lpu-notif-tabs">
+                  <button type="button" class="lpu-notif-tab active" data-filter="all">All</button>
+                  <button type="button" class="lpu-notif-tab" data-filter="unread">Unread</button>
+                </div>
+              </div>
+
+              <!-- Notifications Scrollable Feed -->
+              <div id="lpu-notif-items" class="lpu-notif-items-list">
+                <div class="lpu-notif-loading" style="padding: 2rem; text-align: center; color: #64748B; font-size: 0.85rem;">
+                  Loading alerts...
+                </div>
+              </div>
+
+              <!-- Dropdown Footer -->
+              <div class="lpu-notif-footer">
+                <a href="{% url 'notifications_page' %}" class="lpu-notif-view-all-link">
+                  View Full Notification History →
+                </a>
+              </div>
+            </div>
+          </div>
 
           <!-- Dynamic User Profile Header -->
           <a href="{% url 'dashboard' %}" class="user-profile-header" style="text-decoration: none;">
@@ -384,10 +466,11 @@
 
     </div>
   </header>
+  {% endif %}
 
   <!-- Main Content Area -->
-  <main class="main-container {% if request.path == '/' %}landing-main-bleed{% endif %}">
-    {% if messages %}
+  <main class="main-container {% if request.path == '/' %}landing-main-bleed{% elif request.path == '/login/' %}login-main-bleed{% endif %}">
+    {% if messages and request.path != '/login/' %}
       <div style="padding: 1rem 2rem 0 2rem; max-width: 1400px; margin: 0 auto;">
         {% for message in messages %}
           <div class="alert" style="padding: 0.75rem 1.25rem; border-radius: var(--radius-md); background: #FFF7ED; border: 1px solid #FED7AA; color: #C2410C; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 600;">
@@ -564,6 +647,286 @@
       });
     })();
   </script>
+
+  <!-- ========================================================================
+       REAL-TIME NOTIFICATIONS CLIENT ENGINE (POLLING & TOASTS)
+       ======================================================================== -->
+  {% if user.is_authenticated %}
+  <script>
+    (function() {
+      const bellBtn = document.getElementById('lpu-notif-bell-btn');
+      const dropdown = document.getElementById('lpu-notif-dropdown');
+      const badge = document.getElementById('lpu-notif-badge');
+      const headerCount = document.getElementById('lpu-notif-header-unread-count');
+      const itemsContainer = document.getElementById('lpu-notif-items');
+      const markAllBtn = document.getElementById('lpu-notif-mark-all-btn');
+      const tabs = document.querySelectorAll('.lpu-notif-tab');
+      const toastContainer = document.getElementById('lpu-toast-container');
+
+      let currentFilter = 'all';
+      let cachedNotifications = [];
+      let knownNotificationIds = new Set();
+      let isFirstPoll = true;
+      let pollingInterval = null;
+
+      function getCsrfToken() {
+        const match = document.cookie.match(/csrftoken=([^;]+)/);
+        return match ? match[1] : '';
+      }
+
+      window.updateNotifBadgeCount = function(count) {
+        if (!badge) return;
+        const num = parseInt(count, 10) || 0;
+        if (num > 0) {
+          badge.textContent = num > 99 ? '99+' : num;
+          badge.style.display = 'inline-block';
+          if (headerCount) headerCount.textContent = num + ' unread';
+        } else {
+          badge.style.display = 'none';
+          if (headerCount) headerCount.textContent = '0 unread';
+        }
+      };
+
+      function showNotificationToast(notif) {
+        if (!toastContainer) return;
+        const toast = document.createElement('div');
+        toast.className = 'lpu-toast-card';
+        toast.innerHTML = `
+          <div class="lpu-toast-icon">${notif.icon || '🔔'}</div>
+          <div class="lpu-toast-body">
+            <div class="lpu-toast-title">${escapeHtml(notif.title)}</div>
+            <div class="lpu-toast-text">${escapeHtml(notif.message)}</div>
+          </div>
+          <button type="button" class="lpu-toast-close" title="Dismiss">&times;</button>
+          <div class="lpu-toast-progress"></div>
+        `;
+
+        toast.addEventListener('click', function(e) {
+          if (e.target.closest('.lpu-toast-close')) return;
+          markNotificationAsRead(notif.id, notif.link);
+        });
+
+        const closeBtn = toast.querySelector('.lpu-toast-close');
+        closeBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          dismissToast(toast);
+        });
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(function() {
+          dismissToast(toast);
+        }, 6000);
+      }
+
+      function dismissToast(toast) {
+        if (!toast || toast.classList.contains('toast-leaving')) return;
+        toast.classList.add('toast-leaving');
+        setTimeout(function() {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 260);
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        const p = document.createElement('p');
+        p.textContent = str;
+        return p.innerHTML;
+      }
+
+      function renderDropdownItems() {
+        if (!itemsContainer) return;
+        let list = cachedNotifications;
+        if (currentFilter === 'unread') {
+          list = cachedNotifications.filter(n => !n.is_read);
+        }
+
+        if (list.length === 0) {
+          itemsContainer.innerHTML = `
+            <div style="padding: 2.5rem 1.5rem; text-align: center; color: #64748B;">
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔕</div>
+              <div style="font-size: 0.9rem; font-weight: 700; color: #0F172A; margin-bottom: 0.25rem;">No ${currentFilter === 'unread' ? 'unread ' : ''}notifications</div>
+              <div style="font-size: 0.775rem; color: #94A3B8;">You're all caught up! New alerts will show up here.</div>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        list.forEach(n => {
+          html += `
+            <div class="lpu-notif-item ${!n.is_read ? 'unread' : ''}" data-id="${n.id}" data-link="${n.link || ''}">
+              <div class="lpu-notif-icon-box">
+                ${n.icon || '🔔'}
+              </div>
+              <div class="lpu-notif-body">
+                <div class="lpu-notif-item-title">
+                  <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;">${escapeHtml(n.title)}</span>
+                  ${!n.is_read ? '<span class="lpu-notif-unread-dot" title="Unread"></span>' : ''}
+                </div>
+                <div class="lpu-notif-msg">${escapeHtml(n.message)}</div>
+                <div class="lpu-notif-meta-row">
+                  <span class="lpu-notif-tag" style="background: ${n.type_color}18; color: ${n.type_color};">${escapeHtml(n.type_badge)}</span>
+                  <span>•</span>
+                  <span>${n.time_ago}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        itemsContainer.innerHTML = html;
+
+        itemsContainer.querySelectorAll('.lpu-notif-item').forEach(item => {
+          item.addEventListener('click', function(e) {
+            const notifId = this.getAttribute('data-id');
+            const targetLink = this.getAttribute('data-link');
+            markNotificationAsRead(notifId, targetLink);
+          });
+        });
+      }
+
+      function markNotificationAsRead(id, link) {
+        const item = itemsContainer ? itemsContainer.querySelector(`.lpu-notif-item[data-id="${id}"]`) : null;
+        if (item) {
+          item.classList.remove('unread');
+          const dot = item.querySelector('.lpu-notif-unread-dot');
+          if (dot) dot.remove();
+        }
+
+        const notifObj = cachedNotifications.find(n => n.id == id);
+        if (notifObj) notifObj.is_read = true;
+
+        const currentUnread = cachedNotifications.filter(n => !n.is_read).length;
+        window.updateNotifBadgeCount(currentUnread);
+
+        fetch(`/api/notifications/${id}/read/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': getCsrfToken(),
+            'Content-Type': 'application/json'
+          }
+        }).then(r => r.json()).then(data => {
+          if (data && data.status === 'success') {
+            window.updateNotifBadgeCount(data.unread_count);
+          }
+          if (link && link !== '#' && link !== '') {
+            window.location.href = link;
+          }
+        }).catch(() => {
+          if (link && link !== '#' && link !== '') {
+            window.location.href = link;
+          }
+        });
+      }
+
+      if (markAllBtn) {
+        markAllBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          cachedNotifications.forEach(n => n.is_read = true);
+          window.updateNotifBadgeCount(0);
+          renderDropdownItems();
+
+          fetch('/api/notifications/mark-all-read/', {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': getCsrfToken(),
+              'Content-Type': 'application/json'
+            }
+          }).then(r => r.json()).then(data => {
+            window.updateNotifBadgeCount(0);
+          });
+        });
+      }
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          tabs.forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          currentFilter = this.getAttribute('data-filter');
+          renderDropdownItems();
+        });
+      });
+
+      if (bellBtn && dropdown) {
+        bellBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
+          if (isHidden) {
+            dropdown.style.display = 'block';
+            bellBtn.setAttribute('aria-expanded', 'true');
+            fetchNotifications(true);
+          } else {
+            dropdown.style.display = 'none';
+            bellBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        document.addEventListener('click', function(e) {
+          if (!dropdown.contains(e.target) && !bellBtn.contains(e.target)) {
+            dropdown.style.display = 'none';
+            bellBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
+      function fetchNotifications(isManual = false) {
+        fetch('/api/notifications/?limit=30')
+          .then(r => {
+            if (!r.ok) throw new Error('Not auth or error');
+            return r.json();
+          })
+          .then(data => {
+            if (data.status === 'success') {
+              cachedNotifications = data.notifications || [];
+              window.updateNotifBadgeCount(data.unread_count);
+
+              if (!isFirstPoll && !isManual) {
+                const incoming = cachedNotifications.filter(n => !n.is_read && !knownNotificationIds.has(n.id));
+                if (incoming.length > 0) {
+                  if (badge) {
+                    badge.classList.remove('lpu-notif-badge-bounce');
+                    void badge.offsetWidth;
+                    badge.classList.add('lpu-notif-badge-bounce');
+                  }
+                  incoming.slice(0, 3).forEach(n => {
+                    showNotificationToast(n);
+                  });
+                }
+              }
+
+              cachedNotifications.forEach(n => knownNotificationIds.add(n.id));
+              isFirstPoll = false;
+
+              if (dropdown && dropdown.style.display === 'block') {
+                renderDropdownItems();
+              }
+            }
+          })
+          .catch(() => {});
+      }
+
+      fetchNotifications();
+
+      pollingInterval = setInterval(function() {
+        if (!document.hidden) {
+          fetchNotifications();
+        }
+      }, 6000);
+
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+          fetchNotifications();
+        }
+      });
+    })();
+  </script>
+  {% endif %}
 
   <script src="{% static 'js/app.js' %}"></script>
   {% block extra_js %}{% endblock %}

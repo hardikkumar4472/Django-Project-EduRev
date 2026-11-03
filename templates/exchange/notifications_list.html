@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications Center — Lovely Professional University{% endblock %}
+
+{% block body_class %}has-fullpage-bg{% endblock %}
+{% block body_style %}background-image: linear-gradient(180deg, rgba(8, 22, 40, 0.85) 0%, rgba(8, 22, 40, 0.92) 420px, rgba(8, 22, 40, 0.97) 100%), url('{% static 'images/lpu_campus_walkway.jpg' %}'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh;{% endblock %}
+
+{% block content %}
+<div class="lpu-page-header">
+<div>
+      <div class="lpu-hero-badge-pill">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+        <span>Communications Hub • Real-Time Dispatch</span>
+      </div>
+      <h1 class="lpu-page-hero-title">
+        Notifications &amp; Activity Stream
+      </h1>
+      <p class="lpu-page-hero-subtitle">
+        Stay updated with real-time alerts on your room exchange proposals, participant responses, warden approvals, and administrative gate passes.
+      </p>
+    </div>
+
+    <!-- Action Shortcuts -->
+    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+      <button type="button" class="btn btn-primary" onclick="markAllNotificationsRead()" style="box-shadow: 0 4px 14px rgba(243, 112, 33, 0.4); font-weight: 700;">
+        <span>✓ Mark All Read</span>
+      </button>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline" style="background: rgba(255, 255, 255, 0.15); color: #FFFFFF; border-color: rgba(255, 255, 255, 0.3); backdrop-filter: blur(8px); font-weight: 700;">
+        <span>← Cockpit</span>
+      </a>
+    </div>
+</div>
+<div style="max-width: 1000px; margin: 0 auto;">
+
+  <!-- Filter & Search Toolbar -->
+  <div class="card" style="padding: 1.15rem 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+    <!-- Filter Pills -->
+    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+      <a href="?filter=all" class="btn btn-sm {% if filter_type == 'all' or not filter_type %}btn-primary{% else %}btn-outline{% endif %}" style="border-radius: 9999px;">
+        All ({{ total_count }})
+      </a>
+      <a href="?filter=unread" class="btn btn-sm {% if filter_type == 'unread' %}btn-primary{% else %}btn-outline{% endif %}" style="border-radius: 9999px;">
+        Unread ({{ unread_total }})
+      </a>
+      <a href="?filter=proposals" class="btn btn-sm {% if filter_type == 'proposals' %}btn-primary{% else %}btn-outline{% endif %}" style="border-radius: 9999px;">
+        🔄 Proposals
+      </a>
+      <a href="?filter=transfers" class="btn btn-sm {% if filter_type == 'transfers' %}btn-primary{% else %}btn-outline{% endif %}" style="border-radius: 9999px;">
+        🎉 Transfers
+      </a>
+      <a href="?filter=warden" class="btn btn-sm {% if filter_type == 'warden' %}btn-primary{% else %}btn-outline{% endif %}" style="border-radius: 9999px;">
+        🏛️ Warden Reviews
+      </a>
+    </div>
+
+    <!-- Search Form -->
+    <form method="get" action="" style="display: flex; align-items: center; gap: 0.5rem;">
+      <input type="hidden" name="filter" value="{{ filter_type }}">
+      <input type="text" name="q" value="{{ search_query }}" placeholder="Search alerts..." class="form-input" style="padding: 0.4rem 0.85rem; font-size: 0.85rem; max-width: 220px;">
+      <button type="submit" class="btn btn-outline btn-sm">Search</button>
+      {% if search_query %}
+        <a href="?filter={{ filter_type }}" class="btn btn-outline btn-sm" title="Clear search">✕</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Notifications List Card -->
+  <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2.5rem;">
+    {% if notifications %}
+      <div style="display: flex; flex-direction: column;">
+        {% for n in notifications %}
+          <div id="notif-row-{{ n.id }}" style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #F1F5F9; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; transition: background 0.2s ease; {% if not n.is_read %}background: #FFFDF8; border-left: 4px solid #F37021;{% endif %}">
+            <div style="display: flex; align-items: flex-start; gap: 1rem; flex: 1;">
+              <!-- Icon Box -->
+              <div style="width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; background: {% if not n.is_read %}#FFF7ED{% else %}#F1F5F9{% endif %}; border: 1px solid {% if not n.is_read %}#FED7AA{% else %}#E2E8F0{% endif %};">
+                {% if n.notification_type == 'PROPOSAL_RECEIVED' %}🔄
+                {% elif n.notification_type == 'PARTICIPANT_ACCEPTED' %}✅
+                {% elif n.notification_type == 'PARTICIPANT_DECLINED' %}❌
+                {% elif n.notification_type == 'READY_FOR_APPROVAL' %}🏛️
+                {% elif n.notification_type == 'TRANSFER_COMPLETED' %}🎉
+                {% elif n.notification_type == 'PROPOSAL_EXPIRED' %}⏰
+                {% else %}📢{% endif %}
+              </div>
+
+              <!-- Content -->
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
+                  <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: {% if not n.is_read %}#FFEDD5; color: #C2410C;{% else %}#F1F5F9; color: #64748B;{% endif %};">
+                    {{ n.get_notification_type_display }}
+                  </span>
+                  {% if not n.is_read %}
+                    <span style="width: 7px; height: 7px; border-radius: 50%; background: #F37021; display: inline-block;"></span>
+                    <span style="font-size: 0.7rem; font-weight: 700; color: #F37021;">Unread</span>
+                  {% endif %}
+                  <span style="font-size: 0.75rem; color: #94A3B8; margin-left: auto;">
+                    {{ n.created_at|date:"d M Y, h:i A" }}
+                  </span>
+                </div>
+
+                <h3 style="font-size: 0.98rem; font-weight: 800; color: #0F172A; margin: 0 0 0.35rem 0;">
+                  {{ n.title }}
+                </h3>
+                <p style="font-size: 0.85rem; color: #475569; line-height: 1.5; margin: 0 0 0.75rem 0;">
+                  {{ n.message }}
+                </p>
+
+                <!-- Action Button if link exists -->
+                {% if n.link %}
+                  <a href="{{ n.link }}" onclick="markNotifReadImmediately({{ n.id }})" class="btn btn-outline btn-sm" style="font-size: 0.775rem; padding: 0.35rem 0.85rem; font-weight: 700; color: #F37021; border-color: #FED7AA;">
+                    View Details &rarr;
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Row Controls -->
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
+              {% if not n.is_read %}
+                <button type="button" class="btn btn-outline btn-sm" onclick="markRowRead({{ n.id }})" title="Mark as read" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">
+                  ✓ Read
+                </button>
+              {% endif %}
+              <button type="button" class="btn btn-outline btn-sm" onclick="deleteNotificationRow({{ n.id }})" title="Delete alert" style="font-size: 0.75rem; padding: 0.35rem 0.65rem; color: #EF4444; border-color: #FEE2E2;">
+                🗑️
+              </button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="padding: 4rem 2rem; text-align: center; color: #64748B;">
+        <div style="font-size: 3rem; margin-bottom: 0.75rem;">📭</div>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin-bottom: 0.4rem;">No Notifications Found</h3>
+        <p style="font-size: 0.875rem; max-width: 420px; margin: 0 auto; line-height: 1.5;">
+          {% if search_query or filter_type != 'all' %}
+            No alerts match your current filter criteria. Try clearing your search query or selecting "All".
+          {% else %}
+            You are all caught up! New alerts regarding room swaps, consensus votes, and warden handovers will appear here in real-time.
+          {% endif %}
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+function markRowRead(id) {
+  fetch('/api/notifications/' + id + '/read/', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Content-Type': 'application/json'
+    }
+  }).then(r => r.json()).then(data => {
+    if (data.status === 'success') {
+      const row = document.getElementById('notif-row-' + id);
+      if (row) {
+        row.style.background = '#FFFFFF';
+        row.style.borderLeft = 'none';
+        const unreadBadge = row.querySelector('span[style*="background: #F37021"]');
+        if (unreadBadge) unreadBadge.remove();
+        const unreadText = row.querySelector('span[style*="color: #F37021"]');
+        if (unreadText) unreadText.remove();
+        const readBtn = row.querySelector('button[onclick*="markRowRead"]');
+        if (readBtn) readBtn.remove();
+      }
+      if (window.updateNotifBadgeCount) {
+        window.updateNotifBadgeCount(data.unread_count);
+      }
+    }
+  });
+}
+
+function deleteNotificationRow(id) {
+  if (!confirm('Delete this notification?')) return;
+  fetch('/api/notifications/' + id + '/delete/', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Content-Type': 'application/json'
+    }
+  }).then(r => r.json()).then(data => {
+    if (data.status === 'success') {
+      const row = document.getElementById('notif-row-' + id);
+      if (row) {
+        row.style.opacity = '0';
+        row.style.transform = 'translateX(20px)';
+        setTimeout(() => row.remove(), 250);
+      }
+      if (window.updateNotifBadgeCount) {
+        window.updateNotifBadgeCount(data.unread_count);
+      }
+    }
+  });
+}
+
+function markAllNotificationsRead() {
+  fetch('/api/notifications/mark-all-read/', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Content-Type': 'application/json'
+    }
+  }).then(r => r.json()).then(data => {
+    if (data.status === 'success') {
+      window.location.reload();
+    }
+  });
+}
+
+function markNotifReadImmediately(id) {
+  fetch('/api/notifications/' + id + '/read/', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+{% endblock %}
+

@@ -13,8 +13,8 @@
   </defs>
 
   <!-- Orange wave base spanning the right and middle -->
-  <path d="M 600,20 C 850,5 1150,15 1440,22 L 1440,160 L 600,160 Z" fill="url(#orangeGrad)"/>
+  <path d="M 500,20 C 780,5 1150,15 1440,22 L 1440,160 L 500,160 Z" fill="url(#orangeGrad)"/>
 
-  <!-- Navy wave sweeping smoothly across the left and transitioning into orange -->
-  <path d="M 0,28 C 280,56 560,8 910,26 C 935,48 920,85 860,118 C 815,142 775,152 730,160 L 0,160 Z" fill="url(#navyGrad)"/>
+  <!-- Navy wave sweeping smoothly across the left and transitioning gracefully into orange with generous width -->
+  <path d="M 0,28 C 280,56 560,8 940,26 C 970,55 955,92 920,122 C 890,146 870,155 850,160 L 0,160 Z" fill="url(#navyGrad)"/>
 </svg>
