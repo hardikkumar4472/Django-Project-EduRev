@@ -1,0 +1,627 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Hostel Maintenance &amp; Complaint RMS — Lovely Professional University{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Clean, Humanized Container */
+  .rms-container {
+    max-width: 1040px;
+    margin: 2.25rem auto 5rem auto;
+    padding: 0 1.25rem;
+  }
+
+  /* RMS Header Card */
+  .rms-header-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    margin-bottom: 2rem;
+    border: 1px solid #E2E8F0;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .rms-brand-left {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .rms-logo-img {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(243, 112, 33, 0.25));
+  }
+
+  .rms-brand-text h1 {
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #1E293B;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .rms-brand-text h1 span {
+    color: #F37021;
+  }
+
+  .rms-brand-text p {
+    font-size: 0.825rem;
+    color: #64748B;
+    margin: 3px 0 0 0;
+  }
+
+  /* Center Tab Dock */
+  .rms-tab-dock {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .rms-tab-pill-box {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 14px;
+    padding: 0.35rem;
+    display: inline-flex;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  }
+
+  .rms-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.65rem 1.85rem;
+    border-radius: 10px;
+    font-size: 0.925rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: #475569;
+    transition: all 0.2s ease;
+  }
+
+  .rms-tab-btn:hover {
+    color: #F37021;
+  }
+
+  .rms-tab-btn.active {
+    background: #FFF7ED;
+    color: #EA580C;
+    border: 1px solid #FED7AA;
+  }
+
+  .tab-icon-emoji {
+    font-size: 1.25rem;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  /* Status Filter Capsules */
+  .rms-stats-dock {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-capsule {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .stat-capsule:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
+  }
+
+  .capsule-total { background: #EA580C; }
+  .capsule-open { background: #991B1B; }
+  .capsule-closed { background: #065F46; }
+
+  /* Ticket Cards (Clean, Humanized & Faithful to Screenshot) */
+  .rms-ticket-card {
+    background: #FFFFFF;
+    border-radius: 14px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .rms-ticket-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .ticket-card-header {
+    padding: 1.25rem 1.5rem 0.5rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .ticket-badge-pill {
+    display: inline-block;
+    padding: 0.3rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .badge-close {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #A7F3D0;
+  }
+
+  .badge-open {
+    background: #FFE4E6;
+    color: #9F1239;
+    border: 1px solid #FECDD3;
+  }
+
+  .badge-escalated {
+    background: #FEF3C7;
+    color: #92400E;
+    border: 1px solid #FDE68A;
+  }
+
+  .ticket-info-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #EA580C;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+
+  .ticket-info-btn:hover {
+    background: #C2410C;
+    transform: scale(1.08);
+  }
+
+  .ticket-card-body {
+    padding: 0 1.5rem 1.25rem 1.5rem;
+  }
+
+  .ticket-meta-line {
+    font-size: 0.825rem;
+    color: #64748B;
+    margin-bottom: 0.35rem;
+  }
+
+  .ticket-meta-line strong {
+    color: #334155;
+  }
+
+  .ticket-subject-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin: 0.65rem 0 0.85rem 0;
+  }
+
+  .ticket-content-bubble {
+    background: #E0F2FE;
+    border: 1px solid #BAE6FD;
+    color: #0369A1;
+    border-radius: 10px;
+    padding: 0.85rem 1.15rem;
+    font-size: 0.925rem;
+    line-height: 1.55;
+    margin-bottom: 0.85rem;
+    font-weight: 600;
+  }
+
+  .ticket-closing-bubble {
+    background: #FFE4E6;
+    border: 1px solid #FECDD3;
+    color: #9F1239;
+    border-radius: 10px;
+    padding: 0.85rem 1.15rem;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    margin-bottom: 0.85rem;
+  }
+
+  .ticket-footer-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+    border-top: 1px solid #F1F5F9;
+    font-size: 0.8rem;
+    color: #64748B;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Consent Terms Card (Faithful to Screenshot 2) */
+  .rms-consent-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 2.5rem 3rem;
+    box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+    border: 1px solid #E2E8F0;
+  }
+
+  .consent-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.925rem;
+    color: #334155;
+    line-height: 1.55;
+  }
+
+  .consent-check-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #EA580C;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .btn-agree-proceed {
+    background: #EA580C;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 0.85rem 2.75rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s ease, transform 0.15s ease;
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.3);
+  }
+
+  .btn-agree-proceed:hover {
+    background: #C2410C;
+    transform: translateY(-2px);
+  }
+
+  /* Form Fields */
+  .rms-form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .rms-form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.45rem;
+  }
+
+  .rms-form-input, .rms-form-select, .rms-form-textarea {
+    width: 100%;
+    padding: 0.65rem 0.95rem;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #1E293B;
+    background: #FFFFFF;
+    box-sizing: border-box;
+  }
+
+  .rms-form-input:focus, .rms-form-select:focus, .rms-form-textarea:focus {
+    border-color: #EA580C;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rms-container">
+
+  <!-- Header Banner -->
+  <div class="rms-header-card">
+    <div class="rms-brand-left">
+      <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU Logo" class="rms-logo-img">
+      <div class="rms-brand-text">
+        <h1>Relationship Management System <span>(RMS)</span></h1>
+        <p>Hostel Maintenance &amp; Residential Room Complaints Directorate &bull; Transforming Campus Living</p>
+      </div>
+    </div>
+    <div>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline btn-sm" style="font-weight: 700; border-color: #CBD5E1; color: #475569;">
+        UMS Home &rarr;
+      </a>
+    </div>
+  </div>
+
+  <!-- Center Tab Dock: Log Request / RMS History -->
+  <div class="rms-tab-dock">
+    <div class="rms-tab-pill-box">
+      <a href="?tab=log" class="rms-tab-btn {% if tab == 'log' or tab == 'form' %}active{% endif %}">
+        <span class="tab-icon-emoji">💬</span>
+        <span>Log Request</span>
+      </a>
+      <a href="?tab=history" class="rms-tab-btn {% if tab == 'history' or not tab %}active{% endif %}">
+        <span class="tab-icon-emoji">📋</span>
+        <span>RMS History</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- TAB 1: LOG REQUEST - CONSENT SCREEN (Screenshot 2) -->
+  {% if tab == 'log' %}
+    <div class="rms-consent-card">
+      <div class="consent-item">
+        <div class="consent-check-icon">&#10003;</div>
+        <div>I have not shared my UMS password with anyone.</div>
+      </div>
+      <div class="consent-item">
+        <div class="consent-check-icon">&#10003;</div>
+        <div>I am responsible for the hostel maintenance details typed in this query.</div>
+      </div>
+      <div class="consent-item">
+        <div class="consent-check-icon">&#10003;</div>
+        <div>I understand that necessary disciplinary action can be initiated against me in case of use of derogatory words or false statements against any Student/Faculty/Staff/Higher Authority.</div>
+      </div>
+      <div class="consent-item">
+        <div class="consent-check-icon">&#10003;</div>
+        <div>The information given by me regarding the hostel complaint/maintenance request is true to the best of my knowledge and if found false or malicious, disciplinary action can be initiated against me.</div>
+      </div>
+      <div class="consent-item">
+        <div class="consent-check-icon">&#10003;</div>
+        <div>I have read the hostel residence policy &amp; maintenance notification already before submitting the RMS and I am requesting official caretaker / electrician / carpenter inspection.</div>
+      </div>
+
+      <div style="text-align: center; margin-top: 2.5rem;">
+        <a href="?tab=form" class="btn-agree-proceed">
+          Agree &amp; Proceed &rarr;
+        </a>
+      </div>
+    </div>
+
+  <!-- TAB 1B: MAINTENANCE & COMPLAINT FORM (Screenshot 5 - Cleaned of Academic items) -->
+  {% elif tab == 'form' %}
+    <div class="card" style="background: #FFFFFF; border-radius: 16px; padding: 2.5rem; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05); border: 1px solid #E2E8F0;">
+      <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #F1F5F9; padding-bottom: 1.25rem; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.35rem; font-weight: 800; color: #1E293B; margin: 0;">Log Hostel Maintenance / Complaint</h2>
+          <p style="font-size: 0.85rem; color: #64748B; margin: 4px 0 0 0;">
+            Target Authority: <strong>{{ user_hostel.name|default:"Chief Warden Central Desk" }}</strong> (Assigned Warden Desk)
+          </p>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 0.5rem; background: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; font-weight: 700; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.825rem;">
+          📍 {{ user_bed.room.full_name|default:"Allocated Room" }} (Bed {{ user_bed.bed_number|default:"N/A" }})
+        </span>
+      </div>
+
+      <form method="POST" action="{% url 'rms_create' %}">
+        {% csrf_token %}
+
+        <!-- Message Type Radio Choices (Hostel Focus) -->
+        <div class="rms-form-group">
+          <label class="rms-form-label">Message Type *</label>
+          <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.5rem; font-size: 0.88rem; color: #475569;">
+            {% for code, label in message_types %}
+              <label style="display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer;">
+                <input type="radio" name="message_type" value="{{ code }}" {% if forloop.first %}checked{% endif %} style="accent-color: #EA580C;">
+                <span>{{ label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+          <div class="rms-form-group">
+            <label class="rms-form-label">Maintenance Category *</label>
+            <select name="category" class="rms-form-select" required>
+              {% for code, label in categories %}
+                <option value="{{ code }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="rms-form-group">
+            <label class="rms-form-label">Sub Category *</label>
+            <select name="sub_category" class="rms-form-select" required>
+              {% for code, label in sub_categories %}
+                <option value="{{ code }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="rms-form-group">
+            <label class="rms-form-label">Hostel &amp; Warden Desk</label>
+            <input type="text" class="rms-form-input" value="{{ user_hostel.code }} - {{ user_hostel.name }} (Warden: {{ user_hostel.warden.get_full_name|default:'Central Desk' }})" readonly style="background: #F8FAFC; color: #475569;">
+            {% if user_hostel %}
+              <input type="hidden" name="hostel_id" value="{{ user_hostel.id }}">
+            {% endif %}
+          </div>
+
+          <div class="rms-form-group">
+            <label class="rms-form-label">Room &amp; Bed Number</label>
+            <input type="text" class="rms-form-input" value="{{ user_bed.room.room_number|default:'Room Assigned' }} - Bed {{ user_bed.bed_number|default:'1' }}" readonly style="background: #F8FAFC; color: #475569;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="rms-form-group">
+            <label class="rms-form-label">Contact Mobile Number *</label>
+            <input type="text" name="contact_phone" class="rms-form-input" value="{{ user.phone|default:'+91 ' }}" placeholder="+91 9876543210" required>
+          </div>
+
+          <div class="rms-form-group">
+            <label class="rms-form-label">Preferred Date of Inspection</label>
+            <input type="date" name="availability_date" class="rms-form-input">
+          </div>
+        </div>
+
+        <div class="rms-form-group">
+          <label class="rms-form-label">Technician Visit Time Slot</label>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.4rem; font-size: 0.85rem; color: #475569;">
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;"><input type="radio" name="time_slot" value="08:00-10:00" style="accent-color: #EA580C;"> 08:00–10:00 AM</label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;"><input type="radio" name="time_slot" value="10:00-12:00" checked style="accent-color: #EA580C;"> 10:00–12:00 PM</label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;"><input type="radio" name="time_slot" value="12:00-14:00" style="accent-color: #EA580C;"> 12:00–02:00 PM</label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;"><input type="radio" name="time_slot" value="14:00-16:00" style="accent-color: #EA580C;"> 02:00–04:00 PM</label>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;"><input type="radio" name="time_slot" value="16:00-18:00" style="accent-color: #EA580C;"> 04:00–06:00 PM</label>
+          </div>
+        </div>
+
+        <div class="rms-form-group">
+          <label class="rms-form-label">Subject / Issue Summary *</label>
+          <input type="text" name="subject" class="rms-form-input" placeholder="e.g. Window AC not cooling / Tap leakage in bathroom / Light switch broken" required>
+        </div>
+
+        <div class="rms-form-group">
+          <label class="rms-form-label">Detailed Description of Complaint *</label>
+          <textarea name="description" rows="4" class="rms-form-textarea" placeholder="Describe the fault accurately (e.g. AC frame came loose and airflow stopped; water leaking from flush pipe)..." required></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+          <a href="?tab=history" class="btn btn-outline" style="font-weight: 700;">Cancel</a>
+          <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem; font-weight: 800;">
+            Submit Hostel Complaint &rarr;
+          </button>
+        </div>
+      </form>
+    </div>
+
+  <!-- TAB 2: RMS HISTORY (Screenshot 1 Replication) -->
+  {% else %}
+    <!-- Filter Pills (Total, Open, Closed) -->
+    <div class="rms-stats-dock">
+      <a href="?tab=history&status=ALL" class="stat-capsule capsule-total">
+        <span>Total</span>
+        <span style="background: rgba(255,255,255,0.25); padding: 1px 8px; border-radius: 9999px;">{{ total_count }}</span>
+      </a>
+      <a href="?tab=history&status=OPEN" class="stat-capsule capsule-open">
+        <span>Open</span>
+        <span style="background: rgba(255,255,255,0.25); padding: 1px 8px; border-radius: 9999px;">{{ open_count }}</span>
+      </a>
+      <a href="?tab=history&status=CLOSED" class="stat-capsule capsule-closed">
+        <span>Closed</span>
+        <span style="background: rgba(255,255,255,0.25); padding: 1px 8px; border-radius: 9999px;">{{ closed_count }}</span>
+      </a>
+    </div>
+
+    <!-- Ticket Cards List -->
+    {% if requests %}
+      {% for req in requests %}
+        <div class="rms-ticket-card">
+          <div class="ticket-card-header">
+            <div>
+              {% if req.status == 'CLOSED' or req.status == 'RESOLVED' %}
+                <span class="ticket-badge-pill badge-close">Close</span>
+              {% elif 'ESCALATED' in req.status %}
+                <span class="ticket-badge-pill badge-escalated">Escalated</span>
+              {% else %}
+                <span class="ticket-badge-pill badge-open">{{ req.get_status_display }}</span>
+              {% endif %}
+            </div>
+            <a href="{% url 'rms_ticket_detail' req.id %}" class="ticket-info-btn" title="View Full Details">i</a>
+          </div>
+
+          <div class="ticket-card-body">
+            <div class="ticket-meta-line">
+              <strong>SubCategory:</strong> {{ req.get_sub_category_display }}
+            </div>
+            <div class="ticket-meta-line">
+              <strong>Request:</strong> {{ req.ticket_code }}
+            </div>
+            <div class="ticket-meta-line">
+              <strong>Dated:</strong> {{ req.created_at|date:"M d, Y" }} &bull; <strong>Hostel:</strong> {{ req.hostel.code|default:"Campus" }}
+            </div>
+
+            <div class="ticket-subject-title">
+              {{ req.subject }}
+            </div>
+
+            <!-- Student Content Bubble (Light Blue) -->
+            <div class="ticket-content-bubble">
+              {{ req.description }}
+            </div>
+
+            <!-- Closing Remarks Bubble (Light Red / Pink) if available -->
+            {% if req.closing_remarks %}
+              <div class="ticket-closing-bubble">
+                <strong>Closing Remarks:</strong> {{ req.closing_remarks }}
+              </div>
+            {% elif req.escalation_reason %}
+              <div style="background: #FEF3C7; border: 1px solid #FDE68A; color: #92400E; border-radius: 8px; padding: 0.85rem 1.15rem; font-size: 0.88rem; margin-bottom: 0.85rem;">
+                <strong>Escalation Note:</strong> {{ req.escalation_reason }} (Transferred to {{ req.get_status_display }})
+              </div>
+            {% endif %}
+
+            <div class="ticket-footer-strip">
+              <div>
+                {% if req.student_rating %}
+                  <span style="color: #F59E0B; font-size: 1rem;">
+                    {% if req.student_rating >= 1 %}★{% endif %}
+                    {% if req.student_rating >= 2 %}★{% endif %}
+                    {% if req.student_rating >= 3 %}★{% endif %}
+                    {% if req.student_rating >= 4 %}★{% endif %}
+                    {% if req.student_rating >= 5 %}★{% endif %}
+                  </span>
+                {% elif req.status == 'RESOLVED' or req.status == 'CLOSED' %}
+                  <a href="{% url 'rms_ticket_detail' req.id %}#feedback" style="color: #EA580C; font-weight: 700; text-decoration: none;">Rate this resolution &rarr;</a>
+                {% else %}
+                  <span style="color: #94A3B8;">Status: {{ req.get_status_display }}</span>
+                {% endif %}
+              </div>
+              <div>
+                Logged By: <strong>{{ req.student.university_id }}-{{ req.student.get_full_name|default:req.student.username }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="card" style="text-align: center; padding: 3.5rem 2rem; background: #FFFFFF; border-radius: 16px; border: 1px dashed #CBD5E1;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔧</div>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #1E293B;">No Maintenance Requests Found</h3>
+        <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 1.5rem;">
+          You currently have no hostel complaints or maintenance requests recorded under this filter.
+        </p>
+        <a href="?tab=form" class="btn btn-primary btn-sm" style="font-weight: 700;">
+          + Log Maintenance Complaint
+        </a>
+      </div>
+    {% endif %}
+  {% endif %}
+
+</div>
+{% endblock %}

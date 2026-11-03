@@ -1,4 +1,4 @@
-"""
+﻿"""
 Django settings for edurev_swap project.
 Built strictly for P04 Hostel Room Exchange & Multi-Party Swap Platform.
 """
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'accounts',
     'hostel',
     'exchange',
+    'rms',
 ]
 
 MIDDLEWARE = [

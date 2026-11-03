@@ -1,4 +1,4 @@
-/* ==========================================================================
+﻿/* ==========================================================================
    CampusExchange Master Design System — Lovely Professional University (LPU) Theme
    ========================================================================== */
 
@@ -1623,49 +1623,165 @@ body {
   background: #FFFFFF;
 }
 
-/* LPU Universal Website Footer */
+/* LPU Universal Website Footer - Humanized & Refined */
 .lpu-portal-footer {
   margin-top: auto;
-  background: #081628;
+  background: radial-gradient(120% 120% at 50% 0%, #0d1e36 0%, #060e1a 100%);
   color: #94A3B8;
-  border-top: 3px solid #F37021;
-  padding: 3rem 2rem 1.75rem;
+  border-top: 1px solid rgba(243, 112, 33, 0.35);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+  padding: 3.5rem 2rem 2rem;
+  position: relative;
+}
+
+.lpu-portal-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #F37021 30%, #FED7AA 50%, #F37021 70%, transparent);
 }
 
 .lpu-footer-inner {
-  max-width: 1400px;
+  max-width: 1360px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
-  gap: 2.5rem;
-  margin-bottom: 2.5rem;
+  grid-template-columns: 1.6fr 1fr 1fr 1.3fr;
+  gap: 2.75rem;
+  margin-bottom: 2.75rem;
+}
+
+.lpu-footer-brand-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.lpu-footer-brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  margin-bottom: 0.85rem;
+}
+
+.lpu-footer-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  filter: drop-shadow(0 2px 8px rgba(243, 112, 33, 0.3));
+}
+
+.lpu-footer-brand-title {
+  color: #FFFFFF;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.lpu-footer-brand-title .highlight {
+  color: #F37021;
+}
+
+.lpu-footer-brand-sub {
+  color: #94A3B8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
 }
 
 .lpu-footer-brand-desc {
-  font-size: 0.825rem;
+  font-size: 0.86rem;
   line-height: 1.6;
   color: #94A3B8;
-  margin-top: 0.75rem;
+  margin: 0 0 1.25rem 0;
   max-width: 380px;
+}
+
+.lpu-footer-helper-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.65rem 0.95rem;
+  margin-bottom: 1.1rem;
+  max-width: 380px;
+  transition: all 0.2s ease;
+}
+
+.lpu-footer-helper-card:hover {
+  background: rgba(243, 112, 33, 0.08);
+  border-color: rgba(243, 112, 33, 0.3);
+}
+
+.helper-avatar {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.helper-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.helper-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #F8FAFC;
+}
+
+.helper-sub {
+  font-size: 0.72rem;
+  color: #94A3B8;
+}
+
+.lpu-footer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.lpu-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.28rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #FED7AA;
+}
+
+.lpu-footer-col {
+  display: flex;
+  flex-direction: column;
 }
 
 .lpu-footer-title {
   color: #FFFFFF;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 800;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 .lpu-footer-title::after {
   content: '';
   display: block;
-  width: 20px;
+  width: 16px;
   height: 2px;
+  border-radius: 2px;
   background: #F37021;
 }
 
@@ -1675,17 +1791,18 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .lpu-footer-links li a {
   color: #94A3B8;
   text-decoration: none;
-  font-size: 0.825rem;
+  font-size: 0.85rem;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.5rem;
+  line-height: 1.35;
 }
 
 .lpu-footer-links li a:hover {
@@ -1693,8 +1810,54 @@ body {
   transform: translateX(3px);
 }
 
+.lpu-footer-contact-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.825rem;
+  line-height: 1.45;
+  color: #94A3B8;
+}
+
+.contact-icon {
+  font-size: 1rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.contact-text strong {
+  color: #E2E8F0;
+  font-size: 0.84rem;
+}
+
+.contact-link {
+  color: #FED7AA;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.contact-link:hover {
+  color: #F37021;
+  text-decoration: underline;
+}
+
+.contact-hours {
+  display: block;
+  font-size: 0.73rem;
+  color: #64748B;
+  margin-top: 2px;
+}
+
 .lpu-footer-bottom {
-  max-width: 1400px;
+  max-width: 1360px;
   margin: 0 auto;
   padding-top: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -1702,35 +1865,49 @@ body {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1rem;
-  font-size: 0.775rem;
+  gap: 1.25rem;
+  font-size: 0.8rem;
   color: #64748B;
 }
 
-@media (max-width: 960px) {
-  .lpu-auth-split-wrapper {
-    grid-template-columns: 1fr;
-  }
-  .lpu-auth-visual-side {
-    min-height: 240px;
-    padding: 2rem 1.5rem;
-  }
-  .lpu-auth-quote-box {
-    padding-top: 1.5rem;
-  }
+.footer-bottom-left {
+  color: #94A3B8;
+}
+
+.footer-bottom-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footer-bottom-links a {
+  color: #94A3B8;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-bottom-links a:hover {
+  color: #F37021;
+}
+
+.footer-bottom-links span {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 992px) {
   .lpu-footer-inner {
     grid-template-columns: 1fr 1fr;
+    gap: 2rem;
   }
 }
 
 @media (max-width: 600px) {
   .lpu-footer-inner {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
-  .lpu-page-hero-content {
-    padding: 1.75rem 1.25rem;
-  }
-  .lpu-page-hero-title {
-    font-size: 1.45rem;
+  .lpu-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

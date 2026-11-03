@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}RMS Ticket {{ ticket.ticket_code }} — Lovely Professional University{% endblock %}
+
+{% block extra_css %}
+<style>
+  .rms-detail-container {
+    max-width: 960px;
+    margin: 2rem auto 5rem auto;
+    padding: 0 1rem;
+  }
+  .card-box {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rms-detail-container">
+
+  <!-- Back Link & Top Status Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <a href="{% url 'rms_dashboard' %}" class="btn btn-outline btn-sm" style="font-weight: 700; border-color: #CBD5E1; color: #475569; display: inline-flex; align-items: center; gap: 0.4rem;">
+      &larr; Back to RMS History
+    </a>
+    <div>
+      {% if ticket.status == 'RESOLVED' or ticket.status == 'CLOSED' %}
+        <span style="background: #D1FAE5; color: #065F46; padding: 4px 14px; border-radius: 9999px; font-size: 0.825rem; font-weight: 800; border: 1px solid #A7F3D0;">
+          ✓ TICKET RESOLVED
+        </span>
+      {% elif 'ESCALATED' in ticket.status %}
+        <span style="background: #FEF3C7; color: #92400E; padding: 4px 14px; border-radius: 9999px; font-size: 0.825rem; font-weight: 800; border: 1px solid #FDE68A;">
+          ⚡ {{ ticket.get_status_display }}
+        </span>
+      {% else %}
+        <span style="background: #FFE4E6; color: #9F1239; padding: 4px 14px; border-radius: 9999px; font-size: 0.825rem; font-weight: 800; border: 1px solid #FECDD3;">
+          {{ ticket.get_status_display }}
+        </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Main Ticket Summary Card -->
+  <div class="card-box">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #F1F5F9; padding-bottom: 1.25rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <div style="font-size: 0.8rem; color: #EA580C; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;">
+          {{ ticket.get_category_display }} &bull; {{ ticket.get_sub_category_display }}
+        </div>
+        <h1 style="font-size: 1.45rem; font-weight: 900; color: #1E293B; margin: 0.35rem 0 0.5rem 0;">
+          {{ ticket.subject }}
+        </h1>
+        <div style="font-size: 0.85rem; color: #64748B;">
+          <strong>Request ID:</strong> <code style="background: #F1F5F9; padding: 2px 6px; border-radius: 4px; color: #0F172A; font-weight: 700;">{{ ticket.ticket_code }}</code> &bull;
+          <strong>Logged:</strong> {{ ticket.created_at|date:"M d, Y, h:i A" }}
+        </div>
+      </div>
+
+      <div style="text-align: right; font-size: 0.85rem; color: #475569; background: #F8FAFC; padding: 0.75rem 1.25rem; border-radius: 10px; border: 1px solid #E2E8F0;">
+        <div><strong>Student:</strong> {{ ticket.student.get_full_name|default:ticket.student.username }} ({{ ticket.student.university_id }})</div>
+        <div><strong>Location:</strong> {{ ticket.hostel.code|default:"Hostel" }} &bull; {{ ticket.room_number_str }}</div>
+        <div><strong>Contact:</strong> 📞 {{ ticket.contact_phone }}</div>
+      </div>
+    </div>
+
+    <!-- Student Description (Soft Blue Container) -->
+    <div style="margin-bottom: 1.5rem;">
+      <div style="font-size: 0.825rem; font-weight: 800; color: #0369A1; text-transform: uppercase; margin-bottom: 0.35rem;">
+        Complaint Description
+      </div>
+      <div style="background: #E0F2FE; border: 1px solid #BAE6FD; color: #0369A1; border-radius: 10px; padding: 1.25rem 1.5rem; font-size: 0.95rem; line-height: 1.6; font-weight: 600;">
+        {{ ticket.description }}
+      </div>
+    </div>
+
+    <!-- Inspection Details Strip -->
+    {% if ticket.availability_date or ticket.time_slot %}
+      <div style="display: flex; gap: 2rem; background: #F8FAFC; border: 1px solid #E2E8F0; padding: 0.85rem 1.25rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <div>📅 <strong>Preferred Inspection Date:</strong> {{ ticket.availability_date|default:"Any working day" }}</div>
+        <div>⏰ <strong>Preferred Time Slot:</strong> {{ ticket.time_slot|default:"General hours" }}</div>
+      </div>
+    {% endif %}
+
+    <!-- Closing Remarks Container (Soft Pink) -->
+    {% if ticket.closing_remarks %}
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-size: 0.825rem; font-weight: 800; color: #9F1239; text-transform: uppercase; margin-bottom: 0.35rem;">
+          Warden / Technician Closing Remarks
+        </div>
+        <div style="background: #FFE4E6; border: 1px solid #FECDD3; color: #9F1239; border-radius: 10px; padding: 1.25rem 1.5rem; font-size: 0.95rem; line-height: 1.6;">
+          {{ ticket.closing_remarks }}
+          <div style="font-size: 0.78rem; color: #BE123C; margin-top: 0.65rem; border-top: 1px solid rgba(190, 18, 60, 0.15); padding-top: 0.5rem;">
+            Resolved by: <strong>{{ ticket.resolved_by.get_full_name|default:ticket.resolved_by.username }}</strong> on {{ ticket.resolved_at|date:"M d, Y h:i A" }}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Escalation Dossier if applicable -->
+    {% if ticket.escalated_from_warden %}
+      <div style="background: #FEF3C7; border: 1px solid #FDE68A; color: #92400E; border-radius: 10px; padding: 1.25rem 1.5rem; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">
+        <strong style="display: block; margin-bottom: 0.35rem; font-size: 1rem;">⚡ Escalation Dossier:</strong>
+        {{ ticket.escalation_reason }}
+        <div style="font-size: 0.78rem; color: #B45309; margin-top: 0.65rem;">
+          Escalated by Warden: <strong>{{ ticket.escalated_by.get_full_name|default:ticket.escalated_by.username }}</strong> &bull; Transferred to: <strong>{{ ticket.get_status_display }}</strong> on {{ ticket.escalated_at|date:"M d, Y h:i A" }}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Student Star Rating -->
+    {% if is_student and ticket.status == 'RESOLVED' and not ticket.student_rating %}
+      <div id="feedback" style="background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 12px; padding: 1.5rem; text-align: center; margin-top: 1.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; color: #9A3412; margin: 0 0 0.5rem 0;">Rate Maintenance Resolution</h3>
+        <p style="font-size: 0.85rem; color: #C2410C; margin: 0 0 1rem 0;">Did the caretaker / electrician resolve your issue properly?</p>
+        <form method="POST" action="{% url 'rms_rate' ticket.id %}" style="display: inline-flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; justify-content: center;">
+          {% csrf_token %}
+          <select name="rating" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid #FED7AA; font-weight: 700; color: #9A3412; background: #FFFFFF;">
+            <option value="5">★★★★★ (5 - Excellent Resolution)</option>
+            <option value="4">★★★★☆ (4 - Good)</option>
+            <option value="3">★★★☆☆ (3 - Satisfactory)</option>
+            <option value="2">★★☆☆☆ (2 - Poor / Partial)</option>
+            <option value="1">★☆☆☆☆ (1 - Unsatisfactory)</option>
+          </select>
+          <button type="submit" class="btn btn-primary btn-sm" style="font-weight: 800; padding: 0.55rem 1.25rem;">
+            Submit Feedback
+          </button>
+        </form>
+      </div>
+    {% elif ticket.student_rating %}
+      <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: #475569; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #F1F5F9;">
+        <span>Student Feedback:</span>
+        <span style="color: #F59E0B; font-size: 1.1rem;">
+          {% if ticket.student_rating >= 1 %}★{% endif %}
+          {% if ticket.student_rating >= 2 %}★{% endif %}
+          {% if ticket.student_rating >= 3 %}★{% endif %}
+          {% if ticket.student_rating >= 4 %}★{% endif %}
+          {% if ticket.student_rating >= 5 %}★{% endif %}
+        </span>
+        <span style="font-weight: 700;">({{ ticket.student_rating }} / 5 Stars)</span>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- AUTHORITY DECISION CONSOLE -->
+  {% if can_resolve or can_escalate %}
+    <div class="card-box">
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #1E293B; margin: 0 0 1.25rem 0;">
+        Authority Decision Console
+      </h3>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        
+        <!-- Resolve Action Form -->
+        <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 1.5rem;">
+          <h4 style="font-size: 1rem; font-weight: 800; color: #166534; margin: 0 0 0.5rem 0;">
+            ✓ Mark as Resolved
+          </h4>
+          <p style="font-size: 0.8rem; color: #15803D; margin-bottom: 1rem;">
+            Enter technician actions taken (e.g. electrical parts replaced, carpentry repaired).
+          </p>
+          <form method="POST" action="{% url 'rms_resolve' ticket.id %}">
+            {% csrf_token %}
+            <textarea name="closing_remarks" rows="3" style="width: 100%; padding: 0.65rem; border-radius: 8px; border: 1px solid #86EFAC; font-size: 0.88rem; margin-bottom: 1rem; box-sizing: border-box;" placeholder="e.g. AC capacitor replaced by electrical tech Avinash on 13 Sep 2026. Tested and verified working." required></textarea>
+            <button type="submit" class="btn btn-sm" style="background: #16A34A; color: #FFFFFF; font-weight: 800; border: none; padding: 0.65rem 1.5rem; border-radius: 8px; cursor: pointer;">
+              Confirm Resolution &rarr;
+            </button>
+          </form>
+        </div>
+
+        <!-- Escalation Action Form -->
+        {% if can_escalate %}
+          <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 1.5rem;">
+            <h4 style="font-size: 1rem; font-weight: 800; color: #92400E; margin: 0 0 0.5rem 0;">
+              ⚡ Escalate to Higher Authority
+            </h4>
+            <p style="font-size: 0.8rem; color: #B45309; margin-bottom: 1rem;">
+              If issue requires campus engineer or administrative sanctions beyond warden level.
+            </p>
+            <form method="POST" action="{% url 'rms_escalate' ticket.id %}">
+              {% csrf_token %}
+              <div style="margin-bottom: 0.75rem;">
+                <label style="display: block; font-size: 0.78rem; font-weight: 700; color: #78350F; margin-bottom: 0.25rem;">Target Authority *</label>
+                <select name="target_authority" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid #FCD34D; font-size: 0.85rem; font-weight: 700;">
+                  <option value="DEAN">Dean of Student Welfare (DSW)</option>
+                  <option value="CHIEF_WARDEN">Chief Warden Central Office</option>
+                  <option value="ADMIN">System Administrator</option>
+                </select>
+              </div>
+              <textarea name="escalation_reason" rows="2" style="width: 100%; padding: 0.65rem; border-radius: 8px; border: 1px solid #FCD34D; font-size: 0.85rem; margin-bottom: 1rem; box-sizing: border-box;" placeholder="Reason why this cannot be resolved at the hostel level..." required></textarea>
+              <button type="submit" class="btn btn-sm" style="background: #D97706; color: #FFFFFF; font-weight: 800; border: none; padding: 0.65rem 1.5rem; border-radius: 8px; cursor: pointer;">
+                Escalate Ticket &rarr;
+              </button>
+            </form>
+          </div>
+        {% else %}
+          <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; justify-content: center; text-align: center; color: #64748B; font-size: 0.85rem;">
+            Ticket already under higher authority oversight or resolved.
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Activity & Progress Notes Timeline -->
+  <div class="card-box">
+    <h3 style="font-size: 1.15rem; font-weight: 800; color: #1E293B; margin: 0 0 1.25rem 0;">
+      Activity &amp; Progress Notes Log
+    </h3>
+
+    {% if comments %}
+      <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+        {% for c in comments %}
+          <div style="padding: 1rem 1.25rem; border-radius: 10px; background: #F8FAFC; border-left: 4px solid #EA580C; font-size: 0.88rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.5rem;">
+              <strong style="color: #1E293B;">{{ c.author.get_full_name|default:c.author.username }} ({{ c.author.get_role_display }})</strong>
+              <span style="font-size: 0.75rem; color: #94A3B8;">{{ c.created_at|date:"M d, Y h:i A" }}</span>
+            </div>
+            <div style="color: #475569;">
+              {{ c.comment }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Add Progress Note Form -->
+    <form method="POST" action="{% url 'rms_comment' ticket.id %}">
+      {% csrf_token %}
+      <div style="display: flex; gap: 1rem;">
+        <input type="text" name="comment" class="form-input" placeholder="Add an official progress remark or message to the student..." style="flex: 1;" required>
+        <button type="submit" class="btn btn-outline" style="font-weight: 800; border-color: #CBD5E1;">
+          Add Note
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

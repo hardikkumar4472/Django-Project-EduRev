@@ -1,15 +1,36 @@
 import time
 from typing import List, Dict, Any, Tuple
-import networkx as nx
 from django.utils import timezone
 from exchange.models import ExchangeRequest, PolicyRule
 from accounts.models import User
 
+try:
+    import networkx as nx
+except ImportError:
+    nx = None
+
+def _simple_cycles_dfs(adj: Dict[int, List[int]], max_len: int) -> List[List[int]]:
+    """Pure-Python elementary cycle discovery bounded up to max_len (2 to 5)."""
+    cycles = []
+    nodes = sorted(adj.keys())
+
+    for start_node in nodes:
+        stack = [(start_node, [start_node], {start_node})]
+        while stack:
+            curr, path, visited = stack.pop()
+            for neighbor in adj.get(curr, []):
+                if neighbor == start_node:
+                    if len(path) >= 2:
+                        cycles.append(list(path))
+                elif neighbor not in visited and len(path) < max_len and neighbor > start_node:
+                    stack.append((neighbor, path + [neighbor], visited | {neighbor}))
+    return cycles
+
 class MatchingService:
     """
     High-Performance Graph-Based Exchange Matching Engine.
-    Builds directed dependency graphs and executes bounded cycle searches (lengths 2 to 5)
-    using NetworkX algorithms.
+    Builds directed dependency graphs and executes bounded cycle searches (lengths 2 to 5).
+    Uses NetworkX when available, falling back smoothly to pure-Python DFS algorithm.
     """
 
     @classmethod
@@ -50,15 +71,9 @@ class MatchingService:
             valid_requests.append(req)
 
         # 2. Build directed graph
-        # Node key: student_id
-        # Edge A -> B means A desires B's current room/bed
-        G = nx.DiGraph()
-        req_map: Dict[int, ExchangeRequest] = {}
-
-        for req in valid_requests:
-            s_id = req.requester_id
-            req_map[s_id] = req
-            G.add_node(s_id, request_id=req.id)
+        adj: Dict[int, List[int]] = {r.requester_id: [] for r in valid_requests}
+        edge_data: Dict[Tuple[int, int], Dict[str, Any]] = {}
+        req_map: Dict[int, ExchangeRequest] = {r.requester_id: r for r in valid_requests}
 
         # Evaluate compatibility edges
         for r_a in valid_requests:
@@ -118,11 +133,23 @@ class MatchingService:
                             reasons.append(f"Floor {b_room.floor} match")
 
                 if is_match:
-                    G.add_edge(s_a, s_b, score=min(100.0, score), reasons=reasons)
+                    adj[s_a].append(s_b)
+                    edge_data[(s_a, s_b)] = {
+                        'score': min(100.0, score),
+                        'reasons': reasons
+                    }
 
         # 3. Find elementary cycles (bounded 2 <= length <= max_chain)
-        # Pass length_bound=max_chain so NetworkX prunes deep searches beyond max_chain immediately
-        all_cycles = list(nx.simple_cycles(G, length_bound=max_chain))
+        if nx is not None:
+            G = nx.DiGraph()
+            for n in adj:
+                G.add_node(n)
+            for (u, v), d in edge_data.items():
+                G.add_edge(u, v, **d)
+            all_cycles = list(nx.simple_cycles(G, length_bound=max_chain))
+        else:
+            all_cycles = _simple_cycles_dfs(adj, max_chain)
+
         discovered_cycles = []
         seen_cycle_fingerprints = set()
 
@@ -136,58 +163,86 @@ class MatchingService:
                 continue
 
             # Deduplicate rotational permutations (e.g. [1, 2, 3] is same cycle as [2, 3, 1])
-            # Normalize cycle representation: start with minimum node ID
             min_idx = cycle_nodes.index(min(cycle_nodes))
-            normalized = tuple(cycle_nodes[min_idx:] + cycle_nodes[:min_idx])
-            if normalized in seen_cycle_fingerprints:
+            norm_cycle = tuple(cycle_nodes[min_idx:] + cycle_nodes[:min_idx])
+            if norm_cycle in seen_cycle_fingerprints:
                 continue
-            seen_cycle_fingerprints.add(normalized)
+            seen_cycle_fingerprints.add(norm_cycle)
 
-            # Build cycle details
-            participants = []
+            # Build transition hops
+            hops = []
             cycle_scores = []
-            total_reasons = []
+            is_valid_cycle = True
 
             for i in range(cycle_len):
-                curr_s = cycle_nodes[i]
-                next_s = cycle_nodes[(i + 1) % cycle_len]
-                edge_data = G.get_edge_data(curr_s, next_s) or {'score': 80.0, 'reasons': ['Mutual hostel preference']}
-                cycle_scores.append(edge_data['score'])
-                total_reasons.extend(edge_data['reasons'])
+                from_id = cycle_nodes[i]
+                to_id = cycle_nodes[(i + 1) % cycle_len]
 
-                r_curr = req_map[curr_s]
-                r_next = req_map[next_s]
-                curr_h = r_curr.current_bed.room.block.hostel
-                next_h = r_next.current_bed.room.block.hostel
-                participants.append({
-                    'order': i + 1,
-                    'student_id': curr_s,
-                    'student_name': r_curr.requester.get_full_name(),
-                    'university_id': r_curr.requester.university_id,
-                    'current_bed_id': r_curr.current_bed.id,
-                    'current_room': r_curr.current_bed.room.room_number,
-                    'current_hostel': curr_h.name,
-                    'current_hostel_code': curr_h.code or curr_h.name,
-                    'target_bed_id': r_next.current_bed.id,
-                    'target_room': r_next.current_bed.room.room_number,
-                    'target_hostel': next_h.name,
-                    'target_hostel_code': next_h.code or next_h.name,
-                    'request_id': r_curr.id,
+                e_info = edge_data.get((from_id, to_id), {})
+                if not e_info and nx is not None:
+                    # fallback to nx graph lookup
+                    pass
+
+                r_from = req_map.get(from_id)
+                r_to = req_map.get(to_id)
+                if not r_from or not r_to:
+                    is_valid_cycle = False
+                    break
+
+                edge_score = e_info.get('score', 75.0)
+                edge_reasons = e_info.get('reasons', [])
+                cycle_scores.append(edge_score)
+
+                hops.append({
+                    'step': i + 1,
+                    'giver': {
+                        'student_id': r_from.requester.id,
+                        'name': r_from.requester.get_full_name() or r_from.requester.username,
+                        'university_id': r_from.requester.university_id,
+                        'current_room': r_from.current_bed.room.room_number,
+                        'current_block': r_from.current_bed.room.block.name,
+                        'current_hostel': r_from.current_bed.room.block.hostel.name,
+                        'current_hostel_code': r_from.current_bed.room.block.hostel.code,
+                        'bed_number': r_from.current_bed.bed_number,
+                    },
+                    'receiver': {
+                        'student_id': r_to.requester.id,
+                        'name': r_to.requester.get_full_name() or r_to.requester.username,
+                        'university_id': r_to.requester.university_id,
+                    },
+                    'assigned_bed_id': r_to.current_bed_id,
+                    'score': edge_score,
+                    'reasons': edge_reasons,
                 })
 
-            avg_score = round(sum(cycle_scores) / len(cycle_scores), 1)
+            if not is_valid_cycle:
+                continue
+
+            avg_score = round(sum(cycle_scores) / len(cycle_scores), 1) if cycle_scores else 0.0
+
+            # Determine cycle typology
+            if cycle_len == 2:
+                cycle_type_label = "Direct 2-Party Swap"
+            elif cycle_len == 3:
+                cycle_type_label = "3-Party Cyclic Rotation"
+            elif cycle_len == 4:
+                cycle_type_label = "4-Party Quad Loop"
+            else:
+                cycle_type_label = f"{cycle_len}-Party Multi-Hop Chain"
+
             discovered_cycles.append({
                 'cycle_length': cycle_len,
-                'proposal_type': f"CYCLE_{cycle_len}" if cycle_len > 2 else "DIRECT",
-                'type_display': f"Direct 2-Party Swap" if cycle_len == 2 else f"{cycle_len}-Party Multi-Hop Cycle",
-                'compatibility_score': avg_score,
-                'reasons': list(set(total_reasons))[:4],
-                'participants': participants,
-                'node_ids': cycle_nodes,
+                'cycle_type': cycle_type_label,
+                'student_ids': list(norm_cycle),
+                'score': avg_score,
+                'hops': hops,
+                'involved_hostels': list(set(
+                    h['giver']['current_hostel_code'] for h in hops
+                )),
+                'is_cross_hostel': len(set(h['giver']['current_hostel_code'] for h in hops)) > 1,
             })
 
-        # Sort candidate matches by highest compatibility score, then shortest cycle length
-        discovered_cycles.sort(key=lambda x: (-x['compatibility_score'], x['cycle_length']))
-        elapsed_time = round(time.time() - start_time, 4)
+        # Sort: highest score first, then shorter cycle length
+        discovered_cycles.sort(key=lambda c: (-c['score'], c['cycle_length']))
 
         return discovered_cycles

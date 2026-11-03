@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -92,6 +92,7 @@
     }
   </style>
   {% block extra_head %}{% endblock %}
+  {% block extra_css %}{% endblock %}
 </head>
 <body class="{% if request.path == '/' %}landing-page-body{% endif %}">
 
@@ -147,6 +148,9 @@
               <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
                 <a href="{% url 'transfers_list' %}">Transfers</a>
               </li>
+              <li class="nav-item {% if '/rms/' in request.path %}active{% endif %}">
+                <a href="{% url 'rms_dashboard' %}">💬 RMS</a>
+              </li>
             {% elif user.role == 'warden' %}
               <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
                 <a href="{% url 'warden_approvals' %}">Queue</a>
@@ -156,6 +160,9 @@
               </li>
               <li class="nav-item {% if request.path == '/caretaker/verify/' %}active{% endif %}">
                 <a href="{% url 'caretaker_verify' %}">🔑 Key Desk</a>
+              </li>
+              <li class="nav-item {% if '/rms/' in request.path %}active{% endif %}">
+                <a href="{% url 'rms_dashboard' %}">💬 RMS Desk</a>
               </li>
             {% elif user.role == 'chief_warden' %}
               <li class="nav-item {% if '/warden/' in request.path %}active{% endif %}">
@@ -167,12 +174,18 @@
               <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
                 <a href="{% url 'transfers_list' %}">Transfers</a>
               </li>
+              <li class="nav-item {% if '/rms/' in request.path %}active{% endif %}">
+                <a href="{% url 'rms_dashboard' %}">💬 RMS Desk</a>
+              </li>
             {% elif user.role == 'dsw' %}
               <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
                 <a href="{% url 'dean_analytics' %}">Analytics</a>
               </li>
               <li class="nav-item {% if request.path == '/transfers/' %}active{% endif %}">
                 <a href="{% url 'transfers_list' %}">Transfers</a>
+              </li>
+              <li class="nav-item {% if '/rms/' in request.path %}active{% endif %}">
+                <a href="{% url 'rms_dashboard' %}">💬 RMS Desk</a>
               </li>
             {% elif user.is_admin_role %}
               <li class="nav-item {% if '/admin/users/' in request.path %}active{% endif %}">
@@ -183,6 +196,9 @@
               </li>
               <li class="nav-item {% if '/dean/' in request.path %}active{% endif %}">
                 <a href="{% url 'dean_analytics' %}">Analytics</a>
+              </li>
+              <li class="nav-item {% if '/rms/' in request.path %}active{% endif %}">
+                <a href="{% url 'rms_dashboard' %}">💬 RMS Console</a>
               </li>
               <li class="nav-item">
                 <a href="/django-admin/" target="_blank">⚙️ Admin</a>
@@ -263,75 +279,107 @@
 
   <!-- Universal LPU Portal Footer (Hidden on focused Auth screens) -->
   {% if request.path != '/login/' and request.path != '/signup/' %}
-  <footer class="lpu-portal-footer">
+  <footer id="support" class="lpu-portal-footer">
     <div class="lpu-footer-inner">
-      <div>
-        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-          <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU Logo" style="width: 42px; height: 42px; border-radius: 50%;">
+      <!-- Brand & Mission Column -->
+      <div class="lpu-footer-brand-col">
+        <a href="{% url 'landing' %}" class="lpu-footer-brand-link">
+          <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU Logo" class="lpu-footer-logo">
           <div>
-            <div style="color: #FFFFFF; font-size: 1.05rem; font-weight: 900; line-height: 1;">
-              LOVELY <span style="color: #F37021;">PROFESSIONAL</span>
+            <div class="lpu-footer-brand-title">LOVELY <span class="highlight">PROFESSIONAL</span></div>
+            <div class="lpu-footer-brand-sub">UNIVERSITY • CAMPUS LIVING</div>
+          </div>
+        </a>
+
+        <p class="lpu-footer-brand-desc">
+          Created for university residents to make hostel swaps easy, transparent, and fair. Find roommates whose lifestyle matches yours and settle into your perfect campus home.
+        </p>
+
+        <!-- Student-friendly Support Card -->
+        <a href="#support" class="lpu-footer-helper-card" style="text-decoration: none;">
+          <div class="helper-avatar">💬</div>
+          <div class="helper-info">
+            <span class="helper-label">Need a hand with your swap?</span>
+            <span class="helper-sub">Warden desk &amp; peer mentors are here for you</span>
+          </div>
+        </a>
+
+        <div class="lpu-footer-tags">
+          <span class="lpu-tag-pill">🏆 NAAC A++ Campus</span>
+          <span class="lpu-tag-pill">🌿 30,000+ Happy Residents</span>
+        </div>
+      </div>
+
+      <!-- Column 1: Student Living & Hostels -->
+      <div class="lpu-footer-col">
+        <h4 class="lpu-footer-title">Campus Hostels</h4>
+        <ul class="lpu-footer-links">
+          <li><a href="{% url 'hostels_list' %}?gender=MALE"><span>👦</span> Boys Hostels (BH-1 to BH-10)</a></li>
+          <li><a href="{% url 'hostels_list' %}?gender=FEMALE"><span>👧</span> Girls Hostels (GH-1 to GH-10)</a></li>
+          <li><a href="{% url 'hostels_list' %}"><span>🏢</span> Room Types &amp; Capacity</a></li>
+          <li><a href="{% if request.path == '/' %}#guidelines{% else %}/#guidelines{% endif %}"><span>📋</span> Rules &amp; Curfew Timings</a></li>
+          <li><a href="{% url 'lifestyle_quiz' %}"><span>🎯</span> Roommate Habit Matcher</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 2: Quick Links / Portal Access -->
+      <div class="lpu-footer-col">
+        <h4 class="lpu-footer-title">Quick Links</h4>
+        <ul class="lpu-footer-links">
+          <li><a href="{% url 'landing' %}">Home &amp; Guide</a></li>
+          <li><a href="{% url 'dashboard' %}">Student Dashboard</a></li>
+          <li><a href="{% url 'matches' %}">Browse Available Swaps</a></li>
+          <li><a href="{% url 'transfers_list' %}">Recent Exchange Log</a></li>
+          <li><a href="{% url 'rms_dashboard' %}"><span>ðŸ’¬</span> RMS Student Grievance Desk</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'logout' %}" style="color: #F87171;">Sign Out of Account</a></li>
+          {% else %}
+            <li><a href="{% url 'login' %}" style="color: #FB923C; font-weight: 700;">Student Portal Login &rarr;</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Column 3: Friendly Helpdesk & Contacts -->
+      <div class="lpu-footer-col">
+        <h4 class="lpu-footer-title">Here to Help</h4>
+        <div class="lpu-footer-contact-box">
+          <div class="contact-item">
+            <span class="contact-icon">📍</span>
+            <div class="contact-text">
+              <strong>Chief Warden Central Office</strong><br>
+              Block 32, Administrative Wing, Phagwara, Punjab 144411
             </div>
-            <div style="color: #FFFFFF; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.08em; line-height: 1.2;">
-              UNIVERSITY
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">📞</span>
+            <div class="contact-text">
+              <strong>Hostel Helpline</strong><br>
+              <a href="tel:+911824517000" class="contact-link">+91 1824 517000</a>
+              <span class="contact-hours">(Mon – Sat, 9 AM – 6 PM)</span>
+            </div>
+          </div>
+          <div class="contact-item">
+            <span class="contact-icon">✉️</span>
+            <div class="contact-text">
+              <strong>Student Support Email</strong><br>
+              <a href="mailto:hostel.exchange@lpu.co.in" class="contact-link">hostel.exchange@lpu.co.in</a>
             </div>
           </div>
         </div>
-        <p class="lpu-footer-brand-desc">
-          Official hostel allocation and room exchange management platform. Providing equitable, audited 2-party and multi-hop cyclic swaps for 30,000+ residents.
-        </p>
-        <div style="margin-top: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.06); padding: 0.35rem 0.85rem; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.12); font-size: 0.75rem; color: #FED7AA; font-weight: 700;">
-          <span>🏆 NAAC A++ Accredited</span>
-          <span>•</span>
-          <span>Ranked Top University</span>
-        </div>
-      </div>
-
-      <div>
-        <h4 class="lpu-footer-title">Residences</h4>
-        <ul class="lpu-footer-links">
-          <li><a href="{% url 'hostels_list' %}?gender=MALE">Boys Hostels (BH-1 to BH-10)</a></li>
-          <li><a href="{% url 'hostels_list' %}?gender=FEMALE">Girls Hostels (GH-1 to GH-10)</a></li>
-          <li><a href="{% url 'hostels_list' %}">Room Capacity Directory</a></li>
-          <li><a href="{% if request.path == '/' %}#guidelines{% else %}/#guidelines{% endif %}">Hostel Rules &amp; Curfew</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h4 class="lpu-footer-title">Portal Navigation</h4>
-        <ul class="lpu-footer-links">
-          <li><a href="{% url 'landing' %}">Home &amp; Overview</a></li>
-          <li><a href="{% url 'dashboard' %}">Student Cockpit</a></li>
-          <li><a href="{% url 'matches' %}">Find Compatible Rooms</a></li>
-          <li><a href="{% url 'lifestyle_quiz' %}">Compatibility Quiz</a></li>
-          <li><a href="{% url 'transfers_list' %}">Executed Transfers Log</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h4 class="lpu-footer-title">Institutional Desk</h4>
-        <ul class="lpu-footer-links">
-          <li style="color: #CBD5E1; font-size: 0.8rem; line-height: 1.4;">
-            <strong>Chief Warden Central Office</strong><br>
-            Block 32, Central Administrative Wing<br>
-            Phagwara, Punjab - 144411
-          </li>
-          <li style="color: #CBD5E1; font-size: 0.8rem; margin-top: 0.4rem;">
-            📞 <strong>Helpline:</strong> +91 1824 517000
-          </li>
-          <li style="color: #CBD5E1; font-size: 0.8rem;">
-            ✉️ <strong>Support:</strong> hostel.exchange@lpu.co.in
-          </li>
-        </ul>
       </div>
     </div>
 
+    <!-- Human Bottom Bar -->
     <div class="lpu-footer-bottom">
-      <div>
-        &copy; {% now "Y" %} Lovely Professional University. All Rights Reserved.
+      <div class="footer-bottom-left">
+        &copy; {% now "Y" %} Lovely Professional University &bull; Made with ❤️ for university residents.
       </div>
-      <div>
-        Transforming Education &bull; Transforming the World
+      <div class="footer-bottom-links">
+        <a href="{% if request.path == '/' %}#guidelines{% else %}/#guidelines{% endif %}">Hostel Guidelines</a>
+        <span>&bull;</span>
+        <a href="{% url 'hostels_list' %}">Directory</a>
+        <span>&bull;</span>
+        <a href="#support">Support Desk</a>
       </div>
     </div>
   </footer>

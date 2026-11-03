@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}RMS Authority Console — Lovely Professional University{% endblock %}
+
+{% block extra_css %}
+<style>
+  .rms-staff-container {
+    max-width: 1360px;
+    margin: 2rem auto 5rem auto;
+    padding: 0 1.25rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="rms-staff-container">
+
+  <!-- Console Header -->
+  <div style="background: #FFFFFF; border-radius: 16px; padding: 1.75rem 2rem; border: 1px solid #E2E8F0; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #EA580C 0%, #C2410C 100%); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);">
+        🛡️
+      </div>
+      <div>
+        <h1 style="font-size: 1.45rem; font-weight: 900; color: #1E293B; margin: 0;">
+          Relationship Management System (RMS) &bull; Maintenance Desk
+        </h1>
+        <p style="font-size: 0.825rem; color: #64748B; margin: 2px 0 0 0;">
+          Scope: <strong>{{ jurisdiction_label }}</strong> &bull; Authority Signed In: <strong>{{ user.get_full_name|default:user.username }} ({{ user.get_role_display }})</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="?status=ALL" class="btn btn-sm {% if status_filter == 'ALL' or not status_filter %}btn-primary{% else %}btn-outline{% endif %}" style="font-weight: 700;">
+        All Tickets ({{ total_queue }})
+      </a>
+      <a href="?status=OPEN" class="btn btn-sm {% if status_filter == 'OPEN' %}btn-primary{% else %}btn-outline{% endif %}" style="font-weight: 700;">
+        New / Open
+      </a>
+      <a href="?status=ESCALATED" class="btn btn-sm {% if status_filter == 'ESCALATED' %}btn-primary{% else %}btn-outline{% endif %}" style="font-weight: 700; border-color: #F59E0B; color: #B45309; background: #FEF3C7;">
+        ⚡ Escalated to Higher Authority ({{ escalated_count }})
+      </a>
+      <a href="?status=RESOLVED" class="btn btn-sm {% if status_filter == 'RESOLVED' %}btn-primary{% else %}btn-outline{% endif %}" style="font-weight: 700;">
+        Resolved / Closed
+      </a>
+    </div>
+  </div>
+
+  <!-- Resolution Queue Table -->
+  <div class="card" style="background: #FFFFFF; border-radius: 16px; border: 1px solid #E2E8F0; overflow: hidden; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);">
+    <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid #F1F5F9; display: flex; justify-content: space-between; align-items: center;">
+      <div style="font-weight: 800; color: #1E293B; font-size: 1.05rem;">
+        Resident Queries Under Your Jurisdiction ({{ requests|length }})
+      </div>
+      <div style="font-size: 0.8rem; color: #64748B;">
+        Pending Maintenance: <strong>{{ unresolved_count }}</strong>
+      </div>
+    </div>
+
+    {% if requests %}
+      <div style="overflow-x: auto;">
+        <table class="data-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+          <thead>
+            <tr style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0; color: #475569; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.04em;">
+              <th style="padding: 1rem 1.25rem;">Ticket &amp; Date</th>
+              <th style="padding: 1rem 1.25rem;">Student &amp; Room</th>
+              <th style="padding: 1rem 1.25rem;">Category &amp; Issue</th>
+              <th style="padding: 1rem 1.25rem;">Current Status</th>
+              <th style="padding: 1rem 1.25rem;">Assigned / Escalated</th>
+              <th style="padding: 1rem 1.25rem; text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for req in requests %}
+              <tr style="border-bottom: 1px solid #F1F5F9;">
+                <td style="padding: 1rem 1.25rem;">
+                  <strong style="color: #1E293B; font-size: 0.9rem;">{{ req.ticket_code }}</strong><br>
+                  <span style="font-size: 0.75rem; color: #64748B;">{{ req.created_at|date:"M d, Y h:i A" }}</span>
+                </td>
+                <td style="padding: 1rem 1.25rem;">
+                  <strong style="color: #1E293B;">{{ req.student.get_full_name|default:req.student.username }}</strong><br>
+                  <span style="font-size: 0.78rem; color: #0284C7; font-weight: 600;">{{ req.hostel.code|default:"Campus" }} &bull; {{ req.room_number_str }}</span><br>
+                  <span style="font-size: 0.75rem; color: #64748B;">📞 {{ req.contact_phone }}</span>
+                </td>
+                <td style="padding: 1rem 1.25rem; max-width: 320px;">
+                  <span style="font-size: 0.72rem; background: #F1F5F9; color: #475569; padding: 2px 6px; border-radius: 4px; font-weight: 700;">
+                    {{ req.get_sub_category_display }}
+                  </span>
+                  <div style="font-weight: 800; color: #1E293B; margin-top: 4px;">{{ req.subject }}</div>
+                  <div style="font-size: 0.8rem; color: #64748B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {{ req.description }}
+                  </div>
+                </td>
+                <td style="padding: 1rem 1.25rem;">
+                  {% if req.status == 'RESOLVED' or req.status == 'CLOSED' %}
+                    <span style="background: #D1FAE5; color: #065F46; padding: 3px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800;">
+                      ✓ RESOLVED
+                    </span>
+                  {% elif 'ESCALATED' in req.status %}
+                    <span style="background: #FEF3C7; color: #92400E; padding: 3px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; display: inline-block;">
+                      ⚡ {{ req.get_status_display }}
+                    </span>
+                  {% elif req.status == 'IN_PROGRESS' %}
+                    <span style="background: #DBEAFE; color: #1E40AF; padding: 3px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800;">
+                      IN PROGRESS
+                    </span>
+                  {% else %}
+                    <span style="background: #FFE4E6; color: #9F1239; padding: 3px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800;">
+                      NEW / OPEN
+                    </span>
+                  {% endif %}
+                </td>
+                <td style="padding: 1rem 1.25rem;">
+                  {% if req.escalated_from_warden %}
+                    <span style="font-size: 0.75rem; color: #B45309; font-weight: 700;">
+                      Escalated by Warden ({{ req.escalated_by.get_full_name|default:req.escalated_by.username }})
+                    </span><br>
+                    <span style="font-size: 0.72rem; color: #64748B;">{{ req.escalation_reason|truncatechars:45 }}</span>
+                  {% else %}
+                    <span style="font-size: 0.78rem; color: #475569;">
+                      Assigned: <strong>{{ req.assigned_to.get_full_name|default:"Hostel Warden" }}</strong>
+                    </span>
+                  {% endif %}
+                </td>
+                <td style="padding: 1rem 1.25rem; text-align: right;">
+                  <a href="{% url 'rms_ticket_detail' req.id %}" class="btn btn-outline btn-sm" style="font-weight: 800; border-color: #EA580C; color: #EA580C;">
+                    Manage &rarr;
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 4rem 2rem; color: #64748B;">
+        <div style="font-size: 3rem; margin-bottom: 0.75rem;">🎉</div>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #1E293B;">Queue Clear!</h3>
+        <p style="font-size: 0.88rem;">No pending resident queries matching this criteria under your authority.</p>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

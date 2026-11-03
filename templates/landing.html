@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}LPU Hostel Room Exchange Portal — Lovely Professional University{% endblock %}
@@ -335,35 +335,6 @@
       </div>
     </div>
   </section>
-
-  <!-- HELP & SUPPORT FOOTER -->
-  <footer id="support" style="background: #081628; color: #FFFFFF; padding: 3.5rem 2rem 2.5rem 2rem;">
-    <div style="max-width: 1340px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
-      <div style="display: flex; align-items: center; gap: 0.85rem;">
-        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU" style="width: 48px; height: 48px; filter: brightness(1.2);">
-        <div>
-          <div style="font-size: 1.05rem; font-weight: 900; color: #FFFFFF; letter-spacing: 0.03em;">
-            LOVELY PROFESSIONAL UNIVERSITY
-          </div>
-          <div style="font-size: 0.78rem; color: #F37021; font-weight: 600;">
-            Hostel Management &amp; Room Exchange Portal &bull; Phagwara, Punjab (India)
-          </div>
-        </div>
-      </div>
-
-      <div style="display: flex; gap: 1.75rem; font-size: 0.88rem; color: #94A3B8; flex-wrap: wrap;">
-        <a href="#how-it-works" style="color: #E2E8F0; text-decoration: none; font-weight: 600; transition: color 0.2s ease;">How It Works</a>
-        <a href="#guidelines" style="color: #E2E8F0; text-decoration: none; font-weight: 600; transition: color 0.2s ease;">Guidelines</a>
-        <a href="{% url 'hostels_list' %}" style="color: #E2E8F0; text-decoration: none; font-weight: 600; transition: color 0.2s ease;">Hostels Directory</a>
-        <a href="{% url 'login' %}" style="color: #F37021; font-weight: 700; text-decoration: none;">Student Sign In</a>
-      </div>
-    </div>
-
-    <div style="max-width: 1340px; margin: 2.5rem auto 0 auto; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.76rem; color: #64748B; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-      <div>&copy; 2026 Lovely Professional University. All rights reserved.</div>
-      <div>Official University Housing &bull; Division of Student Welfare.</div>
-    </div>
-  </footer>
 
 </div>
 {% endblock %}

@@ -1,6 +1,10 @@
-import io
+﻿import io
 import base64
-import qrcode
+try:
+    import qrcode
+except ImportError:
+    qrcode = None
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib import messages
@@ -43,6 +47,7 @@ def landing_page(request):
         'active_requests': active_requests
     })
 
+@login_required
 def student_dashboard(request):
     """
     Student Cockpit: 2D Room visualizer, current bed, active proposal, countdown.
@@ -112,6 +117,7 @@ def student_dashboard(request):
     })
 
 
+@login_required
 def create_request_view(request):
     """
     Submit exchange request with real-time policy verification.
@@ -213,6 +219,7 @@ def create_request_view(request):
         'current_room_type': current_room_type,
     })
 
+@login_required
 @require_POST
 def withdraw_request_view(request, pk):
     """
@@ -237,6 +244,7 @@ def withdraw_request_view(request, pk):
     next_url = request.POST.get('next', '/dashboard/')
     return redirect(next_url)
 
+@login_required
 def cycle_explorer_view(request):
     """
     Graph Cycle Explorer: Matches discovery & active proposals.
@@ -322,6 +330,7 @@ def cycle_explorer_view(request):
     })
 
 
+@login_required
 @require_POST
 def initiate_proposal_view(request):
     """
@@ -378,6 +387,7 @@ def initiate_proposal_view(request):
         messages.error(request, "Invalid cycle selection. Please refresh and try again.")
         return redirect('/matches/')
 
+@login_required
 def proposal_detail_view(request, pk):
     """
     Detailed proposal screen with participant voting table and live countdown.
@@ -400,6 +410,7 @@ def proposal_detail_view(request, pk):
         'is_expired': timezone.now() > proposal.expires_at
     })
 
+@login_required
 @require_POST
 def respond_proposal_view(request, pk):
     proposal = get_object_or_404(ExchangeProposal, id=pk)
@@ -413,6 +424,7 @@ def respond_proposal_view(request, pk):
 
     return redirect(f"/proposals/{proposal.id}/")
 
+@login_required
 def warden_dashboard_view(request):
     """
     Warden Approval Queue:
@@ -461,6 +473,7 @@ def warden_dashboard_view(request):
         'is_chief_or_admin': is_chief_or_admin,
     })
 
+@login_required
 def warden_review_view(request, pk):
     """
     Warden Review:
@@ -579,6 +592,7 @@ def warden_review_view(request, pk):
     })
 
 
+@login_required
 def transfer_letter_view(request, pk):
     """
     Phase 15: Official Printable Transfer Certificate with Base64 QR Code.
@@ -610,6 +624,7 @@ def transfer_letter_view(request, pk):
         'qr_base64': qr_base64
     })
 
+@login_required
 def transfers_list_view(request):
     """
     List transfers: personal for students, university-wide for wardens/admins.
@@ -632,6 +647,7 @@ def transfers_list_view(request):
 
     return render(request, 'exchange/transfers_list.html', {'transfers': transfers})
 
+@login_required
 def admin_policies_view(request):
     """
     Phase 17: Administrative Policy Configuration.
@@ -671,6 +687,7 @@ def admin_policies_view(request):
     policies = PolicyRule.objects.all().order_by('rule_type')
     return render(request, 'exchange/admin_policies.html', {'policies': policies})
 
+@login_required
 def analytics_dashboard_view(request):
     """
     Phase 17: Dean of Student Welfare (DSW) & Admin Analytics & Audit Trail.
@@ -730,6 +747,7 @@ def analytics_dashboard_view(request):
         'room_type_counts_json': json.dumps(room_type_counts),
     })
 
+@login_required
 def concurrency_demo_view(request):
     """
     Phase 18 & 20E: Dedicated Concurrency Demonstration Page.
@@ -755,6 +773,7 @@ def room_detail_view(request, pk=None):
     })
 
 
+@login_required
 def caretaker_verify_view(request):
     """
     In-App Caretaker Verification & QR Scanner Screen.
@@ -820,6 +839,7 @@ def caretaker_verify_view(request):
     })
 
 
+@login_required
 def get_proposal_messages_view(request, pk):
     """
     Returns real-time discussion chat messages for a proposal in JSON format.
@@ -857,6 +877,7 @@ def get_proposal_messages_view(request, pk):
     })
 
 
+@login_required
 @require_POST
 def send_proposal_message_view(request, pk):
     """
@@ -914,6 +935,7 @@ def send_proposal_message_view(request, pk):
     return redirect(f'/proposals/{proposal.id}/#chat')
 
 
+@login_required
 def lifestyle_quiz_view(request):
     """
     Student Roommate Lifestyle Quiz & Compatibility Engine.

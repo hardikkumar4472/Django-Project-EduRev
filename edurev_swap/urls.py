@@ -1,4 +1,4 @@
-"""
+﻿"""
 Master URL Configuration for edurev_swap.
 """
 from django.contrib import admin
@@ -20,6 +20,7 @@ urlpatterns = [
     path('', include('accounts.urls')),
     path('', include('exchange.urls')),
     path('hostels/', include('hostel.urls')),
+    path('rms/', include('rms.urls')),
     path('api/', include('exchange.api_urls')),
 ]
 
