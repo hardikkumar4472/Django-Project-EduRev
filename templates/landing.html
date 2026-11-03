@@ -289,81 +289,285 @@
     </div>
   </section>
 
-  <!-- GUIDELINES SECTION -->
+  <!-- GUIDELINES & RESIDENTIAL REGULATIONS SECTION -->
   <section id="guidelines" style="background: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; padding: 4.5rem 2rem;">
-    <div style="max-width: 1340px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: center;">
-      <div>
-        <span class="section-badge-pill">Institutional Policy</span>
-        <h2 style="font-size: 2.15rem; font-weight: 900; color: #0F172A; margin: 0.85rem 0 1rem 0; letter-spacing: -0.02em;">
-          Official Guidelines &amp; Code of Conduct
+    <div style="max-width: 1340px; margin: 0 auto;">
+      <div style="text-align: center; max-width: 780px; margin: 0 auto 3rem auto;">
+        <span class="section-badge-pill">Institutional Policy &amp; Code of Living</span>
+        <h2 style="font-size: 2.25rem; font-weight: 900; color: #0F172A; margin: 0.85rem 0 1rem 0; letter-spacing: -0.02em;">
+          LPU Residential Regulations &amp; Conduct Rules
         </h2>
-        <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.92rem; color: #475569; line-height: 1.65;">
-          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
-            <div style="width: 24px; height: 24px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;">✓</div>
-            <div><strong>Gender Segregation Enforced:</strong> Male students can only exchange rooms within Boys Hostels (BH-1 to BH-10); female students within Girls Hostels (GH-1 to GH-10).</div>
-          </div>
-          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
-            <div style="width: 24px; height: 24px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;">✓</div>
-            <div><strong>One Active Request at a Time:</strong> Students may maintain only one active request to prevent queue starvation and ensure swift cycle settlements.</div>
-          </div>
-          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
-            <div style="width: 24px; height: 24px; border-radius: 50%; background: #ECFDF5; color: #059669; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;">✓</div>
-            <div><strong>Mandatory Physical Inspection:</strong> Caretaker verification is required before electronic key handover is recorded in the central database.</div>
-          </div>
-        </div>
+        <p style="font-size: 0.95rem; color: #64748B; line-height: 1.65;">
+          Living in Lovely Professional University residences entails adherence to safety, mutual respect, and university housing governance. Review the mandatory policies below before initiating a room exchange.
+        </p>
       </div>
 
-      <div class="card" style="padding: 2.25rem; border: 2px solid #FED7AA; background: #FFFFFF; box-shadow: 0 16px 36px -6px rgba(243, 112, 33, 0.12); border-radius: 20px;">
-        <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.25rem;">
-          <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU" style="width: 52px; height: 52px; filter: drop-shadow(0 2px 6px rgba(243, 112, 33, 0.25));">
+      <!-- 6 Policy Cards Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; margin-bottom: 3.5rem;">
+        
+        <div class="card" style="padding: 1.75rem; border-left: 4px solid #F37021; background: #FFFFFF; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); border-radius: 14px;">
+          <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🕒</div>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">Biometric Curfew &amp; Movement</h3>
+          <p style="font-size: 0.85rem; color: #64748B; line-height: 1.6; margin: 0;">
+            Strict biometric punch-in is enforced across all residences. Girls Hostels (GH-1 to GH-10) observe curfew at <strong>07:30 PM</strong>; Boys Hostels (BH-1 to BH-10) at <strong>09:30 PM</strong>. Late night library or laboratory passes must be approved through the DSW portal in advance.
+          </p>
+        </div>
+
+        <div class="card" style="padding: 1.75rem; border-left: 4px solid #2563EB; background: #FFFFFF; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); border-radius: 14px;">
+          <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🍽️</div>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">Central Mess &amp; Dining Schedule</h3>
+          <p style="font-size: 0.85rem; color: #64748B; line-height: 1.6; margin: 0;">
+            Four nutritious meals served daily: Breakfast (07:30–09:30 AM), Lunch (12:00–02:00 PM), Evening Snacks (05:00–06:00 PM), and Dinner (07:30–09:45 PM). Food is strictly prohibited inside personal bedrooms to maintain optimal campus hygiene.
+          </p>
+        </div>
+
+        <div class="card" style="padding: 1.75rem; border-left: 4px solid #10B981; background: #FFFFFF; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); border-radius: 14px;">
+          <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🔇</div>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">Mandatory Silence Hours</h3>
+          <p style="font-size: 0.85rem; color: #64748B; line-height: 1.6; margin: 0;">
+            Quiet learning hours are strictly observed between <strong>10:30 PM and 06:00 AM</strong> daily. Playing loudspeakers, shouting, or loud hallway gatherings during these hours attract disciplinary demerit points and suspension of exchange privileges.
+          </p>
+        </div>
+
+        <div class="card" style="padding: 1.75rem; border-left: 4px solid #DC2626; background: #FFFFFF; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); border-radius: 14px;">
+          <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🚫</div>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">Zero-Tolerance Anti-Ragging Policy</h3>
+          <p style="font-size: 0.85rem; color: #64748B; line-height: 1.6; margin: 0;">
+            LPU maintains an absolute zero-tolerance policy against any form of ragging, physical harassment, or intimidation, as mandated by the Supreme Court of India and UGC Regulations. Violators face immediate rustication and police FIR filing.
+          </p>
+        </div>
+
+        <div class="card" style="padding: 1.75rem; border-left: 4px solid #F59E0B; background: #FFFFFF; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); border-radius: 14px;">
+          <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">⚡</div>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">Electrical Safety &amp; Prohibited Items</h3>
+          <p style="font-size: 0.85rem; color: #64748B; line-height: 1.6; margin: 0;">
+            Personal laptops, mobile phone chargers, and desk study lamps are permitted. High-wattage heating coils, electric kettles, immersion rods, and induction cooktops are strictly banned to prevent fire hazards and breaker trips.
+          </p>
+        </div>
+
+        <div class="card" style="padding: 1.75rem; border-left: 4px solid #8B5CF6; background: #FFFFFF; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05); border-radius: 14px;">
+          <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🧳</div>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">Room Shifting &amp; Inventory Protocol</h3>
+          <p style="font-size: 0.85rem; color: #64748B; line-height: 1.6; margin: 0;">
+            Approved transfer passes must be executed within <strong>72 hours</strong>. Students must surrender physical keys to their current Block Caretaker after a joint inventory inspection (bed, mattress, study desk, almirah) before new keys are issued.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Institutional Oversight Banner -->
+      <div class="card" style="padding: 2.25rem; border: 2px solid #FED7AA; background: linear-gradient(135deg, #FFFDF8 0%, #FFF7ED 100%); box-shadow: 0 16px 36px -6px rgba(243, 112, 33, 0.12); border-radius: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+          <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU" style="width: 64px; height: 64px; filter: drop-shadow(0 2px 8px rgba(243, 112, 33, 0.3)); flex-shrink: 0;">
           <div>
-            <div style="font-weight: 900; color: #1E293B; font-size: 1.1rem; line-height: 1.15;">Lovely Professional University</div>
-            <div style="font-size: 0.76rem; color: #EA580C; font-weight: 700; margin-top: 2px;">Division of Student Welfare &bull; Hostel Directorate</div>
+            <div style="font-weight: 900; color: #1E293B; font-size: 1.2rem; line-height: 1.15;">Lovely Professional University • Division of Student Welfare</div>
+            <div style="font-size: 0.825rem; color: #EA580C; font-weight: 700; margin-top: 3px;">Official Hostel Directorate &bull; Auditable Living Governance</div>
+            <p style="font-size: 0.85rem; color: #64748B; margin: 0.35rem 0 0 0; max-width: 650px;">
+              All transactions executed on this portal are recorded in immutable university logs. For disability accommodations, medical ground shifts, or grievance redressal, contact the Chief Warden's office directly.
+            </p>
           </div>
         </div>
-        <p style="font-size: 0.88rem; color: #64748B; line-height: 1.65; margin-bottom: 1.5rem;">
-          All room exchanges executed via this portal are recorded in university auditable logs. Need assistance or custom disability accommodations? Contact the Chief Warden's office directly.
-        </p>
         <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
-          <a href="{% url 'hostels_list' %}" class="btn btn-primary btn-sm" style="flex: 1; padding: 0.65rem 1rem; font-weight: 700;">
-            Hostels Directory →
+          <a href="{% url 'hostels_list' %}" class="btn btn-primary" style="padding: 0.75rem 1.4rem; font-weight: 700;">
+            Explore Hostels Directory →
           </a>
-          <a href="{% url 'login' %}" class="btn btn-outline btn-sm" style="flex: 1; border-color: #FED7AA; color: #EA580C; padding: 0.65rem 1rem; font-weight: 700;">
+          <a href="{% url 'login' %}" class="btn btn-outline" style="border-color: #FED7AA; color: #EA580C; padding: 0.75rem 1.4rem; font-weight: 700; background: #FFFFFF;">
             Sign In with ID
           </a>
         </div>
       </div>
+
     </div>
   </section>
 
-  <!-- HELP & SUPPORT FOOTER -->
-  <footer id="support" style="background: #081628; color: #FFFFFF; padding: 3.5rem 2rem 2.5rem 2rem;">
-    <div style="max-width: 1340px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
-      <div style="display: flex; align-items: center; gap: 0.85rem;">
-        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU" style="width: 48px; height: 48px; filter: brightness(1.2);">
+  <!-- ========================================================================
+       COMPREHENSIVE FAQS SECTION (INTERACTIVE ACCORDION)
+       ======================================================================== -->
+  <section id="faqs" style="padding: 5rem 2rem; background: #FFFFFF;">
+    <div style="max-width: 1080px; margin: 0 auto;">
+      
+      <div style="text-align: center; margin-bottom: 3.5rem;">
+        <span class="section-badge-pill">Got Questions?</span>
+        <h2 style="font-size: 2.35rem; font-weight: 900; color: #0F172A; margin: 0.85rem 0 0.85rem 0; letter-spacing: -0.02em;">
+          Frequently Asked Questions (FAQs)
+        </h2>
+        <p style="font-size: 0.95rem; color: #64748B; max-width: 680px; margin: 0 auto; line-height: 1.6;">
+          Everything you need to know about participating in the LPU room exchange program, multi-hop rotations, approvals, and fees.
+        </p>
+      </div>
+
+      <!-- FAQ Accordion List -->
+      <div class="lpu-faq-accordion-list" style="display: flex; flex-direction: column; gap: 1rem;">
+        
+        <details class="faq-item-card" open>
+          <summary class="faq-item-question">
+            <span class="q-icon">❓</span>
+            <span class="q-text">Who is eligible for hostel room exchange at Lovely Professional University?</span>
+            <span class="q-chevron">▾</span>
+          </summary>
+          <div class="faq-item-answer">
+            <p>Any registered, bona fide LPU student currently residing in an official university hostel (Boys Hostels BH-1 to BH-10 or Girls Hostels GH-1 to GH-10) who has an active bed allotment, has cleared all semester hostel fee dues, and has no active disciplinary demerits or pending Proctorial Board inquiries is fully eligible to participate.</p>
+          </div>
+        </details>
+
+        <details class="faq-item-card">
+          <summary class="faq-item-question">
+            <span class="q-icon">❓</span>
+            <span class="q-text">Can male students exchange rooms with female students or between BH and GH?</span>
+            <span class="q-chevron">▾</span>
+          </summary>
+          <div class="faq-item-answer">
+            <p><strong>No, under no circumstances.</strong> Strict gender segregation is an immutable regulatory mandate at Lovely Professional University. Male students can only exchange rooms within Boys Hostels (BH-1 to BH-10), and female students strictly within Girls Hostels (GH-1 to GH-10). The portal's database engine enforces this constraint algorithmically at query time.</p>
+          </div>
+        </details>
+
+        <details class="faq-item-card">
+          <summary class="faq-item-question">
+            <span class="q-icon">❓</span>
+            <span class="q-text">How does the cyclic multi-hop (3-way or 4-way) swap engine work?</span>
+            <span class="q-chevron">▾</span>
+          </summary>
+          <div class="faq-item-answer">
+            <p>In traditional manual systems, you can only swap if you find someone who wants your exact room and whose room you want in return. Our portal's <strong>Deterministic Cycle Discovery Engine</strong> connects multi-hop chains (e.g., Student A moves to B's room, Student B moves to C's room, and Student C moves to A's room). When a cycle closes, the system locks all affected beds simultaneously, verifies mutual consent, and presents a complete unified rotation.</p>
+          </div>
+        </details>
+
+        <details class="faq-item-card">
+          <summary class="faq-item-question">
+            <span class="q-icon">❓</span>
+            <span class="q-text">How are fee differentials handled when switching between AC, Non-AC, or different seaters?</span>
+            <span class="q-chevron">▾</span>
+          </summary>
+          <div class="faq-item-answer">
+            <p>When swapping between different room categories (e.g., from a 3-Seater Non-AC to a 1-Seater AC), any pro-rated tariff differential is automatically computed by the University Accounts Division. The differential amount is directly credited or debited to your central University Fee Ledger (UMS account) upon final Caretaker inspection and digital transfer completion.</p>
+          </div>
+        </details>
+
+        <details class="faq-item-card">
+          <summary class="faq-item-question">
+            <span class="q-icon">❓</span>
+            <span class="q-text">What happens if one student in a proposed cycle rejects the proposal?</span>
+            <span class="q-chevron">▾</span>
+          </summary>
+          <div class="faq-item-answer">
+            <p>All participants in a discovered exchange cycle must provide <strong>unanimous consensus</strong>. If any student declines the proposed room, the proposal status automatically transitions to 'DECLINED', the beds are unlocked immediately, and all other students are safely returned to the active queue to await alternate matching opportunities without penalty.</p>
+          </div>
+        </details>
+
+        <details class="faq-item-card">
+          <summary class="faq-item-question">
+            <span class="q-icon">❓</span>
+            <span class="q-text">How long does the Warden and DSW digital approval process take?</span>
+            <span class="q-chevron">▾</span>
+          </summary>
+          <div class="faq-item-answer">
+            <p>Once all students in a rotation accept the swap, digital review alerts are transmitted to the respective Hostel Wardens. Reviews are conducted during daily office hours (typically within <strong>24 to 48 business hours</strong>). Wardens verify academic standing, discipline records, and room compatibility before issuing the digital transfer pass.</p>
+          </div>
+        </details>
+
+        <details class="faq-item-card">
+          <summary class="faq-item-question">
+            <span class="q-icon">❓</span>
+            <span class="q-text">What is the procedure for physical key handover with the Block Caretaker?</span>
+            <span class="q-chevron">▾</span>
+          </summary>
+          <div class="faq-item-answer">
+            <p>Upon final approval, you can download your official <strong>LPU Digital Transfer Pass</strong> containing a secure verification QR code. Bring this pass to your Block Caretaker desk. The Caretaker conducts a quick physical room inventory check (furniture, fittings, electricals), accepts your old keys, updates the master allotment ledger, and issues your new room keys.</p>
+          </div>
+        </details>
+
+        <details class="faq-item-card">
+          <summary class="faq-item-question">
+            <span class="q-icon">❓</span>
+            <span class="q-text">How can students with medical or physical accessibility needs request priority relocation?</span>
+            <span class="q-chevron">▾</span>
+          </summary>
+          <div class="faq-item-answer">
+            <p>Students with verified medical conditions, mobility impairments, or elevator requirements can submit a Medical Priority Request. Submit your medical certificate endorsed by the Chief Medical Officer at the LPU Uni-Hospital to the Division of Student Welfare (DSW, Sector 34). Priority allotments are expedited outside the standard cycle queue.</p>
+          </div>
+        </details>
+
+      </div>
+
+      <!-- FAQ Help Desk Footer -->
+      <div style="margin-top: 3rem; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem;">
         <div>
-          <div style="font-size: 1.05rem; font-weight: 900; color: #FFFFFF; letter-spacing: 0.03em;">
-            LOVELY PROFESSIONAL UNIVERSITY
-          </div>
-          <div style="font-size: 0.78rem; color: #F37021; font-weight: 600;">
-            Hostel Management &amp; Room Exchange Portal &bull; Phagwara, Punjab (India)
-          </div>
+          <strong style="color: #0F172A; font-size: 0.95rem; display: block;">Still have questions or need personalized guidance?</strong>
+          <span style="font-size: 0.825rem; color: #64748B;">Our DSW Hostel Support Desk is available Monday to Saturday, 09:00 AM to 05:00 PM.</span>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+          <a href="mailto:hostels@lpu.co.in" class="btn btn-outline btn-sm" style="font-weight: 700; color: #F37021; border-color: #FED7AA;">
+            ✉️ Email Support
+          </a>
+          <a href="#support" class="btn btn-primary btn-sm" style="font-weight: 700;">
+            📞 Contact Numbers
+          </a>
         </div>
       </div>
 
-      <div style="display: flex; gap: 1.75rem; font-size: 0.88rem; color: #94A3B8; flex-wrap: wrap;">
-        <a href="#how-it-works" style="color: #E2E8F0; text-decoration: none; font-weight: 600; transition: color 0.2s ease;">How It Works</a>
-        <a href="#guidelines" style="color: #E2E8F0; text-decoration: none; font-weight: 600; transition: color 0.2s ease;">Guidelines</a>
-        <a href="{% url 'hostels_list' %}" style="color: #E2E8F0; text-decoration: none; font-weight: 600; transition: color 0.2s ease;">Hostels Directory</a>
-        <a href="{% url 'login' %}" style="color: #F37021; font-weight: 700; text-decoration: none;">Student Sign In</a>
-      </div>
     </div>
+  </section>
 
-    <div style="max-width: 1340px; margin: 2.5rem auto 0 auto; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.76rem; color: #64748B; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-      <div>&copy; 2026 Lovely Professional University. All rights reserved.</div>
-      <div>Official University Housing &bull; Division of Student Welfare.</div>
-    </div>
-  </footer>
+  <!-- FAQ Accordion Styling -->
+  <style>
+    .faq-item-card {
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #FFFFFF;
+      transition: all 0.2s ease;
+    }
+    .faq-item-card[open] {
+      border-color: #FDBA74;
+      box-shadow: 0 4px 16px -2px rgba(243, 112, 33, 0.12);
+    }
+    .faq-item-question {
+      padding: 1.15rem 1.4rem;
+      font-size: 0.975rem;
+      font-weight: 800;
+      color: #0F172A;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      list-style: none;
+      user-select: none;
+    }
+    .faq-item-question::-webkit-details-marker {
+      display: none;
+    }
+    .faq-item-question:hover {
+      background: #FFFBF5;
+      color: #EA580C;
+    }
+    .q-icon {
+      font-size: 1.1rem;
+    }
+    .q-text {
+      flex: 1;
+    }
+    .q-chevron {
+      font-size: 1.25rem;
+      color: #94A3B8;
+      transition: transform 0.2s ease;
+    }
+    .faq-item-card[open] .q-chevron {
+      transform: rotate(180deg);
+      color: #F37021;
+    }
+    .faq-item-answer {
+      padding: 0 1.4rem 1.25rem 3.35rem;
+      font-size: 0.88rem;
+      color: #475569;
+      line-height: 1.65;
+      border-top: 1px dashed #F1F5F9;
+      margin-top: -0.25rem;
+      padding-top: 0.85rem;
+    }
+    .faq-item-answer strong {
+      color: #0F172A;
+    }
+  </style>
 
 </div>
 {% endblock %}

@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Official Residential Guidelines & Code of Conduct — Lovely Professional University{% endblock %}
+
+{% block content %}
+<!-- Grand Hero Banner -->
+<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.8) 55%, rgba(243, 112, 33, 0.45) 100%), url('{% static 'images/lpu_facade_emblem.jpg' %}'); background-size: cover; background-position: center; border-radius: 18px; min-height: 200px; padding: 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2.5rem; box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.2);">
+  <div class="lpu-page-hero-content" style="position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div style="max-width: 740px;">
+      <div class="lpu-hero-badge-pill">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+        <span>Division of Student Welfare • Official Residential Code</span>
+      </div>
+      <h1 class="lpu-page-hero-title">
+        Residential Guidelines &amp; Code of Living
+      </h1>
+      <p class="lpu-page-hero-subtitle">
+        Mandatory conduct rules, curfew protocols, safety regulations, and key handover standards governing all 20 residences across Lovely Professional University.
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+      <a href="{% url 'hostels_list' %}" class="btn btn-primary" style="padding: 0.8rem 1.6rem; font-weight: 700; box-shadow: 0 4px 14px rgba(243, 112, 33, 0.4);">
+        🏢 View All Residences →
+      </a>
+      <a href="{% url 'how_it_works' %}" class="btn btn-outline" style="background: rgba(255, 255, 255, 0.15); color: #FFFFFF; border-color: rgba(255, 255, 255, 0.35); padding: 0.8rem 1.4rem; font-weight: 700;">
+        How Exchange Works
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================
+     DETAILED RESIDENTIAL POLICIES GRID
+     ======================================================================== -->
+<section style="margin-bottom: 4rem;">
+  <div style="text-align: center; max-width: 780px; margin: 0 auto 3rem auto;">
+    <span style="font-size: 0.75rem; font-weight: 800; color: #F37021; text-transform: uppercase; letter-spacing: 0.08em; background: #FFF7ED; padding: 4px 12px; border-radius: 9999px; border: 1px solid #FED7AA;">
+      Campus Safety &amp; Discipline
+    </span>
+    <h2 style="font-size: 2.25rem; font-weight: 900; color: #0F172A; margin: 0.85rem 0 0.5rem; letter-spacing: -0.02em;">
+      Mandatory Living Policies
+    </h2>
+    <p style="font-size: 0.95rem; color: #64748B; margin: 0; line-height: 1.6;">
+      Compliance with university housing policies is mandatory for all hostel residents. Violations result in disciplinary demerit points and suspension of room exchange privileges.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.75rem;">
+    
+    <!-- Policy 1 -->
+    <div class="card" style="padding: 2rem; border-left: 4px solid #F37021; background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🕒</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">Biometric Curfew &amp; Movement</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        Biometric fingerprint attendance is recorded nightly at hostel entrance turnstiles.
+        <br>• <strong>Girls Hostels (GH-1 to GH-10):</strong> 07:30 PM sharp.
+        <br>• <strong>Boys Hostels (BH-1 to BH-10):</strong> 09:30 PM sharp.
+        <br>Late library or laboratory access passes must be applied for and approved by the Hostel Warden via the university portal prior to 05:00 PM.
+      </p>
+    </div>
+
+    <!-- Policy 2 -->
+    <div class="card" style="padding: 2rem; border-left: 4px solid #DC2626; background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🚫</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">Zero-Tolerance Anti-Ragging Policy</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        In compliance with Supreme Court orders and UGC Regulations, Lovely Professional University maintains an absolute zero-tolerance policy towards ragging in any form.
+        <br>Any student found guilty faces immediate expulsion, forfeiture of hostel allocation, and registration of a criminal FIR with state police authorities.
+      </p>
+    </div>
+
+    <!-- Policy 3 -->
+    <div class="card" style="padding: 2rem; border-left: 4px solid #2563EB; background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🔇</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">Mandatory Silence Hours</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        Quiet study and resting hours are enforced daily between <strong>10:30 PM and 06:00 AM</strong>.
+        <br>Playing musical instruments, television speakers, loud hallway conversations, or disorderly gatherings during these hours is strictly prohibited to protect the academic study environment.
+      </p>
+    </div>
+
+    <!-- Policy 4 -->
+    <div class="card" style="padding: 2rem; border-left: 4px solid #F59E0B; background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">⚡</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">Permitted &amp; Prohibited Electricals</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        • <strong>Permitted:</strong> Laptops, tablets, mobile chargers, study desk lamps.
+        <br>• <strong>Strictly Prohibited:</strong> Immersion heating rods, electric kettles, induction stoves, room heaters, and electric irons.
+        <br>Unauthorized heating devices cause fire risks and will be confiscated with a monetary penalty.
+      </p>
+    </div>
+
+    <!-- Policy 5 -->
+    <div class="card" style="padding: 2rem; border-left: 4px solid #10B981; background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🍽️</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">Central Mess &amp; Hygiene Standards</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        Residents must take all meals in the central dining hall. Carrying food, utensils, or glassware to student rooms is prohibited to prevent pest infestations.
+        <br>Mess Timings: Breakfast (07:30–09:30 AM), Lunch (12:00–02:00 PM), Tea (05:00–06:00 PM), Dinner (07:30–09:45 PM).
+      </p>
+    </div>
+
+    <!-- Policy 6 -->
+    <div class="card" style="padding: 2rem; border-left: 4px solid #8B5CF6; background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🧳</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">Room Shifting &amp; Inventory Protocol</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        Approved room swap passes are valid for <strong>72 hours</strong> from the Warden's digital signature.
+        <br>Before receiving new keys, the resident must complete an inventory inspection (bed cot, mattress, study desk, almirah, fan, lights) with the Block Caretaker and surrender the old room keys.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================================================
+     INSTITUTIONAL GOVERNANCE STATEMENT
+     ======================================================================== -->
+<section style="background: linear-gradient(135deg, #FFFDF8 0%, #FFF7ED 100%); border: 2px solid #FED7AA; border-radius: 20px; padding: 2.75rem; margin-bottom: 4rem; box-shadow: 0 12px 32px rgba(243, 112, 33, 0.1);">
+  <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+    <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU Crest" style="width: 72px; height: 72px; filter: drop-shadow(0 4px 10px rgba(243, 112, 33, 0.3)); flex-shrink: 0;">
+    <div style="flex: 1; min-width: 280px;">
+      <h3 style="font-size: 1.35rem; font-weight: 900; color: #1E293B; margin: 0 0 0.35rem;">
+        Division of Student Welfare (DSW) Oversight
+      </h3>
+      <p style="font-size: 0.9rem; color: #64748B; line-height: 1.65; margin: 0;">
+        All hostel allocations, cyclic swaps, disciplinary evaluations, and caretaker inspections are audited by the Directorate of Student Welfare under ISO-9001 quality management guidelines. For policy inquiries or special disability accommodations, contact the DSW Central Helpdesk in Block 32.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="mailto:dsw@lpu.co.in" class="btn btn-outline" style="border-color: #FED7AA; color: #EA580C; font-weight: 700; background: #FFFFFF;">
+        ✉️ Contact DSW
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================================
+     GUIDELINES & POLICY FAQS
+     ======================================================================== -->
+<section style="margin-bottom: 4rem;">
+  <div style="text-align: center; max-width: 720px; margin: 0 auto 2.5rem auto;">
+    <span style="font-size: 0.75rem; font-weight: 800; color: #F37021; text-transform: uppercase; letter-spacing: 0.08em; background: #FFF7ED; padding: 4px 12px; border-radius: 9999px; border: 1px solid #FED7AA;">
+      Compliance FAQs
+    </span>
+    <h2 style="font-size: 2.15rem; font-weight: 900; color: #0F172A; margin: 0.75rem 0 0.5rem; letter-spacing: -0.02em;">
+      Frequently Asked Questions on Conduct &amp; Rules
+    </h2>
+    <p style="font-size: 0.9rem; color: #64748B; margin: 0;">
+      Essential answers regarding hostel discipline, room cleanliness, and damage responsibilities.
+    </p>
+  </div>
+
+  <div style="max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.85rem;">
+    
+    <details class="faq-item-card" open>
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">What happens if a resident fails to shift rooms within the 72-hour pass window?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>If the key handover and Caretaker inspection are not concluded within 72 hours of approval, the digital pass expires automatically to avoid holding beds in limbo. The allocation reverts to the original status, and the applicant must submit a new request.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">Who pays for damage found in the room during Caretaker inspection?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>The outgoing resident is solely accountable for the condition of fixtures and furniture allocated to them upon check-in. Any deliberate damage or broken inventory will be assessed by the Estate Maintenance Division and debited from the student's security deposit.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">Are day-scholar students permitted inside hostel buildings?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>No. Day scholars and non-resident students are strictly barred from entering residential hostel blocks at all times. Violations lead to immediate disciplinary hearings before the Proctorial Board.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">Can I keep a refrigerator or personal microwave in the room?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Personal refrigerators and microwaves are not permitted inside individual rooms due to circuit load constraints. Common refrigerators are provided in designated dining or pantry areas across selected blocks.</p>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+<!-- FAQ Accordion Styling -->
+<style>
+  .faq-item-card {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+  }
+  .faq-item-card[open] {
+    border-color: #FDBA74;
+    box-shadow: 0 4px 16px -2px rgba(243, 112, 33, 0.12);
+  }
+  .faq-item-question {
+    padding: 1.15rem 1.4rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0F172A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    list-style: none;
+    user-select: none;
+  }
+  .faq-item-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item-question:hover {
+    background: #FFFBF5;
+    color: #EA580C;
+  }
+  .q-icon {
+    font-size: 1.1rem;
+  }
+  .q-text {
+    flex: 1;
+  }
+  .q-chevron {
+    font-size: 1.25rem;
+    color: #94A3B8;
+    transition: transform 0.2s ease;
+  }
+  .faq-item-card[open] .q-chevron {
+    transform: rotate(180deg);
+    color: #F37021;
+  }
+  .faq-item-answer {
+    padding: 0 1.4rem 1.25rem 3.35rem;
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.65;
+    border-top: 1px dashed #F1F5F9;
+    margin-top: -0.25rem;
+    padding-top: 0.85rem;
+  }
+  .faq-item-answer strong {
+    color: #0F172A;
+  }
+</style>
+{% endblock %}
+

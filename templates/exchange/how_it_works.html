@@ -1,0 +1,368 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}How Room Exchange Works — Lovely Professional University{% endblock %}
+
+{% block content %}
+<!-- Grand Hero Banner -->
+<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.8) 55%, rgba(243, 112, 33, 0.45) 100%), url('{% static 'images/lpu_campus_roundabout.jpg' %}'); background-size: cover; background-position: center; border-radius: 18px; min-height: 200px; padding: 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2.5rem; box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.2);">
+  <div class="lpu-page-hero-content" style="position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div style="max-width: 720px;">
+      <div class="lpu-hero-badge-pill">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+        <span>Official Process Architecture • Algorithmic Transparency</span>
+      </div>
+      <h1 class="lpu-page-hero-title">
+        How Room Exchange Works at LPU
+      </h1>
+      <p class="lpu-page-hero-subtitle">
+        Discover how Lovely Professional University coordinates seamless, auditable room swaps across 20 residences using deterministic cyclic graph algorithms, peer consensus, and verified digital caretaker key handovers.
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+      {% if user.is_authenticated and user.is_student %}
+        <a href="{% url 'create_request' %}" class="btn btn-primary" style="padding: 0.8rem 1.6rem; font-weight: 700; box-shadow: 0 4px 14px rgba(243, 112, 33, 0.4);">
+          🚀 Apply for Room Swap →
+        </a>
+      {% elif not user.is_authenticated %}
+        <a href="{% url 'login' %}?next={% url 'create_request' %}" class="btn btn-primary" style="padding: 0.8rem 1.6rem; font-weight: 700; box-shadow: 0 4px 14px rgba(243, 112, 33, 0.4);">
+          🎓 Sign In to Apply →
+        </a>
+      {% endif %}
+      <a href="{% url 'hostels_list' %}" class="btn btn-outline" style="background: rgba(255, 255, 255, 0.15); color: #FFFFFF; border-color: rgba(255, 255, 255, 0.35); padding: 0.8rem 1.4rem; font-weight: 700;">
+        Explore Hostels Directory
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================
+     THE 4-PHASE ROOM EXCHANGE LIFECYCLE
+     ======================================================================== -->
+<section style="margin-bottom: 3.5rem;">
+  <div style="text-align: center; max-width: 760px; margin: 0 auto 3rem auto;">
+    <span style="font-size: 0.75rem; font-weight: 800; color: #F37021; text-transform: uppercase; letter-spacing: 0.08em; background: #FFF7ED; padding: 4px 12px; border-radius: 9999px; border: 1px solid #FED7AA;">
+      Step-by-Step Transparency
+    </span>
+    <h2 style="font-size: 2.25rem; font-weight: 900; color: #0F172A; margin: 0.85rem 0 0.5rem; letter-spacing: -0.02em;">
+      The 4-Stage Digital Lifecycle
+    </h2>
+    <p style="font-size: 0.95rem; color: #64748B; margin: 0; line-height: 1.6;">
+      Every room exchange follows a rigorous, tamper-proof four-stage state machine from initial submission to key collection.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
+    
+    <!-- Stage 1 -->
+    <div class="card" style="padding: 2rem; border-top: 4px solid #F37021; border-radius: 16px; background: #FFFFFF; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="width: 48px; height: 48px; border-radius: 12px; background: #FFF7ED; border: 1.5px solid #FED7AA; color: #EA580C; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; font-weight: 900; margin-bottom: 1.25rem;">
+        1
+      </div>
+      <h3 style="font-size: 1.2rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">Submit Room Preferences</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        Log in with your University Registration Number. Verify your current allocated room and select your target hostels (BH-1 to BH-10 for boys, GH-1 to GH-10 for girls), preferred floors, and AC / Non-AC preferences.
+      </p>
+      <div style="margin-top: 1rem; font-size: 0.75rem; color: #EA580C; font-weight: 700;">
+        ⚡ Instant Eligibility Validation
+      </div>
+    </div>
+
+    <!-- Stage 2 -->
+    <div class="card" style="padding: 2rem; border-top: 4px solid #2563EB; border-radius: 16px; background: #FFFFFF; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="width: 48px; height: 48px; border-radius: 12px; background: #EFF6FF; border: 1.5px solid #BFDBFE; color: #1E40AF; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; font-weight: 900; margin-bottom: 1.25rem;">
+        2
+      </div>
+      <h3 style="font-size: 1.2rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">Cycle Discovery &amp; Matching</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        Our graph algorithm runs continuously. It identifies both direct pairwise swaps (A &harr; B) and multi-hop circular rotations (A &rarr; B &rarr; C &rarr; A) to break deadlocks and maximize opportunities.
+      </p>
+      <div style="margin-top: 1rem; font-size: 0.75rem; color: #2563EB; font-weight: 700;">
+        🔄 Multi-Party Circular Matching
+      </div>
+    </div>
+
+    <!-- Stage 3 -->
+    <div class="card" style="padding: 2rem; border-top: 4px solid #10B981; border-radius: 16px; background: #FFFFFF; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="width: 48px; height: 48px; border-radius: 12px; background: #ECFDF5; border: 1.5px solid #A7F3D0; color: #065F46; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; font-weight: 900; margin-bottom: 1.25rem;">
+        3
+      </div>
+      <h3 style="font-size: 1.2rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">Unanimous Consensus &amp; Warden Review</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        All students in a matched cycle must review and unanimously accept the proposed rooms. Once approved by students, the request is digitally forwarded to the respective Hostel Wardens for discipline verification.
+      </p>
+      <div style="margin-top: 1rem; font-size: 0.75rem; color: #059669; font-weight: 700;">
+        🛡️ Double-Gated Authority Clearance
+      </div>
+    </div>
+
+    <!-- Stage 4 -->
+    <div class="card" style="padding: 2rem; border-top: 4px solid #8B5CF6; border-radius: 16px; background: #FFFFFF; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="width: 48px; height: 48px; border-radius: 12px; background: #FAF5FF; border: 1.5px solid #DDD6FE; color: #5B21B6; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; font-weight: 900; margin-bottom: 1.25rem;">
+        4
+      </div>
+      <h3 style="font-size: 1.2rem; font-weight: 800; color: #0F172A; margin: 0 0 0.5rem;">QR Transfer Pass &amp; Key Handover</h3>
+      <p style="font-size: 0.85rem; color: #64748B; line-height: 1.65; margin: 0;">
+        Upon Warden sign-off, download your official Transfer Letter with an encrypted QR code. Present it to your Block Caretaker desk within 72 hours for inventory clearance and immediate key handover.
+      </p>
+      <div style="margin-top: 1rem; font-size: 0.75rem; color: #7C3AED; font-weight: 700;">
+        🔑 Digital QR Caretaker Sign-off
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================================================
+     MULTI-PARTY ROTATION ARCHITECTURE & GRAPH VISUALIZER
+     ======================================================================== -->
+<section style="background: linear-gradient(135deg, #081628 0%, #0F2848 100%); border-radius: 20px; padding: 3rem 2.5rem; color: #FFFFFF; margin-bottom: 3.5rem; box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.25);">
+  <div style="display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 3rem; align-items: center;">
+    <div>
+      <span style="font-size: 0.75rem; font-weight: 800; color: #FDBA74; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(243, 112, 33, 0.25); padding: 4px 12px; border-radius: 9999px;">
+        Deterministic Cyclic Graph Engine
+      </span>
+      <h2 style="font-size: 2.15rem; font-weight: 900; margin: 0.85rem 0 0.75rem; color: #FFFFFF; letter-spacing: -0.02em;">
+        Solving Swap Deadlocks with 3-Way &amp; 4-Way Rotations
+      </h2>
+      <p style="font-size: 0.925rem; color: #CBD5E1; line-height: 1.7; margin-bottom: 1.5rem;">
+        In traditional paper-based hostel systems, students can only swap if they find someone who wants their exact room and vice versa. 
+        LPU's algorithm models the entire campus as a <strong>Directed Graph</strong>, discovering circular permutations where:
+      </p>
+      <ul style="padding-left: 1.25rem; color: #FED7AA; font-size: 0.9rem; line-height: 1.8; margin-bottom: 1.5rem;">
+        <li>Student A (in BH-1) moves to Student B's room in BH-3</li>
+        <li>Student B (in BH-3) moves to Student C's room in BH-6</li>
+        <li>Student C (in BH-6) moves to Student A's room in BH-1</li>
+      </ul>
+      <p style="font-size: 0.85rem; color: #94A3B8; margin: 0;">
+        All three allocations execute simultaneously in a single atomic database transaction. If any student cancels, all beds are safely reverted without locking students out.
+      </p>
+    </div>
+
+    <!-- Interactive Diagram Box -->
+    <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; padding: 2rem; backdrop-filter: blur(10px);">
+      <div style="font-size: 0.8rem; font-weight: 800; color: #FDBA74; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.25rem; text-align: center;">
+        Sample 3-Way Verified Rotation
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 0.85rem 1rem; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <strong style="color: #FFFFFF; font-size: 0.9rem;">Student A</strong>
+            <span style="font-size: 0.75rem; color: #94A3B8; display: block;">BH-1 · Room 104</span>
+          </div>
+          <span style="font-size: 0.75rem; font-weight: 700; color: #F37021;">Moves to BH-3 →</span>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 0.85rem 1rem; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <strong style="color: #FFFFFF; font-size: 0.9rem;">Student B</strong>
+            <span style="font-size: 0.75rem; color: #94A3B8; display: block;">BH-3 · Room 218</span>
+          </div>
+          <span style="font-size: 0.75rem; font-weight: 700; color: #F37021;">Moves to BH-6 →</span>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 0.85rem 1rem; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <strong style="color: #FFFFFF; font-size: 0.9rem;">Student C</strong>
+            <span style="font-size: 0.75rem; color: #94A3B8; display: block;">BH-6 · Room 302</span>
+          </div>
+          <span style="font-size: 0.75rem; font-weight: 700; color: #10B981;">Moves to BH-1 (Cycle Complete!)</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem; text-align: center; font-size: 0.75rem; color: #94A3B8;">
+        ✅ 100% Deterministic • Zero Partial Transfers
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================================
+     COMPARISON: MANUAL PAPER REQUESTS VS. SMART PORTAL
+     ======================================================================== -->
+<section style="margin-bottom: 3.5rem;">
+  <div style="text-align: center; max-width: 720px; margin: 0 auto 2.5rem auto;">
+    <h2 style="font-size: 2rem; font-weight: 900; color: #0F172A; margin: 0 0 0.5rem; letter-spacing: -0.02em;">
+      Manual Requests vs. LPU Smart Portal
+    </h2>
+    <p style="font-size: 0.9rem; color: #64748B; margin: 0;">
+      Why university residential governance transitioned to automated digital exchange.
+    </p>
+  </div>
+
+  <div class="card" style="padding: 0; overflow: hidden; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);">
+    <div style="overflow-x: auto;">
+      <table class="data-table" style="margin: 0;">
+        <thead>
+          <tr style="background: #F8FAFC;">
+            <th style="width: 280px;">Evaluation Criteria</th>
+            <th style="color: #DC2626; width: 320px;">Legacy Paper Process</th>
+            <th style="color: #F37021;">LPU Smart Exchange Portal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Discovery Method</strong></td>
+            <td>Word of mouth; searching manually for swap partners</td>
+            <td><strong style="color: #059669;">Algorithmic cycle discovery</strong> with multi-hop matching</td>
+          </tr>
+          <tr>
+            <td><strong>Multi-Party Rotations</strong></td>
+            <td>Virtually impossible to coordinate by hand</td>
+            <td><strong style="color: #059669;">Automated 3-way and 4-way cycles</strong> identified in milliseconds</td>
+          </tr>
+          <tr>
+            <td><strong>Safety &amp; Race Conditions</strong></td>
+            <td>High risk of students vacating without confirmed destination</td>
+            <td><strong style="color: #059669;">Atomic database row-locking</strong> guarantees zero partial transfers</td>
+          </tr>
+          <tr>
+            <td><strong>Warden &amp; DSW Verification</strong></td>
+            <td>Physical signatures across multiple buildings</td>
+            <td><strong style="color: #059669;">Centralized digital dashboard</strong> with 1-click review</td>
+          </tr>
+          <tr>
+            <td><strong>Caretaker Handover</strong></td>
+            <td>Disputes over missing keys or damaged inventory</td>
+            <td><strong style="color: #059669;">Encrypted QR code pass</strong> with mandatory digital checklist</td>
+          </tr>
+          <tr>
+            <td><strong>Fee Adjustment Settling</strong></td>
+            <td>Manual visits to Accounts Division</td>
+            <td><strong style="color: #059669;">Automated UMS fee ledger update</strong> upon Caretaker sign-off</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================================
+     FREQUENTLY ASKED QUESTIONS ABOUT THE PROCESS
+     ======================================================================== -->
+<section style="margin-bottom: 4rem;">
+  <div style="text-align: center; max-width: 720px; margin: 0 auto 2.5rem auto;">
+    <span style="font-size: 0.75rem; font-weight: 800; color: #F37021; text-transform: uppercase; letter-spacing: 0.08em; background: #FFF7ED; padding: 4px 12px; border-radius: 9999px; border: 1px solid #FED7AA;">
+      Step-by-Step Guidance
+    </span>
+    <h2 style="font-size: 2.15rem; font-weight: 900; color: #0F172A; margin: 0.75rem 0 0.5rem; letter-spacing: -0.02em;">
+      Questions About the Process
+    </h2>
+    <p style="font-size: 0.9rem; color: #64748B; margin: 0;">
+      Clear answers to practical questions regarding requests, timelines, and approvals.
+    </p>
+  </div>
+
+  <div style="max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.85rem;">
+    
+    <details class="faq-item-card" open>
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">Can I edit my preferences after submitting a room exchange request?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Yes. If your request is still in 'ACTIVE' status and has not yet been matched into a binding proposal, you can withdraw your request with one click from your Student Cockpit and submit an updated set of target hostels or floor preferences.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">How long do students have to accept or decline a discovered swap proposal?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Students have a <strong>48-hour response window</strong> to review the matched room details and accept the proposal. If any participant does not respond within the timeframe, the proposal expires automatically and beds are unlocked.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">What happens if my swap involves shifting between AC and Non-AC rooms?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>The system calculates the exact pro-rated difference in semester hostel fees based on the university tariff table. Once the transfer is completed at the Caretaker desk, the Accounts Division automatically updates your University Management System (UMS) fee account.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">Do I need to visit the Warden's office in person?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>No. The entire review and approval process is 100% digital. Wardens review academic, disciplinary, and fee clearance records through their administrative portal. You will receive an SMS and email notification once your pass is signed.</p>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+<!-- FAQ Accordion Styling -->
+<style>
+  .faq-item-card {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+  }
+  .faq-item-card[open] {
+    border-color: #FDBA74;
+    box-shadow: 0 4px 16px -2px rgba(243, 112, 33, 0.12);
+  }
+  .faq-item-question {
+    padding: 1.15rem 1.4rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0F172A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    list-style: none;
+    user-select: none;
+  }
+  .faq-item-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item-question:hover {
+    background: #FFFBF5;
+    color: #EA580C;
+  }
+  .q-icon {
+    font-size: 1.1rem;
+  }
+  .q-text {
+    flex: 1;
+  }
+  .q-chevron {
+    font-size: 1.25rem;
+    color: #94A3B8;
+    transition: transform 0.2s ease;
+  }
+  .faq-item-card[open] .q-chevron {
+    transform: rotate(180deg);
+    color: #F37021;
+  }
+  .faq-item-answer {
+    padding: 0 1.4rem 1.25rem 3.35rem;
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.65;
+    border-top: 1px dashed #F1F5F9;
+    margin-top: -0.25rem;
+    padding-top: 0.85rem;
+  }
+  .faq-item-answer strong {
+    color: #0F172A;
+  }
+</style>
+{% endblock %}
+

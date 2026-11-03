@@ -1,0 +1,335 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Help & Student Support — Lovely Professional University{% endblock %}
+
+{% block content %}
+<!-- Grand Hero Banner -->
+<div class="lpu-page-hero" style="background-image: linear-gradient(90deg, rgba(8, 22, 40, 0.94) 0%, rgba(8, 22, 40, 0.8) 55%, rgba(243, 112, 33, 0.45) 100%), url('{% static 'images/lpu_campus_walkway.jpg' %}'); background-size: cover; background-position: center; border-radius: 18px; min-height: 200px; padding: 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; margin-bottom: 2.5rem; box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.2);">
+  <div class="lpu-page-hero-content" style="position: relative; z-index: 2; width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div style="max-width: 740px;">
+      <div class="lpu-hero-badge-pill">
+        <img src="{% static 'images/lpu_official_logo.png' %}" alt="LPU">
+        <span>Division of Student Welfare • Official Support Desk</span>
+      </div>
+      <h1 class="lpu-page-hero-title">
+        Help, Support &amp; Emergency Contacts
+      </h1>
+      <p class="lpu-page-hero-subtitle">
+        We are here to assist you 24/7. Access dedicated contact numbers for the Chief Warden's Office, Hostel Wardens, Caretaker desks, Uni-Hospital ambulance, and grievance escalation.
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+      <a href="mailto:hostels@lpu.co.in" class="btn btn-primary" style="padding: 0.8rem 1.6rem; font-weight: 700; box-shadow: 0 4px 14px rgba(243, 112, 33, 0.4);">
+        ✉️ Email Support Desk →
+      </a>
+      <a href="{% url 'hostels_list' %}" class="btn btn-outline" style="background: rgba(255, 255, 255, 0.15); color: #FFFFFF; border-color: rgba(255, 255, 255, 0.35); padding: 0.8rem 1.4rem; font-weight: 700;">
+        Explore Hostels
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================
+     EMERGENCY & PRIORITY HELPLINES (4-COL GRID)
+     ======================================================================== -->
+<section style="margin-bottom: 3.5rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
+    
+    <!-- Helpline 1: DSW Central Desk -->
+    <div class="card" style="padding: 2rem; border-top: 4px solid #F37021; border-radius: 16px; background: #FFFFFF; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">📞</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.35rem;">DSW Central Helpline</h3>
+      <p style="font-size: 0.825rem; color: #64748B; margin: 0 0 1rem;">
+        General inquiries, exchange queries &amp; fee ledger adjustments.
+      </p>
+      <div style="font-size: 1rem; font-weight: 800; color: #EA580C; margin-bottom: 0.25rem;">
+        +91 1824 517000
+      </div>
+      <div style="font-size: 0.75rem; color: #94A3B8;">
+        Ext. 2101 · Mon–Sat (09:00 AM – 05:00 PM)
+      </div>
+    </div>
+
+    <!-- Helpline 2: Chief Warden Office -->
+    <div class="card" style="padding: 2rem; border-top: 4px solid #2563EB; border-radius: 16px; background: #FFFFFF; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🛡️</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.35rem;">Chief Warden Secretariat</h3>
+      <p style="font-size: 0.825rem; color: #64748B; margin: 0 0 1rem;">
+        Disciplinary appeals, special accommodations &amp; policy reviews.
+      </p>
+      <div style="font-size: 1rem; font-weight: 800; color: #2563EB; margin-bottom: 0.25rem;">
+        Internal Ext. 4402
+      </div>
+      <div style="font-size: 0.75rem; color: #94A3B8;">
+        Sector 34, Central Administrative Wing
+      </div>
+    </div>
+
+    <!-- Helpline 3: Uni-Hospital Emergency -->
+    <div class="card" style="padding: 2rem; border-top: 4px solid #DC2626; border-radius: 16px; background: #FFFFFF; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">🚑</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.35rem;">Uni-Hospital 24x7 Ambulance</h3>
+      <p style="font-size: 0.825rem; color: #64748B; margin: 0 0 1rem;">
+        Emergency medical response, doctor consultations &amp; first aid.
+      </p>
+      <div style="font-size: 1rem; font-weight: 800; color: #DC2626; margin-bottom: 0.25rem;">
+        +91 1824 517108
+      </div>
+      <div style="font-size: 0.75rem; color: #94A3B8;">
+        Dial Ext. 108 · 24 Hours / 7 Days Available
+      </div>
+    </div>
+
+    <!-- Helpline 4: Campus Security & Fire -->
+    <div class="card" style="padding: 2rem; border-top: 4px solid #10B981; border-radius: 16px; background: #FFFFFF; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);">
+      <div style="font-size: 2rem; margin-bottom: 0.75rem;">👮</div>
+      <h3 style="font-size: 1.15rem; font-weight: 800; color: #0F172A; margin: 0 0 0.35rem;">Campus Security &amp; Fire</h3>
+      <p style="font-size: 0.825rem; color: #64748B; margin: 0 0 1rem;">
+        Main security control room, night patrols &amp; emergency access.
+      </p>
+      <div style="font-size: 1rem; font-weight: 800; color: #059669; margin-bottom: 0.25rem;">
+        Internal Ext. 101 / 102
+      </div>
+      <div style="font-size: 0.75rem; color: #94A3B8;">
+        Main Campus Gate 1 Control Room
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================================================
+     GRIEVANCE REDRESSAL ESCALATION MATRIX
+     ======================================================================== -->
+<section style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 20px; padding: 3rem 2.5rem; margin-bottom: 3.5rem;">
+  <div style="text-align: center; max-width: 720px; margin: 0 auto 2.5rem auto;">
+    <span style="font-size: 0.75rem; font-weight: 800; color: #F37021; text-transform: uppercase; letter-spacing: 0.08em; background: #FFF7ED; padding: 4px 12px; border-radius: 9999px; border: 1px solid #FED7AA;">
+      Standard Resolution Hierarchy
+    </span>
+    <h2 style="font-size: 2.15rem; font-weight: 900; color: #0F172A; margin: 0.75rem 0 0.5rem; letter-spacing: -0.02em;">
+      Grievance Redressal Ladder
+    </h2>
+    <p style="font-size: 0.9rem; color: #64748B; margin: 0;">
+      Follow our formal university resolution hierarchy for swift and auditable handling of any issue.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem;">
+    
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+      <span style="font-size: 0.75rem; font-weight: 800; color: #EA580C; background: #FFF7ED; padding: 3px 8px; border-radius: 4px;">Level 1</span>
+      <h4 style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.75rem 0 0.35rem;">Block Caretaker Desk</h4>
+      <p style="font-size: 0.825rem; color: #64748B; margin: 0; line-height: 1.55;">
+        Electrical breakdowns, tap leaks, furniture issues, key replacement, physical room inspection during shifts.
+      </p>
+      <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #059669; font-weight: 700;">Turnaround: 4–12 Hours</div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+      <span style="font-size: 0.75rem; font-weight: 800; color: #2563EB; background: #EFF6FF; padding: 3px 8px; border-radius: 4px;">Level 2</span>
+      <h4 style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.75rem 0 0.35rem;">Hostel Warden In-Charge</h4>
+      <p style="font-size: 0.825rem; color: #64748B; margin: 0; line-height: 1.55;">
+        Room exchange approvals, roommate disputes, night passes, attendance irregularities, mess feedback.
+      </p>
+      <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #059669; font-weight: 700;">Turnaround: 24–48 Hours</div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+      <span style="font-size: 0.75rem; font-weight: 800; color: #7C3AED; background: #FAF5FF; padding: 3px 8px; border-radius: 4px;">Level 3</span>
+      <h4 style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.75rem 0 0.35rem;">Chief Warden Secretariat</h4>
+      <p style="font-size: 0.825rem; color: #64748B; margin: 0; line-height: 1.55;">
+        Cross-hostel transfers, medical priority requests, safety escalations, disciplinary reviews.
+      </p>
+      <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #059669; font-weight: 700;">Turnaround: 48–72 Hours</div>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+      <span style="font-size: 0.75rem; font-weight: 800; color: #DC2626; background: #FEF2F2; padding: 3px 8px; border-radius: 4px;">Level 4</span>
+      <h4 style="font-size: 1.05rem; font-weight: 800; color: #0F172A; margin: 0.75rem 0 0.35rem;">Dean (DSW) Directorate</h4>
+      <p style="font-size: 0.825rem; color: #64748B; margin: 0; line-height: 1.55;">
+        Final appellate authority for administrative policy exceptions and central housing governance.
+      </p>
+      <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #059669; font-weight: 700;">Turnaround: 3–5 Business Days</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================================================================
+     HOSTEL WARDENS IN-CHARGE DIRECTORY
+     ======================================================================== -->
+<section style="margin-bottom: 4rem;">
+  <div style="text-align: center; max-width: 720px; margin: 0 auto 2.5rem auto;">
+    <h2 style="font-size: 2.15rem; font-weight: 900; color: #0F172A; margin: 0 0 0.5rem; letter-spacing: -0.02em;">
+      Residences &amp; In-Charge Directory
+    </h2>
+    <p style="font-size: 0.9rem; color: #64748B; margin: 0;">
+      All 20 university residential complexes with designated wardens and offices.
+    </p>
+  </div>
+
+  <div class="card" style="padding: 0; overflow: hidden; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);">
+    <div style="overflow-x: auto;">
+      <table class="data-table" style="margin: 0;">
+        <thead>
+          <tr style="background: #F8FAFC;">
+            <th style="width: 110px;">Code</th>
+            <th>Residence Name</th>
+            <th style="width: 140px;">Category</th>
+            <th>Designated Warden / In-Charge</th>
+            <th style="width: 180px;">Office Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in hostels %}
+            <tr>
+              <td>
+                <span class="badge {% if h.gender_type == 'MALE' %}badge-blue{% elif h.gender_type == 'FEMALE' %}badge-purple{% else %}badge-teal{% endif %}" style="font-family: monospace; font-size: 0.85rem; font-weight: 700;">
+                  {{ h.code }}
+                </span>
+              </td>
+              <td>
+                <strong style="color: #0F172A; font-size: 0.95rem;">{{ h.name }}</strong>
+              </td>
+              <td>
+                {% if h.gender_type == 'MALE' %}
+                  <span style="color: #1E40AF; font-size: 0.8rem; font-weight: 700;">👨 Boys Hostel</span>
+                {% elif h.gender_type == 'FEMALE' %}
+                  <span style="color: #7C3AED; font-size: 0.8rem; font-weight: 700;">👩 Girls Hostel</span>
+                {% else %}
+                  <span style="color: #F37021; font-size: 0.8rem; font-weight: 700;">🏢 Co-Ed</span>
+                {% endif %}
+              </td>
+              <td>
+                <span style="color: #334155; font-size: 0.85rem; font-weight: 600;">
+                  {{ h.warden.get_full_name|default:"University In-Charge" }}
+                </span>
+              </td>
+              <td>
+                <span style="color: #64748B; font-size: 0.8rem;">
+                  Block A, Ground Floor
+                </span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================================
+     HELP & SUPPORT FAQS
+     ======================================================================== -->
+<section style="margin-bottom: 4rem;">
+  <div style="text-align: center; max-width: 720px; margin: 0 auto 2.5rem auto;">
+    <span style="font-size: 0.75rem; font-weight: 800; color: #F37021; text-transform: uppercase; letter-spacing: 0.08em; background: #FFF7ED; padding: 4px 12px; border-radius: 9999px; border: 1px solid #FED7AA;">
+      Helpdesk FAQs
+    </span>
+    <h2 style="font-size: 2.15rem; font-weight: 900; color: #0F172A; margin: 0.75rem 0 0.5rem; letter-spacing: -0.02em;">
+      Frequently Asked Questions on Support &amp; Grievances
+    </h2>
+  </div>
+
+  <div style="max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.85rem;">
+    
+    <details class="faq-item-card" open>
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">What is the official procedure for filing a hostel maintenance ticket?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Residents can log repair tickets 24/7 through the LPU Touch mobile app or visit their ground floor Caretaker desk. Routine plumbing, electrical, and carpentry issues are resolved within 4 to 12 hours under university SLAs.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">How do I request emergency medical aid during night hours?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Immediately contact your floor Caretaker or call the Uni-Hospital Emergency Line directly at <strong>+91 1824 517108 / Ext. 108</strong>. The campus ambulance will be dispatched to your hostel entrance within 3 to 5 minutes.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">Who handles fee refund or billing disputes related to room category changes?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Fee adjustments are governed by the University Accounts Division in Sector 32. Any debit or credit discrepancies after room shifting can be escalated via ticket to <code>accounts@lpu.co.in</code> or visited at Window 4 in Block 32.</p>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+<!-- FAQ Accordion Styling -->
+<style>
+  .faq-item-card {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+  }
+  .faq-item-card[open] {
+    border-color: #FDBA74;
+    box-shadow: 0 4px 16px -2px rgba(243, 112, 33, 0.12);
+  }
+  .faq-item-question {
+    padding: 1.15rem 1.4rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0F172A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    list-style: none;
+    user-select: none;
+  }
+  .faq-item-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item-question:hover {
+    background: #FFFBF5;
+    color: #EA580C;
+  }
+  .q-icon {
+    font-size: 1.1rem;
+  }
+  .q-text {
+    flex: 1;
+  }
+  .q-chevron {
+    font-size: 1.25rem;
+    color: #94A3B8;
+    transition: transform 0.2s ease;
+  }
+  .faq-item-card[open] .q-chevron {
+    transform: rotate(180deg);
+    color: #F37021;
+  }
+  .faq-item-answer {
+    padding: 0 1.4rem 1.25rem 3.35rem;
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.65;
+    border-top: 1px dashed #F1F5F9;
+    margin-top: -0.25rem;
+    padding-top: 0.85rem;
+  }
+  .faq-item-answer strong {
+    color: #0F172A;
+  }
+</style>
+{% endblock %}
+

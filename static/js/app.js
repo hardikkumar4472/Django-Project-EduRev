@@ -50,4 +50,31 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
+
+  // 3. Universal Skeleton UI Helper
+  window.SkeletonUI = {
+    show: function(skeletonSelector, contentSelector) {
+      const s = document.querySelector(skeletonSelector);
+      const c = document.querySelector(contentSelector);
+      if (s) s.style.display = '';
+      if (c) c.style.display = 'none';
+    },
+
+    hide: function(skeletonSelector, contentSelector) {
+      const s = document.querySelector(skeletonSelector);
+      const c = document.querySelector(contentSelector);
+      if (s) s.style.display = 'none';
+      if (c) {
+        c.style.display = '';
+        c.classList.add('fade-in');
+      }
+    },
+
+    simulate: function(skeletonSelector, contentSelector, durationMs = 600) {
+      this.show(skeletonSelector, contentSelector);
+      setTimeout(() => {
+        this.hide(skeletonSelector, contentSelector);
+      }, durationMs);
+    }
+  };
 });

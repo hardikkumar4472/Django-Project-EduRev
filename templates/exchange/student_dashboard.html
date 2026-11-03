@@ -38,6 +38,41 @@
   </div>
 </div>
 
+<!-- ========================================================================
+     SKELETON PLACEHOLDERS FOR STUDENT DASHBOARD (SHOWN DURING LOAD)
+     ======================================================================== -->
+<div id="dashboard-skeleton-view" class="skeleton-dashboard-grid" style="display: none;">
+  <!-- Left: Room Allotment Skeleton Card -->
+  <div class="card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="skeleton-title" style="width: 40%; height: 20px; margin: 0;"></div>
+      <div class="skeleton-pill" style="width: 80px; height: 22px;"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 0.5rem;">
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div class="skeleton-line" style="height: 16px; width: 85%;"></div>
+        <div class="skeleton-line" style="height: 16px; width: 75%;"></div>
+        <div class="skeleton-line" style="height: 16px; width: 65%;"></div>
+        <div class="skeleton-line" style="height: 16px; width: 90%;"></div>
+        <div class="skeleton-btn" style="height: 36px; width: 140px; margin-top: 0.5rem;"></div>
+      </div>
+      <div class="skeleton-box" style="height: 180px; border-radius: 12px;"></div>
+    </div>
+  </div>
+
+  <!-- Right: Active Proposal / Swap Status Skeleton Card -->
+  <div class="card" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="skeleton-title" style="width: 50%; height: 20px; margin: 0;"></div>
+      <div class="skeleton-badge" style="width: 60px; height: 22px;"></div>
+    </div>
+    <div class="skeleton-box" style="height: 90px; border-radius: 10px;"></div>
+    <div class="skeleton-line" style="height: 14px; width: 100%;"></div>
+    <div class="skeleton-line" style="height: 14px; width: 80%;"></div>
+    <div class="skeleton-btn" style="height: 42px; margin-top: 0.5rem;"></div>
+  </div>
+</div>
+
 <div class="grid-2" style="grid-template-columns: 1.35fr 0.65fr; align-items: stretch; margin-bottom: 2rem;">
   
   <!-- LEFT: Your Current Room Card with Info + Floorplan -->

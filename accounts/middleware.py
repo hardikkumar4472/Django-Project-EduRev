@@ -17,8 +17,15 @@ class RBACMiddleware:
         user = request.user
 
         # Public paths that never require auth
-        public_prefixes = ['/login/', '/signup/', '/ping/', '/static/', '/media/', '/django-admin/']
-        is_public = path == '/' or path == '/hostels/' or path == '/hostels' or any(path.startswith(p) for p in public_prefixes)
+        public_prefixes = [
+            '/login/', '/signup/', '/ping/', '/static/', '/media/', '/django-admin/',
+            '/hostels/', '/how-it-works/', '/guidelines/', '/support/', '/help-support/'
+        ]
+        is_public = (
+            path == '/' or 
+            path in ['/hostels', '/hostels/', '/how-it-works', '/how-it-works/', '/guidelines', '/guidelines/', '/support', '/support/', '/help-support', '/help-support/'] or 
+            any(path.startswith(p) for p in public_prefixes)
+        )
 
         if not is_public and not user.is_authenticated:
             return redirect(f"/login/?next={path}")

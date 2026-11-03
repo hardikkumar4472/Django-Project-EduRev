@@ -2,8 +2,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Phase 20: Landing & Student Views
+    # Phase 20: Landing & Public Information Pages
     path('', views.landing_page, name='landing'),
+    path('how-it-works/', views.how_it_works_view, name='how_it_works'),
+    path('guidelines/', views.guidelines_view, name='guidelines'),
+    path('support/', views.support_view, name='support'),
+    path('help-support/', views.support_view, name='help_support'),
     path('dashboard/', views.student_dashboard, name='dashboard'),
     path('exchange-requests/new/', views.create_request_view, name='create_request'),
     path('exchange-requests/<int:pk>/withdraw/', views.withdraw_request_view, name='withdraw_request'),

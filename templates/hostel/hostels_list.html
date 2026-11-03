@@ -94,6 +94,44 @@
 </div>
 
 <!-- ========================================================================
+     SKELETON PLACEHOLDERS FOR HOSTEL CARDS (SHOWN BEFORE/DURING DATA FETCH)
+     ======================================================================== -->
+<div id="hostels-skeleton-container" class="hostels-cards-grid" style="display: none;">
+  {% for i in "123456" %}
+    <div class="skeleton-hostel-card">
+      <div class="skeleton-card-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+          <span class="skeleton-badge" style="width: 55px; height: 22px;"></span>
+          <span class="skeleton-pill" style="width: 95px; height: 22px;"></span>
+        </div>
+        <div class="skeleton-title" style="width: 70%; height: 22px; margin-bottom: 0.4rem;"></div>
+        <div class="skeleton-sub" style="width: 50%; height: 14px;"></div>
+      </div>
+      <div class="skeleton-card-body">
+        <div>
+          <div class="skeleton-sub" style="width: 45%; height: 13px; margin-bottom: 0.6rem;"></div>
+          <div class="skeleton-capsule"></div>
+          <div class="skeleton-capsule"></div>
+          <div class="skeleton-capsule"></div>
+        </div>
+        <div>
+          <div class="skeleton-sub" style="width: 40%; height: 13px; margin-bottom: 0.6rem;"></div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+            <div class="skeleton-chip" style="width: 85px;"></div>
+            <div class="skeleton-chip" style="width: 100px;"></div>
+            <div class="skeleton-chip" style="width: 90px;"></div>
+            <div class="skeleton-chip" style="width: 75px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="skeleton-card-footer">
+        <div class="skeleton-btn" style="height: 40px;"></div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- ========================================================================
      VIEW 1: CLEAN DYNAMIC HOSTEL CARDS (NO IMAGES, NO BED NUMBERS)
      SHOWCASES: ROOM SEATERS AVAILABLE + FACILITIES
      ======================================================================== -->
@@ -295,6 +333,148 @@
     </table>
   </div>
 </div>
+
+<!-- ========================================================================
+     STATIC GUIDE: RESIDENCE LIFE & CAMPUS AMENITIES GUIDE (EXACTLY ONCE)
+     ======================================================================== -->
+<section class="hostel-amenities-guide-section" style="margin-top: 3.5rem; margin-bottom: 3.5rem;">
+  <div style="background: linear-gradient(135deg, #081628 0%, #0F2848 100%); border-radius: 20px; padding: 3rem 2.5rem; color: #FFFFFF; position: relative; overflow: hidden; box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.25);">
+    <div style="max-width: 720px; margin-bottom: 2.5rem;">
+      <span style="font-size: 0.75rem; font-weight: 800; color: #FDBA74; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(243, 112, 33, 0.25); padding: 4px 12px; border-radius: 9999px;">
+        Comprehensive Student Living Standards
+      </span>
+      <h2 style="font-size: 2.15rem; font-weight: 900; margin: 0.85rem 0 0.5rem; color: #FFFFFF; letter-spacing: -0.02em;">
+        Life Across LPU Residential Complexes
+      </h2>
+      <p style="font-size: 0.925rem; color: #CBD5E1; line-height: 1.65; margin: 0;">
+        From comfortable personal living spaces to round-the-clock campus safety, every residence is engineered to support academic rigor, holistic development, and peaceful student living.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+      
+      <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; padding: 1.5rem; backdrop-filter: blur(8px);">
+        <div style="font-size: 1.75rem; margin-bottom: 0.65rem;">📶</div>
+        <h4 style="font-size: 1.05rem; font-weight: 800; color: #FFFFFF; margin: 0 0 0.4rem;">Gigabit Campus Wi-Fi</h4>
+        <p style="font-size: 0.825rem; color: #94A3B8; line-height: 1.6; margin: 0;">
+          High-throughput enterprise access points deployed across all corridors and common rooms, providing seamless connectivity for online lectures, coding contests, and research.
+        </p>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; padding: 1.5rem; backdrop-filter: blur(8px);">
+        <div style="font-size: 1.75rem; margin-bottom: 0.65rem;">🛡️</div>
+        <h4 style="font-size: 1.05rem; font-weight: 800; color: #FFFFFF; margin: 0 0 0.4rem;">Multi-Layer Security</h4>
+        <p style="font-size: 0.825rem; color: #94A3B8; line-height: 1.6; margin: 0;">
+          Round-the-clock armed campus marshals, biometric turnstile entry, facial recognition logs, and over 4,000 CCTV cameras monitored from the central University Control Room.
+        </p>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; padding: 1.5rem; backdrop-filter: blur(8px);">
+        <div style="font-size: 1.75rem; margin-bottom: 0.65rem;">🍽️</div>
+        <h4 style="font-size: 1.05rem; font-weight: 800; color: #FFFFFF; margin: 0 0 0.4rem;">Nutritious 4-Meal Dining</h4>
+        <p style="font-size: 0.825rem; color: #94A3B8; line-height: 1.6; margin: 0;">
+          Hygienic multi-cuisine dining options prepared under ISO-certified food safety protocols, catering to North Indian, South Indian, and continental palates.
+        </p>
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; padding: 1.5rem; backdrop-filter: blur(8px);">
+        <div style="font-size: 1.75rem; margin-bottom: 0.65rem;">🩺</div>
+        <h4 style="font-size: 1.05rem; font-weight: 800; color: #FFFFFF; margin: 0 0 0.4rem;">24/7 Uni-Hospital Care</h4>
+        <p style="font-size: 0.825rem; color: #94A3B8; line-height: 1.6; margin: 0;">
+          Immediate emergency attention through the in-campus super-specialty hospital, on-site resident medical officers, and a dedicated fleet of GPS-equipped ambulances.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================================
+     HOSTELS DIRECTORY FAQS (ACCORDION - EXACTLY ONCE)
+     ======================================================================== -->
+<section class="hostel-faqs-section" style="margin-bottom: 4rem;">
+  <div style="text-align: center; max-width: 720px; margin: 0 auto 2.5rem auto;">
+    <span style="font-size: 0.75rem; font-weight: 800; color: #F37021; text-transform: uppercase; letter-spacing: 0.08em; background: #FFF7ED; padding: 4px 12px; border-radius: 9999px; border: 1px solid #FED7AA;">
+      Help &amp; Answers
+    </span>
+    <h2 style="font-size: 2.15rem; font-weight: 900; color: #0F172A; margin: 0.75rem 0 0.5rem; letter-spacing: -0.02em;">
+      Frequently Asked Questions About LPU Hostels
+    </h2>
+    <p style="font-size: 0.9rem; color: #64748B; margin: 0;">
+      Find answers to common questions regarding room allocations, facilities, shifting policies, and guest rules.
+    </p>
+  </div>
+
+  <div style="max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.85rem;">
+    
+    <details class="faq-item-card" open>
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">How are room seaters and categories allocated in LPU Hostels?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Rooms are offered in 1-Seater (Single), 2-Seater (Double), 3-Seater (Triple), 4-Seater (Quad), and 7/8-Seater Dormitory layouts, with both AC and Non-AC configurations. Allotments are managed digitally based on applicant preference, program seniority, and availability at the start of each academic session.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">Are campus facilities such as Gym, Laundry, and Wi-Fi included in the hostel fee?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Yes. High-speed campus Wi-Fi, electricity, 24/7 power backup, central reading lounges, and water purification are fully included in the standard hostel fee. The gymnasium and automated laundry tokens are provided as complimentary residential services governed by DSW policies.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">Can I request a room transfer between different hostel buildings (e.g., from BH-2 to BH-8)?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Yes! Our automated exchange engine allows you to select any of your preferred hostels as target destinations. When a matching direct or multi-party rotation is found, the system coordinates approval across both Wardens and enables your transfer seamlessly.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">What basic furniture and amenities are provided inside the room?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Every resident is provided an individual steel cot bed with mattress, a designated study desk with ergonomic chair, a spacious lockable wardrobe/almirah, book rack, and individual electrical sockets. AC rooms feature wall-mounted split air conditioning units with automated thermostatic control.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">What is the process for lodging maintenance requests (electrical, plumbing, carpentry)?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Residents can log maintenance tickets 24/7 through the LPU Touch mobile app or at the Caretaker desk on the ground floor of each block. Routine repairs (e.g. tubelight replacement, tap leakage) are resolved within 4 to 12 hours under university service-level agreements.</p>
+      </div>
+    </details>
+
+    <details class="faq-item-card">
+      <summary class="faq-item-question">
+        <span class="q-icon">❓</span>
+        <span class="q-text">What are the regulations regarding visitors and parents?</span>
+        <span class="q-chevron">▾</span>
+      </summary>
+      <div class="faq-item-answer">
+        <p>Parents and verified guardians may visit students in designated hostel visitor lounges between <strong>09:00 AM and 06:00 PM</strong> on weekends and university holidays after submitting government ID proof at the main security reception. Overnight stays inside student rooms are strictly prohibited.</p>
+      </div>
+    </details>
+
+  </div>
+</section>
 
 <!-- Add New Hostel Modal (For Admin & Staff) -->
 {% if is_admin_or_dsw %}
@@ -804,6 +984,65 @@
     border-radius: 16px;
     border: 1.5px dashed #CBD5E1;
     color: #64748B;
+  }
+
+  /* FAQ Accordion Styling */
+  .faq-item-card {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+    transition: all 0.2s ease;
+  }
+  .faq-item-card[open] {
+    border-color: #FDBA74;
+    box-shadow: 0 4px 16px -2px rgba(243, 112, 33, 0.12);
+  }
+  .faq-item-question {
+    padding: 1.15rem 1.4rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #0F172A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    list-style: none;
+    user-select: none;
+  }
+  .faq-item-question::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item-question:hover {
+    background: #FFFBF5;
+    color: #EA580C;
+  }
+  .q-icon {
+    font-size: 1.1rem;
+  }
+  .q-text {
+    flex: 1;
+  }
+  .q-chevron {
+    font-size: 1.25rem;
+    color: #94A3B8;
+    transition: transform 0.2s ease;
+  }
+  .faq-item-card[open] .q-chevron {
+    transform: rotate(180deg);
+    color: #F37021;
+  }
+  .faq-item-answer {
+    padding: 0 1.4rem 1.25rem 3.35rem;
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.65;
+    border-top: 1px dashed #F1F5F9;
+    margin-top: -0.25rem;
+    padding-top: 0.85rem;
+  }
+  .faq-item-answer strong {
+    color: #0F172A;
   }
 </style>
 

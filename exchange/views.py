@@ -43,6 +43,30 @@ def landing_page(request):
         'active_requests': active_requests
     })
 
+def how_it_works_view(request):
+    """
+    Public, unauthenticated dedicated page detailing the step-by-step
+    room exchange methodology, deterministic cycle discovery, and transfer lifecycle.
+    """
+    return render(request, 'exchange/how_it_works.html')
+
+def guidelines_view(request):
+    """
+    Public, unauthenticated dedicated page for official LPU residential policies,
+    curfew hours, discipline codes, anti-ragging mandates, and shifting protocols.
+    """
+    return render(request, 'exchange/guidelines.html')
+
+def support_view(request):
+    """
+    Public, unauthenticated dedicated Help & Support page with DSW contacts,
+    Chief Warden helpline, caretaker desks, FAQ directory, and grievance escalation.
+    """
+    hostels_all = Hostel.objects.filter(is_active=True).order_by('gender_type', 'code')
+    return render(request, 'exchange/support.html', {
+        'hostels': hostels_all
+    })
+
 def student_dashboard(request):
     """
     Student Cockpit: 2D Room visualizer, current bed, active proposal, countdown.
